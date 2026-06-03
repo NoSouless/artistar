@@ -1,31 +1,32 @@
 (function () {
-    var productsList = document.getElementById('storeManageProductsList');
-    var searchInput = document.getElementById('storeManageSearchInput');
+    var productsList = document.getElementById('storeCollectionProductsList');
+    var searchInput = document.getElementById('storeCollectionSearchInput');
 
     if (!productsList) return;
 
     var storeId = parseInt(productsList.dataset.storeId || '0', 10);
+    var collectionId = parseInt(productsList.dataset.collectionId || '0', 10);
     var searchTimeout = null;
     var activeRequest = null;
     var currentProducts = [];
     var selectedProductsSortable = null;
 
     var apiUrls = {
-        products: '/apis/store/manage-products',
-        toggleOrder: '/apis/store/toggle-product-order',
-        reorderOrder: '/apis/store/reorder-product-order'
+        products: '/apis/store/manage-collection-products',
+        toggleOrder: '/apis/store/toggle-collection-product',
+        reorderOrder: '/apis/store/reorder-collection-product-order'
     };
 
     var messages = {
-        invalidStore: 'Loja invalida para carregar produtos.',
+        invalidStore: 'Colecao invalida para carregar produtos.',
         invalidApiResponse: 'Erro ao processar resposta da API.',
         productsUnavailable: 'Nao foi possivel carregar os produtos.',
-        searchFailed: 'Falha ao buscar produtos da loja.',
+        searchFailed: 'Falha ao buscar produtos da colecao.',
         processResponseFailed: 'Nao foi possivel processar a resposta da API.',
-        updateFailed: 'Falha ao atualizar produto da vitrine.',
+        updateFailed: 'Falha ao atualizar produto da colecao.',
         saveOrderFailed: 'Falha ao salvar a nova ordem dos produtos.',
         noProductsInStore: 'Nenhum produto encontrado na loja.',
-        noSelectedProducts: 'Nenhum produto encontrado na vitrine'
+        noSelectedProducts: 'Nenhum produto encontrado na colecao'
     };
 
     function parseApiResponse(response) {
@@ -80,7 +81,7 @@
     }
 
     function favoriteButtonHtml(productId, selected, name) {
-        var title = selected ? 'Remover da vitrine' : 'Adicionar na vitrine';
+        var title = selected ? 'Remover da colecao' : 'Adicionar na colecao';
 
         return '<button type="button" class="store-product-favorite" data-product-id="' + productId + '" data-selected="' + (selected ? '1' : '0') + '" aria-label="' + title + ' ' + name + '" title="' + title + '" style="position:absolute; top:8px; right:8px; z-index:3; border-radius:100%; background:none; border:none; font-size:1.5rem;">'
             + '<i class="' + (selected ? 'fa-solid fa-heart' : 'fa-regular fa-heart') + ' link-nocturne-purple link-hover"></i>'
@@ -270,70 +271,7 @@
         return html;
     }
 
-    function snapshotProductRects() {
-        var snapshot = {};
-
-        Array.prototype.forEach.call(productsList.querySelectorAll('[data-product-id]'), function (item) {
-            var productId = parseInt(item.dataset.productId || '0', 10);
-
-            if (productId < 1) return;
-
-            snapshot[productId] = item.getBoundingClientRect();
-        });
-
-        return snapshot;
-    }
-
-    function animateProductLayout(previousRects) {
-        if (!previousRects) return;
-
-        var items = Array.prototype.slice.call(productsList.querySelectorAll('[data-product-id]'));
-
-        if (!items.length) return;
-
-        items.forEach(function (item) {
-            var productId = parseInt(item.dataset.productId || '0', 10);
-            var previousRect = previousRects[productId];
-
-            item.style.transition = 'none';
-            item.style.willChange = 'transform, opacity';
-            item.style.transformOrigin = 'top left';
-
-            if (previousRect) {
-                var currentRect = item.getBoundingClientRect();
-                var deltaX = previousRect.left - currentRect.left;
-                var deltaY = previousRect.top - currentRect.top;
-
-                item.style.transform = 'translate(' + deltaX + 'px, ' + deltaY + 'px)';
-                item.style.opacity = '1';
-            } else {
-                item.style.transform = 'translateY(12px)';
-                item.style.opacity = '0';
-            }
-        });
-
-        requestAnimationFrame(function () {
-            items.forEach(function (item) {
-                item.style.transition = 'transform 220ms ease, opacity 220ms ease';
-                item.style.transform = '';
-                item.style.opacity = '1';
-            });
-
-            window.setTimeout(function () {
-                items.forEach(function (item) {
-                    item.style.transition = '';
-                    item.style.transform = '';
-                    item.style.opacity = '';
-                    item.style.willChange = '';
-                    item.style.transformOrigin = '';
-                });
-            }, 240);
-        });
-    }
-
     function renderProducts(products) {
-        var previousRects = snapshotProductRects();
-
         if (!Array.isArray(products) || products.length === 0) {
             currentProducts = [];
             destroySelectedSortable();
@@ -386,7 +324,6 @@
 
         productsList.innerHTML = html;
         initSelectedSortable();
-        animateProductLayout(previousRects);
     }
 
     function updateCurrentProductSelection(productId, selected) {
@@ -417,6 +354,7 @@
             type: 'POST',
             data: {
                 storeId: storeId,
+                collectionId: collectionId,
                 search: searchTerm || ''
             },
             success: function (response) {
@@ -450,14 +388,14 @@
         if (!icon) return;
 
         button.dataset.selected = selected ? '1' : '0';
-        button.title = selected ? 'Remover da vitrine' : 'Adicionar na vitrine';
+        button.title = selected ? 'Remover da colecao' : 'Adicionar na colecao';
         icon.className = (selected ? 'fa-solid fa-heart' : 'fa-regular fa-heart') + ' link-nocturne-purple link-hover';
     }
 
     function toggleProduct(button) {
         var productId = parseInt(button.dataset.productId || '0', 10);
 
-        if (!productId || !storeId) return;
+        if (!productId || !storeId || !collectionId) return;
         if (button.disabled) return;
 
         button.disabled = true;
@@ -467,6 +405,7 @@
             type: 'POST',
             data: {
                 storeId: storeId,
+                collectionId: collectionId,
                 productId: productId
             },
             success: function (response) {

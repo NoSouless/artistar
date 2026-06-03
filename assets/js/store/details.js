@@ -89,7 +89,7 @@
             productsList.innerHTML = [
                 '<div class="col-12">',
                 '   <div class="alert alert-light border text-center mb-0">',
-                '       Nenhum produto encontrado para esta loja.',
+                '       Nenhum produto encontrado na loja.',
                 '   </div>',
                 '</div>'
             ].join('');

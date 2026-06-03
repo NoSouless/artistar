@@ -109,5 +109,6 @@
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script src="<?= url('assets/js/store/manage.js?t=' . time()) ?>"></script>
 <?= $this->stop() ?>

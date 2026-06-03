@@ -331,4 +331,70 @@ class Store extends Core {
 
         return ['success' => (bool) $ok, 'selected' => true, 'message' => $ok ? 'Produto adicionado a vitrine.' : 'Erro ao adicionar produto.'];
     }
+
+    public function reorderProductOrders($storeId, $productIds) {
+        $storeId = (int) $storeId;
+
+        if ($storeId < 1 || !is_array($productIds)) {
+            return ['success' => false, 'message' => 'Dados invalidos.'];
+        }
+
+        $orderedIds = [];
+        foreach ($productIds as $productId) {
+            $productId = (int) $productId;
+            if ($productId > 0 && !in_array($productId, $orderedIds, true)) {
+                $orderedIds[] = $productId;
+            }
+        }
+
+        if (empty($orderedIds)) {
+            return ['success' => false, 'message' => 'Nenhum produto para ordenar.'];
+        }
+
+        $selectedQuery = $this->SQL->prepare('
+            SELECT po.produto_id
+            FROM produtos_ordenacao po
+            INNER JOIN produtos p ON p.produto_id = po.produto_id
+            WHERE p.produto_loja = :storeId
+            ORDER BY po.produto_ordenacao_ordem ASC, po.produto_ordenacao_id ASC
+        ');
+        $selectedQuery->bindParam(':storeId', $storeId, PDO::PARAM_INT);
+        $selectedQuery->execute();
+        $existingIds = array_map('intval', array_column($selectedQuery->fetchAll(PDO::FETCH_ASSOC), 'produto_id'));
+
+        sort($existingIds);
+        $sortedOrderedIds = $orderedIds;
+        sort($sortedOrderedIds);
+
+        if ($existingIds !== $sortedOrderedIds) {
+            return ['success' => false, 'message' => 'A lista de produtos selecionados nao confere com a loja.'];
+        }
+
+        try {
+            $this->SQL->beginTransaction();
+
+            $update = $this->SQL->prepare('
+                UPDATE produtos_ordenacao
+                SET produto_ordenacao_ordem = :orderValue
+                WHERE produto_id = :productId
+            ');
+
+            foreach ($orderedIds as $index => $productId) {
+                $orderValue = $index + 1;
+                $update->bindParam(':orderValue', $orderValue, PDO::PARAM_INT);
+                $update->bindParam(':productId', $productId, PDO::PARAM_INT);
+                $update->execute();
+            }
+
+            $this->SQL->commit();
+
+            return ['success' => true, 'message' => 'Ordem dos produtos atualizada.'];
+        } catch (\Throwable $e) {
+            if ($this->SQL->inTransaction()) {
+                $this->SQL->rollBack();
+            }
+
+            return ['success' => false, 'message' => 'Erro ao atualizar ordem dos produtos.'];
+        }
+    }
 }
