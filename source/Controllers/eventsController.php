@@ -12,7 +12,6 @@ class eventsController extends Core {
         parent::__construct($router);
         $this->getLayout()->setHeader($this->getLogado() ? 'header-logado' : 'header');
         $this->getLayout()->setFooter('footer');
-        $this->addLayout();
     }
 
     public function home() {
@@ -45,6 +44,8 @@ class eventsController extends Core {
     }
 
     public function details($data) {
+        $this->addTranslator('events/details');
+
         $dados = new Events();
         $store = !empty($this->getUser()) ? $this->getUser()['loja_id'] : null;
         $event = $dados->getEventBasicInfo(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT), $store);
@@ -76,14 +77,14 @@ class eventsController extends Core {
             $event['endereco_completo'] .= ', '.$event['evento_endereco_cep'];
             $event['endereco_com_complemento'] .= ', '.$event['evento_endereco_cep'];
         }
+        if (!empty($event['evento_pais'])) {
+            $event['endereco_completo'] .= ', '.$event['evento_pais'];
+            $event['endereco_com_complemento'] .= ', '.$event['evento_pais'];
+        }
+        if (!empty($event['evento_descricao'])) $this->getLayout()->setDescription($event['evento_descricao']);
+        $this->addLayout($event['evento_nome']);
 
         echo $this->view->render("events/details", [
-            'layout' => [
-                'title' =>  $event['evento_nome'].' - Artistar', 
-                'logado' => $this->getLogado(),
-                'header' => true,
-                'footer' => true
-            ],
             'event'         => $event,
             'user'          => empty($this->getUser()) ? null : $this->getUser()['id'],
             'days'          => $dados->getEventDays(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT)),
@@ -141,6 +142,8 @@ class eventsController extends Core {
         if (!$this->getLogado()) exit($this->renderApiResponse(401, "Usuário não autenticado.", [
             'redirect' => '/login?r=' . base64_encode(urlencode('/events/id/'.$post['eventId']))
         ]));
+        $this->addTranslator('events/details');
+        $translator = $this->getTranslator();
         $eventsModel = new Events();
         $eventId = filter_var($post['eventId'], FILTER_SANITIZE_NUMBER_INT);
         try {
@@ -153,22 +156,18 @@ class eventsController extends Core {
                 isset($post['inputUserFeedback']) ? $post['inputUserFeedback'] : null
             );
         } catch (\Exception $e) {
-            exit($this->renderApiResponse(500, "Erro ao atualizar inscrição no evento: " . $e->getMessage()));
+            exit($this->renderApiResponse(500, $translator->translate("Erro ao atualizar inscrição no evento: ") . $e->getMessage()));
         }
-        exit($this->renderApiResponse(200, "Inscrição atualizada com sucesso!"));
+        exit($this->renderApiResponse(200, $translator->translate("Inscrição atualizada com sucesso!")));
         return;
     }
 
     public function myEvents() {
+        $this->addTranslator('events/myEvents');
+        $this->addLayout($this->getTranslator()->translate("Meus Eventos"));
         $this->validaAcesso(true);
         $eventsModel = new Events();
         echo $this->view->render("events/myEvents", [
-            'layout' => [
-                'title' =>  'Meus Eventos - Artistar', 
-                'logado' => $this->getLogado(),
-                'header' => true,
-                'footer' => true
-            ],
             'events' => $eventsModel->getUserEvents($this->getUser()['id']),
             'totals' => $eventsModel->getUserEventsTotals($this->getUser()['id']),
             'todayEvents' => $eventsModel->getUserEventsToday($this->getUser()['id'])
@@ -177,15 +176,11 @@ class eventsController extends Core {
     }
 
     public function create() {
+        $this->addTranslator('events/details');
+        $this->addLayout($this->getTranslator()->translate("Novo Evento"));
         $this->validaAcesso(true);
         $eventsModel = new Events();
         echo $this->view->render("events/create", [
-            'layout' => [
-                'title' =>  'Criar Evento - Artistar', 
-                'logado' => $this->getLogado(),
-                'header' => true,
-                'footer' => true
-            ],
             'advantages' => $eventsModel->getAdvantages()
         ]);
         return;
@@ -198,17 +193,17 @@ class eventsController extends Core {
         try {
             $event = $eventsModel->createEvent($post, $this->getUser()['id']);
         } catch (\Exception $e) {
-            exit($this->renderApiResponse(500, "Erro ao atualizar produto: " . $e->getMessage()));
+            exit($this->renderApiResponse(500, "Erro ao criar evento: " . $e->getMessage()));
         }
-        if (isset($post['eventAdvantages']) && is_array($post['eventAdvantages'])) {
-            foreach($post['eventAdvantages'] as $advantageId) {
-                try {
-                    $eventsModel->addEventAdvantage($event, $advantageId);
-                } catch (\Exception $e) {
-                    $mensagens[] = "Erro ao adicionar vantagem ID {$advantageId}: " . $e->getMessage();
-                }
-            }
-        }
+        // if (isset($post['eventAdvantages']) && is_array($post['eventAdvantages'])) {
+        //     foreach($post['eventAdvantages'] as $advantageId) {
+        //         try {
+        //             $eventsModel->addEventAdvantage($event, $advantageId);
+        //         } catch (\Exception $e) {
+        //             $mensagens[] = "Erro ao adicionar vantagem ID {$advantageId}: " . $e->getMessage();
+        //         }
+        //     }
+        // }
         if (isset($post['dates']) && is_array($post['dates'])) {
             foreach($post['dates'] as $date) {
                 try {
@@ -252,6 +247,7 @@ class eventsController extends Core {
     }
 
     public function edit($data) {
+        $this->addTranslator('events/details');
         $this->validaAcesso(true);
         $dados = new Events();
         $event = $dados->getEventBasicInfo(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT), $this->getUser()['loja_id']);
@@ -260,18 +256,13 @@ class eventsController extends Core {
             header("Location: /error/404");
             return;
         }
-
+        $this->addLayout($event['evento_nome']);
         echo $this->view->render("events/edit", [
-            'layout' => [
-                'title' =>  $event['evento_nome'].' - Artistar', 
-                'logado' => $this->getLogado(),
-                'header' => true,
-                'footer' => true
-            ],
             'event'         => $event,
             'user'          => $this->getUser(),
             'days'          => $dados->getEventDays(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT)),
-            'advantages'    => $dados->getEventAdvantages(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT), false),
+            // 'advantages'    => $dados->getEventAdvantages(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT), false),
+            'advantages'    => [],
             'prices'        => $dados->getEventPrices(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT)),
             'photos'        => $dados->getEventPhotos(filter_var($data['eventId'], FILTER_SANITIZE_NUMBER_INT))
         ]);

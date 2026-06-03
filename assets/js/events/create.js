@@ -10,11 +10,17 @@ $('.moedaReal').inputmask('decimal', {
     removeMaskOnSubmit: true // remove a máscara ao submeter o form
 });
 
-$('#eventAdvantagesSelect').select2({
-    placeholder: "Selecione as vantagens do evento",
+// $('#eventAdvantagesSelect').select2({
+//     placeholder: "Selecione as vantagens do evento",
+//     allowClear: true,
+//     // dropdownParent: $('#newModal .modal-body'),
+//     width: '100%',
+// });
+
+$('#eventCountry').select2({
+    placeholder: translator.selectCountry,
     allowClear: true,
-    // dropdownParent: $('#newModal .modal-body'),
-    width: '100%',
+    width: '100%'
 });
 
 // DATAS
@@ -34,7 +40,7 @@ function criarCardData(day, time, endTime, observation) {
     var dateObj = new Date(day);
     dateObj.setDate(dateObj.getDate() + 1);
     var options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
-    var formattedDay = dateObj.toLocaleDateString('pt-BR', options);
+    var formattedDay = dateObj.toLocaleDateString(translator.language, options);
     var weekday = formattedDay.charAt(0).toUpperCase() + formattedDay.slice(1).split(',')[0];
     formattedDay = formattedDay.split(',')[1].trim();
     var formattedTime = time.slice(0, 5);
@@ -54,7 +60,7 @@ function criarCardData(day, time, endTime, observation) {
                     <h6 class="card-title">${formattedDay}</h6 >
                     <span class="card-subtitle mb-2 text-muted">${formattedTime} - ${formattedEndTime}</span>
                     <span class="btn btn-stellar-blue d-flex align-items-center mt-3 edit-date" data-date="${day}" >
-                        <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> Editar
+                        <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> ${translator.edit}
                     </span>
                 </div>
             </div>
@@ -137,12 +143,13 @@ $('#newPriceForm').on('submit', function(e) {
     var name = $('#priceName').val();
     var amount = $('#priceAmount').val();
     var observation = $('#priceObservation').val();
+    var currency = $('#eventCurrency').val();
     if ($('#priceOrder').val()) {
         var order = $('#priceOrder').val();
         $('input[name="prices[' + order + '][name]"]').val(name);
         $('.card-title[data-price="' + order + '"]').text(name);
         $('input[name="prices[' + order + '][amount]"]').val(amount);
-        $('.card-subtitle[data-price="' + order + '"]').text('R$ ' + amount);
+        $('.card-subtitle[data-price="' + order + '"]').text(`<span class="priceCurrency">${currency}</span> ${amount}`);
         $('input[name="prices[' + order + '][observation]"]').val(observation);
     } else {
         var order = $('#pricesRow .card-price-item').length;
@@ -158,9 +165,9 @@ $('#newPriceForm').on('submit', function(e) {
                         <div class="flex-grow-1">
                             <h5 class="card-title" data-price="${order}">${name}</h5>
                         </div>
-                        <h6 class="card-subtitle mb-2 text-muted color-klikit-2" data-price="${order}">R$ ${amount}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted color-klikit-2" data-price="${order}"><span class="priceCurrency">${currency}</span> ${amount}</h6>
                         <span class="btn btn-stellar-blue d-flex align-items-center mt-3 edit-price" data-price="${order}" >
-                            <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> Editar
+                            <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> ${translator.edit}
                         </span>
                     </div>
                 </div>
@@ -228,25 +235,44 @@ new Sortable(document.getElementById('pricesRow'), {
     }
 });
 
-async function searchCEP() {
-    var cep = document.getElementById('eventCep').value.replace(/\D/g, '');
-    $.ajax({
-        url: `https://viacep.com.br/ws/${cep}/json/`,
+$('#eventCountry').on('change', function() {
+    var currency = $(this).find('option:selected').data('currency');
+    $('#eventCurrency').val(currency);
+    $('.priceCurrency').text(currency);
+});
+
+function searchCountries() {
+        $.ajax({
+        url: `https://restcountries.com/v3.1/all?fields=name,currencies,cca2`,
         type: 'GET',
         success: async function(response) {
-            console.log(response);
-            if (!response.erro) {
-                document.getElementById('eventAddress').value = response.logradouro;
-                document.getElementById('eventNeighborhood').value = response.bairro;
-                document.getElementById('eventState').value = response.uf;
-                await searchCities(response.uf, response.localidade);
-            // } else {
-            //     document.getElementById('eventAddress').value = response.logradouro;
-            //     document.getElementById('eventNeighborhood').value = response.bairro;
-            //     document.getElementById('eventState').value = response.uf;
-            //     await searchCities(response.uf);
-            //     document.getElementById('eventCity').value = response.localidade;
-            }
+            response.sort((a, b) => a.name.common.localeCompare(b.name.common));
+            var select = document.getElementById('eventCountry');
+            response.forEach(country => {
+                var option = document.createElement('option');
+                let countryName = null;
+                if (country.name.nativeName && Object.keys(country.name.nativeName).length > 0) {
+                    countryName = country.name.nativeName[Object.keys(country.name.nativeName)[0]].common;
+                } else {                     
+                    countryName = country.name.common;
+                }
+                option.text = countryName;
+                option.value = countryName;
+                // option.value = country.cca2;
+                if (country.currencies && Object.keys(country.currencies).length > 0) {
+                    var currencyCode = country.currencies[Object.keys(country.currencies)[0]].symbol;
+                    option.setAttribute('data-currency', currencyCode);
+                } else {
+                    option.setAttribute('data-currency', '');
+                }
+                select.appendChild(option);
+                //Selecionar o país do usuário com base em dados do navegador
+            });
+            $('#eventCountry').select2({
+                placeholder: translator.selectCountry,
+                allowClear: true,
+                width: '100%'
+            });
         },
         error: async function(error) {
             console.log('An error occurred');
@@ -254,70 +280,8 @@ async function searchCEP() {
     });
 }
 
-document.getElementById('eventCep').addEventListener('blur', async function() {
-    await searchCEP();
-});
+searchCountries();
 
-async function searchStates() {
-    var select = document.getElementById('eventState');
-    select.innerHTML = '<option value="">Carregando...</option>';
-    $.ajax({
-        url: '/apis/states',
-        type: 'POST',
-        success: async function(response) {
-            response = JSON.parse(response);
-            if (response.code == 200) {
-                select.innerHTML = '';
-                states = response.data.states;
-                select.innerHTML = '<option value="">Selecione um estado</option>';
-                states.forEach(state => {          
-                    var option = document.createElement('option');
-                    option.value = state.sigla;
-                    option.text = state.nome;
-                    select.appendChild(option);
-                });
-            }
-        },
-        error: async function(error) {
-            console.log('An error occurred');
-        }
-    });
-}
-
-searchStates();
-
-async function searchCities(uf, defaultCity = '') {
-    var select = document.getElementById('eventCity');
-    select.innerHTML = '<option value="">Carregando...</option>';
-    $.ajax({
-        url: '/apis/cities',
-        type: 'POST',
-        data: {uf: uf},
-        success: async function(response) {
-            response = JSON.parse(response);
-            if (response.code == 200) {
-                select.innerHTML = '';
-                cities = response.data.cities;
-                select.innerHTML = '<option value="">Selecione uma cidade</option>';
-                cities.forEach(city => {          
-                    var option = document.createElement('option');
-                    if (city.nome == defaultCity) option.selected = true;
-                    option.value = city.nome;
-                    option.text = city.nome;
-                    select.appendChild(option);
-                });
-            }
-        },
-        error: async function(error) {
-            console.log('An error occurred');
-        }
-    });
-}
-
-document.getElementById('eventState').addEventListener('change', async function() {
-    var uf = this.value;
-    searchCities(uf); 
-});
 
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()

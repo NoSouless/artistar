@@ -10,11 +10,17 @@ $('.moedaReal').inputmask('decimal', {
     removeMaskOnSubmit: true // remove a máscara ao submeter o form
 });
 
-$('#eventAdvantagesSelect').select2({
-    placeholder: "Selecione as vantagens do evento",
+// $('#eventAdvantagesSelect').select2({
+//     placeholder: "Selecione as vantagens do evento",
+//     allowClear: true,
+//     // dropdownParent: $('#newModal .modal-body'),
+//     width: '100%',
+// });
+
+$('#eventCountry').select2({
+    placeholder: translator.selectCountry,
     allowClear: true,
-    // dropdownParent: $('#newModal .modal-body'),
-    width: '100%',
+    width: '100%'
 });
 
 // DATAS
@@ -54,7 +60,7 @@ function criarCardData(day, time, endTime, observation) {
                     <h6 class="card-title">${formattedDay}</h6 >
                     <span class="card-subtitle mb-2 text-muted">${formattedTime} - ${formattedEndTime}</span>
                     <span class="btn btn-stellar-blue d-flex align-items-center mt-3 edit-date" data-date="${day}" >
-                        <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> Editar
+                        <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> ${translator.edit}
                     </span>
                 </div>
             </div>
@@ -112,7 +118,7 @@ $('#addPriceCard').on('click', function() {
     $('#newPriceModal').modal('show');
 });
 
-function criarCardPreco(order, name, amount, observation) {
+function criarCardPreco(order, name, amount, observation, currency = '') {
     var newPriceCard = `
         <div class="col-xxl-4 col-xl-6 col-12 mb-3 card-price-item" data-price="${order}">
             <div class="card h-100 flex-column position-relative">
@@ -124,9 +130,9 @@ function criarCardPreco(order, name, amount, observation) {
                     <div class="flex-grow-1">
                         <h5 class="card-title" data-price="${order}">${name}</h5>
                     </div>
-                    <h6 class="card-subtitle mb-2 text-muted color-klikit-2" data-price="${order}">R$ ${amount}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted color-klikit-2" data-price="${order}"><span class="priceCurrency">${currency}</span> ${amount}</h6>
                     <span class="btn btn-stellar-blue d-flex align-items-center mt-3 edit-price" data-price="${order}" >
-                        <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> Editar
+                        <i class="fa-solid fa-pen-to-square ms-2 me-3" style="text-align: center;"></i> ${translator.edit}
                     </span>
                 </div>
             </div>
@@ -150,12 +156,12 @@ $('#newPriceForm').on('submit', function(e) {
         $('input[name="prices[' + order + '][name]"]').val(name);
         $('.card-title[data-price="' + order + '"]').text(name);
         $('input[name="prices[' + order + '][amount]"]').val(amount);
-        $('.card-subtitle[data-price="' + order + '"]').text('R$ ' + amount);
+        $('.card-subtitle[data-price="' + order + '"]').text($('#eventCurrency').val() + ' ' + amount);
         $('input[name="prices[' + order + '][observation]"]').val(observation);
     } else {
         var order = $('#pricesRow .card-price-item').length;
         while ($('div.card-price-item[data-price="' + order + '"]').length) order++;
-        criarCardPreco(order, name, amount, observation);
+        criarCardPreco(order, name, amount, observation, $('#eventCurrency').val());
     }
     $('#newPriceModal').modal('hide');
     $('#newPriceForm')[0].reset();
@@ -213,19 +219,137 @@ new Sortable(document.getElementById('pricesRow'), {
     }
 });
 
-async function searchCEP() {
-    var cep = document.getElementById('eventCep').value.replace(/\D/g, '');
-    $.ajax({
-        url: `https://viacep.com.br/ws/${cep}/json/`,
+// async function searchCEP() {
+//     var cep = document.getElementById('eventCep').value.replace(/\D/g, '');
+//     $.ajax({
+//         url: `https://viacep.com.br/ws/${cep}/json/`,
+//         type: 'GET',
+//         success: async function(response) {
+//             console.log(response);
+//             if (!response.erro) {
+//                 document.getElementById('eventAddress').value = response.logradouro;
+//                 document.getElementById('eventNeighborhood').value = response.bairro;
+//                 document.getElementById('eventState').value = response.uf;
+//                 await searchCities(response.uf, response.localidade);
+//             }
+//         },
+//         error: async function(error) {
+//             console.log('An error occurred');
+//         }
+//     });
+// }
+
+// document.getElementById('eventCep').addEventListener('blur', async function() {
+//     await searchCEP();
+// });
+
+// async function searchStates($defaultState = '') {
+//     var select = document.getElementById('eventState');
+//     select.innerHTML = '<option value="">Carregando...</option>';
+//     $.ajax({
+//         url: '/apis/states',
+//         type: 'POST',
+//         success: async function(response) {
+//             response = JSON.parse(response);
+//             if (response.code == 200) {
+//                 select.innerHTML = '';
+//                 states = response.data.states;
+//                 select.innerHTML = '<option value="">Selecione um estado</option>';
+//                 states.forEach(state => {          
+//                     var option = document.createElement('option');
+//                     option.value = state.sigla;
+//                     option.text = state.nome;
+//                     if (state.sigla === $defaultState) {
+//                         option.selected = true;
+//                     }
+//                     select.appendChild(option);
+//                 });
+//             }
+//         },
+//         error: async function(error) {
+//             console.log('An error occurred');
+//         }
+//     });
+// }
+
+// searchStates($('#eventState').attr('data-default'));
+
+// async function searchCities(uf, defaultCity = '') {
+//     var select = document.getElementById('eventCity');
+//     select.innerHTML = '<option value="">Carregando...</option>';
+//     $.ajax({
+//         url: '/apis/cities',
+//         type: 'POST',
+//         data: {uf: uf},
+//         success: async function(response) {
+//             response = JSON.parse(response);
+//             if (response.code == 200) {
+//                 select.innerHTML = '';
+//                 cities = response.data.cities;
+//                 select.innerHTML = '<option value="">Selecione uma cidade</option>';
+//                 cities.forEach(city => {          
+//                     var option = document.createElement('option');
+//                     if (city.nome == defaultCity) option.selected = true;
+//                     option.value = city.nome;
+//                     option.text = city.nome;
+//                     select.appendChild(option);
+//                 });
+//             }
+//         },
+//         error: async function(error) {
+//             console.log('An error occurred');
+//         }
+//     });
+// }
+
+// document.getElementById('eventState').addEventListener('change', async function() {
+//     var uf = this.value;
+//     searchCities(uf); 
+// });
+
+// searchCities($('#eventState').attr('data-default'), $('#eventCity').attr('data-default'));
+
+$('#eventCountry').on('change', function() {
+    var currency = $(this).find('option:selected').data('currency');
+    $('#eventCurrency').val(currency);
+    $('.priceCurrency').text(currency);
+});
+
+function searchCountries() {
+        $.ajax({
+        url: `https://restcountries.com/v3.1/all?fields=name,currencies,cca2`,
         type: 'GET',
         success: async function(response) {
-            console.log(response);
-            if (!response.erro) {
-                document.getElementById('eventAddress').value = response.logradouro;
-                document.getElementById('eventNeighborhood').value = response.bairro;
-                document.getElementById('eventState').value = response.uf;
-                await searchCities(response.uf, response.localidade);
-            }
+            response.sort((a, b) => a.name.common.localeCompare(b.name.common));
+            var select = document.getElementById('eventCountry');
+            response.forEach(country => {
+                var option = document.createElement('option');
+                let countryName = null;
+                if (country.name.nativeName && Object.keys(country.name.nativeName).length > 0) {
+                    countryName = country.name.nativeName[Object.keys(country.name.nativeName)[0]].common;
+                } else {                     
+                    countryName = country.name.common;
+                }
+                option.text = countryName;
+                option.value = countryName;
+                if (countryName === $('#eventCountry').attr('data-default')) {
+                    option.selected = true;
+                }
+                // option.value = country.cca2;
+                if (country.currencies && Object.keys(country.currencies).length > 0) {
+                    var currencyCode = country.currencies[Object.keys(country.currencies)[0]].symbol;
+                    option.setAttribute('data-currency', currencyCode);
+                } else {
+                    option.setAttribute('data-currency', '');
+                }
+                select.appendChild(option);
+                //Selecionar o país do usuário com base em dados do navegador
+            });
+            $('#eventCountry').select2({
+                placeholder: translator.selectCountry,
+                allowClear: true,
+                width: '100%'
+            });
         },
         error: async function(error) {
             console.log('An error occurred');
@@ -233,75 +357,7 @@ async function searchCEP() {
     });
 }
 
-document.getElementById('eventCep').addEventListener('blur', async function() {
-    await searchCEP();
-});
-
-async function searchStates($defaultState = '') {
-    var select = document.getElementById('eventState');
-    select.innerHTML = '<option value="">Carregando...</option>';
-    $.ajax({
-        url: '/apis/states',
-        type: 'POST',
-        success: async function(response) {
-            response = JSON.parse(response);
-            if (response.code == 200) {
-                select.innerHTML = '';
-                states = response.data.states;
-                select.innerHTML = '<option value="">Selecione um estado</option>';
-                states.forEach(state => {          
-                    var option = document.createElement('option');
-                    option.value = state.sigla;
-                    option.text = state.nome;
-                    if (state.sigla === $defaultState) {
-                        option.selected = true;
-                    }
-                    select.appendChild(option);
-                });
-            }
-        },
-        error: async function(error) {
-            console.log('An error occurred');
-        }
-    });
-}
-
-searchStates($('#eventState').attr('data-default'));
-
-async function searchCities(uf, defaultCity = '') {
-    var select = document.getElementById('eventCity');
-    select.innerHTML = '<option value="">Carregando...</option>';
-    $.ajax({
-        url: '/apis/cities',
-        type: 'POST',
-        data: {uf: uf},
-        success: async function(response) {
-            response = JSON.parse(response);
-            if (response.code == 200) {
-                select.innerHTML = '';
-                cities = response.data.cities;
-                select.innerHTML = '<option value="">Selecione uma cidade</option>';
-                cities.forEach(city => {          
-                    var option = document.createElement('option');
-                    if (city.nome == defaultCity) option.selected = true;
-                    option.value = city.nome;
-                    option.text = city.nome;
-                    select.appendChild(option);
-                });
-            }
-        },
-        error: async function(error) {
-            console.log('An error occurred');
-        }
-    });
-}
-
-document.getElementById('eventState').addEventListener('change', async function() {
-    var uf = this.value;
-    searchCities(uf); 
-});
-
-searchCities($('#eventState').attr('data-default'), $('#eventCity').attr('data-default'));
+searchCountries();
 
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
@@ -326,10 +382,10 @@ $('#eventForm').on('submit', function(e) {
     }).done(function (response) {
         response = JSON.parse(response);
         if (response.code == 200) {
-            atualizarToast('myToast', 'Alterações salvas', 'As alterações do evento foram salvas com sucesso.', true);
+            atualizarToast('myToast', translator.toastSuccessTitle, translator.toastSuccessMessage, true);
         }
     }).fail(function (error) {
-        atualizarToast('myToast', 'Erro ao registrar venda', 'Ocorreu um erro ao tentar registrar a venda. Por favor, tente novamente.', false);
+        atualizarToast('myToast', translator.toastErrorTitle, translator.toastErrorMessage, false);
     });
 });
 
@@ -351,6 +407,6 @@ function criarCardsPrecosEmLote(precos) {
         //Formatar o valor para moeda brasileira
         amount = parseFloat(amount).toFixed(2).replace('.', ',');
         let observation = preco.evento_taxa_observacao;
-        criarCardPreco(order, name, amount, observation);
+        criarCardPreco(order, name, amount, observation, $('#eventCurrency').val());
     });
 }

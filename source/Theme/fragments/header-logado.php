@@ -169,15 +169,15 @@
                 </a>
             </li>
             <!-- <li class="border-top my-3"></li>  -->
-            <?php if($_SESSION['artistar']['permissions']['prototype']): ?>
             <li>
-               <a href="<?= url('store/id/' . $_SESSION['artistar']['user']['loja_id']) ?>" class="nav-link link-nocturne-purple link-hover">
+                <a href="<?= url('store/id/' . $_SESSION['artistar']['user']['loja_id']) ?>" class="nav-link link-nocturne-purple link-hover">
                     <div class="d-flex align-items-center">
                         <i class="icone-sidebar icone-loja me-4" style="width:24px; text-align: center;"></i>
                         <span><?= $translator->translate('Minha Loja') ?></span>
                     </div>
                 </a>
             </li>
+            <?php if($_SESSION['artistar']['permissions']['prototype']): ?>
             <li>
                <a href="<?= url('events') ?>" class="nav-link link-nocturne-purple link-hover">
                     <div class="d-flex align-items-center">

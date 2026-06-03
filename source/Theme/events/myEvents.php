@@ -1,4 +1,4 @@
-<?= $this->layout("base", $layout); ?>
+<?= $this->layout("base"); ?>
 
 <?= $this->start("css") ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css">
@@ -12,38 +12,38 @@
             <div class="row py-5">
                 <div class="col-xl-6 col-12">
                     <div class="row">
-                        <a class="h1 mb-3 link-nocturne-purple" href="<?= url('events/my-events') ?>">Meus Eventos</a>
+                        <a class="h1 mb-3 link-nocturne-purple" href="<?= url('events/my-events') ?>"><?= $translator->translate("Meus Eventos") ?></a>
                         <p class="fs-5">
-                            Veja em que situação estão suas inscrições em eventos!<br>
+                            <?= $translator->translate("Veja em que situação estão suas inscrições em eventos!") ?><br>
                         </p>
                         <span class="text-muted mb-3">
-                            Clique em "Novo evento" ou selecione uma data no calendário para criar um novo evento.<br>
-                            Arraste entre os dias para selecionar mais de um dia.
+                            <?= $translator->translate("Clique em \"Novo evento\" ou selecione uma data no calendário para criar um novo evento.Arraste entre os dias para selecionar mais de um dia.") ?><br>
+                            <?= $translator->translate('Arraste entre os dias para selecionar mais de um dia.') ?>
                         </span>
                         <ul class="list-unstyled row">
                             <li class="col-md-6 col-12 d-flex align-items-center mb-2">
-                                <span class="dot bg-lavanda me-2 rounded-5" style="height:10px; width:10px;"></span>Criados por mim (<?= $totals['total_criados'] ?>)
+                                <span class="dot bg-lavanda me-2 rounded-5" style="height:10px; width:10px;"></span><?php echo $translator->translate("Criados por mim"); ?> (<?= $totals['total_criados'] ?>)
                             </li>
                             <li class="col-md-6 col-12 d-flex align-items-center mb-2">
-                                <span class="dot bg-cotton-candy me-2 rounded-5" style="height:10px; width:10px;"></span>Pendentes (<?= $totals['total_pendente'] ?>)
+                                <span class="dot bg-cotton-candy me-2 rounded-5" style="height:10px; width:10px;"></span><?php echo $translator->translate("Pendentes"); ?> (<?= $totals['total_pendente'] ?>)
                             </li>
                             <li class="col-md-6 col-12 d-flex align-items-center mb-2">
-                                <span class="dot bg-stellar-blue me-2 rounded-5" style="height:10px; width:10px;"></span>Realizadas (<?= $totals['total_realizada'] ?>)
+                                <span class="dot bg-stellar-blue me-2 rounded-5" style="height:10px; width:10px;"></span><?php echo $translator->translate("Realizadas"); ?> (<?= $totals['total_realizada'] ?>)
                             </li>
                             <li class="col-md-6 col-12 d-flex align-items-center mb-2">
-                                <span class="dot bg-nocturne-purple me-2 rounded-5" style="height:10px; width:10px;"></span>Aprovadas (<?= $totals['total_aprovada'] ?>)
+                                <span class="dot bg-nocturne-purple me-2 rounded-5" style="height:10px; width:10px;"></span><?php echo $translator->translate("Aprovadas"); ?> (<?= $totals['total_aprovada'] ?>)
                             </li>
                             <li class="col-md-6 col-12 d-flex align-items-center mb-2">
-                                <span class="dot bg-danger me-2 rounded-5" style="height:10px; width:10px;"></span>Reprovadas (<?= $totals['total_reprovada'] ?>)
+                                <span class="dot bg-danger me-2 rounded-5" style="height:10px; width:10px;"></span><?php echo $translator->translate("Reprovadas"); ?> (<?= $totals['total_reprovada'] ?>)
                             </li>
                             <li class="col-md-6 col-12 d-flex align-items-center mb-2">
-                                <span class="dot bg-gray me-2 rounded-5" style="height:10px; width:10px;"></span>Finalizados (<?= $totals['total_finalizados'] ?>)
+                                <span class="dot bg-gray me-2 rounded-5" style="height:10px; width:10px;"></span><?php echo $translator->translate("Finalizados"); ?> (<?= $totals['total_finalizados'] ?>)
                             </li>
                         </ul>
                     </div>
                     <hr>
                     <div class="row">
-                        <span class="h4 color-gray">Eventos de Hoje</span>
+                        <span class="h4 color-gray"><?= $translator->translate("Eventos de Hoje") ?></span>
                     </div>
                     <?php foreach ($todayEvents as $event): ?>
                         <div class="row mb-3 p-3">
@@ -69,7 +69,7 @@
     <section class="section-eventos">
         <div class="container">
             <div class="pb-5">
-                <span class="h2">Todos os Eventos</span>
+                <span class="h2"><?= $translator->translate("Todos os Eventos") ?></span>
             </div>
             <div class="row lista-eventos" id="eventos">
                 <?php foreach ($events as $event): ?>
@@ -92,31 +92,31 @@
                                     switch ($event['status']) {
                                         case 'criado':
                                             $badgeClass = 'bg-lavanda';
-                                            $badgeText = 'Criado';
+                                            $badgeText = $translator->translate('Criado');
                                             break;
                                         case 'finalizado':
                                             $badgeClass = 'bg-secondary';
-                                            $badgeText = 'Finalizado';
+                                            $badgeText = $translator->translate('Finalizado');
                                             break;
                                         case 'pendente':
                                             $badgeClass = 'bg-cotton-candy';
-                                            $badgeText = 'Pendente';
+                                            $badgeText = $translator->translate('Pendente');
                                             break;
                                         case 'realizada':
                                             $badgeClass = 'bg-stellar-blue';
-                                            $badgeText = 'Realizada';
+                                            $badgeText = $translator->translate('Realizada');
                                             break;
                                         case 'aprovada':
                                             $badgeClass = 'bg-nocturne-purple';
-                                            $badgeText = 'Aprovada';
+                                            $badgeText = $translator->translate('Aprovada');
                                             break;
                                         case 'reprovada':
                                             $badgeClass = 'bg-danger';
-                                            $badgeText = 'Reprovada';
+                                            $badgeText = $translator->translate('Reprovada');
                                             break;
                                         default:
                                             $badgeClass = 'bg-gray';
-                                            $badgeText = 'Desconhecido';
+                                            $badgeText = $translator->translate('Desconhecido');
                                     }
                                     echo "<span class='badge $badgeClass'>$badgeText</span>";
                                 ?>
@@ -155,7 +155,23 @@
         }
         echo "const events = ".json_encode($jsonEvents).";";
     ?>
+    const buttonHints = {
+        today: "<?= $translator->translate('Hoje') ?>",
+        month: "<?= $translator->translate('Mês') ?>",
+        week: "<?= $translator->translate('Semana') ?>",
+        day: "<?= $translator->translate('Dia') ?>",
+        prev: "<?= $translator->translate('Mês anterior') ?>",
+        next: "<?= $translator->translate('Próximo mês') ?>"
+    };
+    const buttonText = {
+        today: "<?= $translator->translate('Hoje') ?>",
+        month: "<?= $translator->translate('Mês') ?>",
+        week: "<?= $translator->translate('Semana') ?>",
+        day: "<?= $translator->translate('Dia') ?>"
+    };
+    const locale = "<?= $translator->getLang() ?>";
+    const newEventText = "<?= $translator->translate('Novo evento') ?>";
 </script>
-<script src="<?= url("assets/js/events/myEvents.js") ?>"></script>
+<script src="<?= url("assets/js/events/myEvents.js?ts=" . time()) ?>"></script>
 
 <?= $this->stop() ?>

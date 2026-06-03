@@ -86,8 +86,7 @@ class buildLayout {
         $arr = $_GET;
         unset($arr['lang']);
         unset($arr['route']);
-        unset($arr['lang']);
-        $urlWithoutLang = (empty($arr) ? '?' : '' . http_build_query($arr));
+        $urlWithoutLang = '?'. http_build_query($arr);
         if (!empty($this->getHeader())) {
             return $this->getView()->render("fragments/" . $this->getHeader(), [
                 'urlWithoutLang' => $urlWithoutLang,

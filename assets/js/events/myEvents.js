@@ -2,36 +2,24 @@ document.addEventListener("DOMContentLoaded", function () {
   var calendarEl = document.getElementById("calendar");
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    locale: "pt-br",
+    locale: locale,
     initialView: "dayGridMonth",
     themeSystem: "bootstrap",
     customButtons: {
         novoEvento: {
-            text: "Novo evento",
+            text: newEventText,
             click: function () {
                 window.location.href = "/events/create";
             }
         }
     },
-    buttonHints: {
-        today: "Hoje",
-        month: "Mês",
-        week: "Semana",
-        day: "Dia",
-        prev: "Mês anterior",
-        next: "Próximo mês"
-    },
+    buttonHints: buttonHints,
     headerToolbar: {
         left: "prev next today",
         center: "title",
         right: "novoEvento"
     },
-    buttonText: {
-        today: "Hoje",
-        month: "Mês",
-        week: "Semana",
-        day: "Dia"
-    },
+    buttonText: buttonText,
     events: events,
     selectable: true,
     selectMirror: true,

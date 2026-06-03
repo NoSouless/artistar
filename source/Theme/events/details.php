@@ -1,4 +1,4 @@
-<?= $this->layout("base", $layout); ?>
+<?= $this->layout("base"); ?>
 
 <?= $this->start("css") ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css" integrity="sha512-6lLUdeQ5uheMFbWm3CP271l14RsX1xtx+J5x2yeIDkkiBpeVTNhTqijME7GgRKKi6hCqovwCoBTlRBEC20M8Mg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -57,13 +57,13 @@
                 <h1><?= $event['evento_nome']?></h1>
                 <?php if ($user == $event['evento_proprietario']): ?>
                     <a class="btn btn-stellar-blue text-white text-decoration-none ms-3" href="<?= url('events/edit/'.$event['evento_id']) ?>">
-                        <i class="fa fa-pen-to-square"></i> Editar
+                        <i class="fa fa-pen-to-square"></i> <?= $translator->translate("Editar") ?>
                     </a>
                 <?php endif;?>
                 <?php if ($event['total_inscritos'] > 0): ?>
                 <span class="badge bg-lavanda ms-3" id="totalSubscribersBadge">
                     <span class="iconify" data-icon="mdi:account-multiple" data-inline="false"></span>
-                    <?= $event['total_inscritos'] ?> <?= $event['total_inscritos'] == 1 ? 'Seguidor' : 'Seguidores' ?>
+                    <?= $event['total_inscritos'] ?> <?= $translator->translate($event['total_inscritos'] == 1 ? 'Seguidor' : 'Seguidores') ?>
                 </span>
                 <?php endif; ?>
             </div>
@@ -77,10 +77,10 @@
         <div class="row p-2 show-with-animation" id="eventTabs" style="<?= !empty($event['inscricao_id']) && $event['inscricao_cancelada'] != 1 ? '' : 'display:none;' ?>">
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link link-stellar-blue text-decoration-none active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Informações</button>
+                    <button class="nav-link link-stellar-blue text-decoration-none active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true"><?= $translator->translate("Informações") ?></button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link link-stellar-blue text-decoration-none" id="meus-dados-tab" data-bs-toggle="tab" data-bs-target="#meus-dados" type="button" role="tab" aria-controls="meus-dados" aria-selected="false">Meus Dados</button>
+                    <button class="nav-link link-stellar-blue text-decoration-none" id="meus-dados-tab" data-bs-toggle="tab" data-bs-target="#meus-dados" type="button" role="tab" aria-controls="meus-dados" aria-selected="false"><?= $translator->translate("Meus Dados") ?></button>
                 </li>
             </ul>
         </div>
@@ -90,7 +90,7 @@
             <section class="container mb-5">
                 <div class="row my-2">
                     <div class="col-md-6" id="eventAddress">
-                        <b class="color-stellar-blue"><span class="iconify" data-icon="mdi:map-marker" data-inline="false"></span> <?= !empty($event['endereco_com_complemento']) ? $event['endereco_com_complemento'] : 'Local não definido'?></b>
+                        <b class="color-stellar-blue"><span class="iconify" data-icon="mdi:map-marker" data-inline="false"></span> <?= !empty($event['endereco_com_complemento']) ? $event['endereco_com_complemento'] : $translator->translate('Local não definido') ?></b>
                     </div>
                     <?php if (!empty($event['evento_produtor'])) {?>
                         <div class="col-md-6 d-md-flex d-block justify-content-end" id="column-productor">
@@ -101,26 +101,26 @@
                 <div class="row mt-3">
                     <?php if (!empty($event['evento_descricao'])) {?>
                         <div class="col-md-6 col-12" id="column-description">
-                            <h4 class="mb-3">Descrição</h4>
+                            <h4 class="mb-3"><?= $translator->translate("Descrição") ?></h4>
                             <section><?= nl2br($event['evento_descricao']) ?></section>
                         </div>
                     <?php } ?>
                     <?php if (!empty($days)): ?>
                         <div class="col-md-6 col-12">
                             <div class="row" id="daysRow">
-                                <h4 class="mb-3">Datas</h4>
+                                <h4 class="mb-3"><?= $translator->translate("Datas") ?></h4>
                                 <?php foreach($days as $day) {?>
                                     <div class="col-xxl-4 col-xl-6 col-12 mb-3 date-card">
                                         <div class="card h-100 flex-column position-relative">
                                             <div class="p-3 pb-2">
-                                                <h5 class="mb-0"><?= formatWeekDateToPortuguese($day['evento_data_dia']) ?></h5>
+                                                <h5 class="mb-0"><?= $translator->getLang() == 'pt-br' ? formatWeekDateToPortuguese($day['evento_data_dia']) : $translator->translate(date('l', strtotime($day['evento_data_dia']))) ?></h5>
                                             </div>
                                             <div class="card-body pt-0">
                                                 <h5 class="card-title"><?= date('d/m/Y', strtotime($day['evento_data_dia']))?></h5>
                                                 <span class="card-subtitle mb-2 text-muted"><?= date('H:i', strtotime($day['evento_data_hora_inicial'])).(!empty($day['evento_data_hora_final']) ? ' - '.date('H:i', strtotime($day['evento_data_hora_final'])) : '') ?></span>
                                                 <?php if (!empty($day['evento_data_observacao'])) { ?>
                                                     <span class="btn btn-stellar-blue d-flex align-items-center mt-3 edit-date" data-dateId="<?= $day['evento_data_id'] ?>">
-                                                        <i class="fa-solid fa-eye ms-1 me-2" style="text-align: center;"></i> Observações
+                                                        <i class="fa-solid fa-eye ms-1 me-2" style="text-align: center;"></i> <?= $translator->translate("Observações") ?>
                                                     </span>
                                                 <?php } ?>
                                             </div>
@@ -132,7 +132,7 @@
                     <?php endif; ?>
                     <?php if (!empty($advantages)): ?>
                         <div class="col-md-6 col-12">
-                            <h4 class="my-3">Vantagens</h4>
+                            <h4 class="my-3"><?= $translator->translate("Vantagens") ?></h4>
                             <div class="d-flex flex-wrap gap-2">
                                 <?php foreach ($advantages as $advantage) { ?>
                                     <span class="badge bg-nocturne-purple"><?= $advantage['nome'] ?></span>
@@ -143,7 +143,7 @@
                     <?php if (!empty($prices)): ?>
                         <div class="col-md-6 col-12">
                             <div class="row" id="pricesRow">
-                                <h4 class="my-3">Taxas e Custos</h4>
+                                <h4 class="my-3"><?= $translator->translate("Taxas e Custos") ?></h4>
                                 <?php foreach ($prices as $price) { ?>
                                     <div class="col-xxl-4 col-xl-6 col-12 mb-3">
                                         <div class="card h-100 flex-column position-relative">
@@ -151,7 +151,7 @@
                                                 <div class="">
                                                     <h5 class="card-title"><?= $price['evento_taxa_titulo'] ?></h5>
                                                 </div>
-                                                <h6 class="card-subtitle mb-2 text-muted flex-grow-1">R$ <?= moedaReal($price['evento_taxa_valor']) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted flex-grow-1"><?= $event['evento_moeda'] ?> <?= moedaReal($price['evento_taxa_valor']) ?></h6>
                                                 <?php if (!empty($price['evento_taxa_observacao'])) { ?>
                                                     <span class="btn btn-stellar-blue d-flex align-items-center mt-3 edit-date" data-priceId="<?= $price['evento_taxa_id'] ?>">
                                                         <i class="fa-solid fa-eye ms-1 me-2" style="text-align: center;"></i> Observações
@@ -170,7 +170,7 @@
             <section id="section-map" class="bg-nocturne-purple py-3">
                 <div class="container">
                     <div class="row mb-3" id="row-map">
-                        <h4 class="mb-3 color-snow-white">Local</h4>
+                        <h4 class="mb-3 color-snow-white"><?= $translator->translate("Local") ?></h4>
                         <div id="mapa">
                             <iframe frameborder='0' title="Google Maps do local do evento" style='border:0; width: 100%; min-height: 500px;' src='https://www.google.com/maps?q=<?= urlencode($event['endereco_completo'])?>&output=embed' allowfullscreen></iframe>
                         </div>
@@ -182,21 +182,21 @@
         <div id="meus-dados" class="tab-pane fade" role="tabpanel" aria-labelledby="meus-dados-tab">
             <form class="container mb-5" id="form-userSubscription">
                 <div class="row my-2">
-                    <div class="col-12"><h3>Meus Dados</h3></div>
+                    <div class="col-12"><h3><?= $translator->translate("Meus Dados") ?></h3></div>
                 </div>
                 <div class="row my-2"> 
                     <div class="col-md-6 col-12 mb-3">
                         <div class="">
-                            <label for="inputName" class="form-label px-0">Status da Inscrição</label>
+                            <label for="inputName" class="form-label px-0"><?= $translator->translate("Status da Inscrição") ?></label>
                             <select class="form-select input-stellar-blue" name="inputSubscriptionStatus" id="inputSubscriptionStatus">
-                                <option value="pendente" <?= $event['status'] == 'pendente' ? 'selected' : '' ?>>Pendente</option>
-                                <option value="realizada" <?= $event['status'] == 'realizada' ? 'selected' : '' ?>>Realizada</option>
-                                <option value="aprovada" <?= $event['status'] == 'aprovada' ? 'selected' : '' ?>>Aprovada</option>
-                                <option value="reprovada" <?= $event['status'] == 'reprovada' ? 'selected' : '' ?>>Reprovada</option>
+                                <option value="pendente" <?= $event['status'] == 'pendente' ? 'selected' : '' ?>><?= $translator->translate("Pendente") ?></option>
+                                <option value="realizada" <?= $event['status'] == 'realizada' ? 'selected' : '' ?>><?= $translator->translate("Realizada") ?></option>
+                                <option value="aprovada" <?= $event['status'] == 'aprovada' ? 'selected' : '' ?>><?= $translator->translate("Aprovada") ?></option>
+                                <option value="reprovada" <?= $event['status'] == 'reprovada' ? 'selected' : '' ?>><?= $translator->translate("Reprovada") ?></option>
                             </select>
                         </div>
                         <div class="mt-3">
-                            <label for="inputUserTags" class="form-label px-0">Tags</label>
+                            <label for="inputUserTags" class="form-label px-0"><?= $translator->translate("Tags") ?></label>
                             <select class="form-select input-stellar-blue" name="inputUserTags[]" id="inputUserTags" multiple="multiple">
                                 <?php if (!empty($event['inscricao_tags_evento'])): ?>
                                     <?php foreach (explode('|', $event['inscricao_tags_evento']) as $tag): ?>
@@ -207,19 +207,19 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-12 mb-3">
-                        <label for="inputUserObservation" class="form-label">Observações</label>
-                        <textarea class="form-control input-stellar-blue" name="inputUserObservation" id="inputUserObservation" rows="4" placeholder="Observações do usuário..."><?= !empty($event['inscricao_observacao_loja']) ? $event['inscricao_observacao_loja'] : '' ?></textarea>
+                        <label for="inputUserObservation" class="form-label"><?= $translator->translate("Observações") ?></label>
+                        <textarea class="form-control input-stellar-blue" name="inputUserObservation" id="inputUserObservation" rows="4" placeholder="<?= $translator->translate("Observações do usuário...") ?>"><?= !empty($event['inscricao_observacao_loja']) ? $event['inscricao_observacao_loja'] : '' ?></textarea>
                     </div>
                 </div>
                 <div class="row my-2">
                     <div class="col-12">
-                        <label class="form-label px-0">Feedback (preencher após o evento)</label>
-                        <textarea class="form-control input-stellar-blue" name="inputUserFeedback" id="inputUserFeedback" rows="4" placeholder="Feedback do usuário..." <?= ($event['evento_data_final'] < date('Y-m-d')) ? '' : 'disabled' ?>><?= !empty($event['inscricao_feedback_loja']) ? $event['inscricao_feedback_loja'] : '' ?></textarea>
+                        <label class="form-label px-0"><?= $translator->translate("Feedback (preencher após o evento)") ?></label>
+                        <textarea class="form-control input-stellar-blue" name="inputUserFeedback" id="inputUserFeedback" rows="4" placeholder="<?= $translator->translate("Feedback do usuário...") ?>" <?= ($event['evento_data_final'] < date('Y-m-d')) ? '' : 'disabled' ?>><?= !empty($event['inscricao_feedback_loja']) ? $event['inscricao_feedback_loja'] : '' ?></textarea>
                     </div>
                 </div>
                 <div class="row my-2">
                     <div class="col-12 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-stellar-blue" id="btn-save-userSubscription">Salvar</button>
+                        <button type="submit" class="btn btn-stellar-blue" id="btn-save-userSubscription"><?= $translator->translate("Salvar") ?></button>
                     </div>
                 </div>
             </form>
@@ -239,7 +239,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="shareModalLabel">Compartilhar</h5>
+                        <h5 class="modal-title" id="shareModalLabel"><?= $translator->translate("Compartilhar") ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -248,7 +248,7 @@
                                 <?= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ?>
                             </div>
                             <button class="btn btn-stellar-blue ms-2" id="copyUrl">
-                                <i class="fas fa-link"></i> Copiar
+                                <i class="fas fa-link"></i> <?= $translator->translate("Copiar") ?>
                             </button>
                         </div>
                         <div class="d-flex justify-content-center mb-5">
@@ -306,7 +306,7 @@
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="copyToast" class="toast bg-stellar-blue" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-body text-light">
-                URL copiada para a área de transferência!
+                <?= $translator->translate("URL copiada para a área de transferência!") ?>
             </div>
         </div>
     </div>
@@ -316,7 +316,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="dateObservationModalLabel">Observações da Data</h5>
+                    <h5 class="modal-title" id="dateObservationModalLabel"><?= $translator->translate("Observações da Data") ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -333,7 +333,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="priceObservationModalLabel">Observações da Taxa</h5>
+                    <h5 class="modal-title" id="priceObservationModalLabel"><?= $translator->translate("Observações da Taxa") ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -393,6 +393,14 @@
         echo empty($jsonPrices) ? '{}' : json_encode($jsonPrices);
         unset($jsonPrices);
     ?>;
+</script>
+<script>
+    const translator = {
+        tagsPlaceholder: "<?= $translator->translate("Selecione as tags do evento") ?>",
+        tagsLanguage: "<?= $translator->translate("Adicione tags personalizadas") ?>",
+        saveSuccessTitle: "<?= $translator->translate("Alteração Salva!") ?>",
+        errorTitle: "<?= $translator->translate("Erro!") ?>",
+    };
 </script>
 <script src="<?= url("assets/js/events/details.js") ?>" defer></script>
 <?= $this->stop() ?>

@@ -260,7 +260,7 @@ class Events extends Core
     }
 
     public function createEvent($postData, $userId) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             INSERT INTO eventos
                 (
                     evento_proprietario, 
@@ -273,7 +273,8 @@ class Events extends Core
                     evento_endereco_bairro,
                     evento_endereco_cidade,
                     evento_endereco_estado,
-                    evento_endereco_cep,
+                    evento_pais,
+                    evento_moeda,
                     evento_produtor,
                     evento_privado
                 )
@@ -289,30 +290,34 @@ class Events extends Core
                     :neighborhood,
                     :city,
                     :state,
-                    :zip,
+                    :country,
+                    :currency,
                     :producer,
                     :private
                 )
         ');
-        $storeStatement->bindParam(':user', $userId, PDO::PARAM_INT);
-        $storeStatement->bindParam(':name', $postData['eventTitle'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':description', $postData['eventDescription'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':address', $postData['eventAddress'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':number', $postData['eventNumber'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':complement', $postData['eventComplement'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':neighborhood', $postData['eventNeighborhood'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':city', $postData['eventCity'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':state', $postData['eventState'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':zip', $postData['eventCep'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':producer', $postData['eventProducer'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':user', $userId, PDO::PARAM_INT);
+        $eventStatement->bindParam(':name', $postData['eventTitle'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':description', $postData['eventDescription'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':address', $postData['eventAddress'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':number', $postData['eventNumber'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':complement', $postData['eventComplement'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':neighborhood', $postData['eventNeighborhood'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':city', $postData['eventCity'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':state', $postData['eventState'], PDO::PARAM_STR);
+        // $eventStatement->bindParam(':zip', $postData['eventCep'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':country', $postData['eventCountry'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':currency', $postData['eventCurrency'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':producer', $postData['eventProducer'], PDO::PARAM_STR);
         $private = !empty($postData['private']) ? 1 : 0;
-        $storeStatement->bindParam(':private', $private, PDO::PARAM_INT);
-        $storeStatement->execute();
+        $eventStatement->bindParam(':private', $private, PDO::PARAM_INT);
+
+        $eventStatement->execute();
         return $this->SQL->lastInsertId();
     }
 
     public function updateEvent($eventId, $postData) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE 
                 eventos 
             SET
@@ -324,30 +329,33 @@ class Events extends Core
                 evento_endereco_bairro = :neighborhood,
                 evento_endereco_cidade = :city,
                 evento_endereco_estado = :state,
-                evento_endereco_cep = :zip,
+                evento_pais = :country,
+                evento_moeda = :currency,
                 evento_produtor = :producer,
                 evento_privado = :private
             WHERE
                 evento_id = :event
         ');
-        $storeStatement->bindParam(':name', $postData['eventTitle'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':description', $postData['eventDescription'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':address', $postData['eventAddress'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':number', $postData['eventNumber'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':complement', $postData['eventComplement'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':neighborhood', $postData['eventNeighborhood'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':city', $postData['eventCity'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':state', $postData['eventState'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':zip', $postData['eventCep'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':producer', $postData['eventProducer'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->bindParam(':name', $postData['eventTitle'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':description', $postData['eventDescription'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':address', $postData['eventAddress'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':number', $postData['eventNumber'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':complement', $postData['eventComplement'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':neighborhood', $postData['eventNeighborhood'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':city', $postData['eventCity'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':state', $postData['eventState'], PDO::PARAM_STR);
+        // $eventStatement->bindParam(':zip', $postData['eventCep'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':country', $postData['eventCountry'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':currency', $postData['eventCurrency'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':producer', $postData['eventProducer'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
         $private = !empty($postData['private']) ? 1 : 0;
-        $storeStatement->bindParam(':private', $private, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':private', $private, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function addEventAdvantage($eventId, $advantageId) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             INSERT INTO eventos_vantagens
                 (
                     evento_vantagem_evento,
@@ -359,24 +367,24 @@ class Events extends Core
                     :advantage
                 )
         ');
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
-        $storeStatement->bindParam(':advantage', $advantageId, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->bindParam(':advantage', $advantageId, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function removeEventAdvantage($id) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             DELETE FROM 
                 eventos_vantagens
             WHERE
                 evento_vantagem_id = :id
         ');
-        $storeStatement->bindParam(':id', $id, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':id', $id, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function addEventDate($eventId, $dateData) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             INSERT INTO eventos_datas
                 (
                     evento_data_evento,
@@ -394,16 +402,16 @@ class Events extends Core
                     :observation
                 )
         ');
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
-        $storeStatement->bindParam(':day', $dateData['day'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':start_time', $dateData['time'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':end_time', $dateData['endTime'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':observation', $dateData['observation'], PDO::PARAM_STR);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->bindParam(':day', $dateData['day'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':start_time', $dateData['time'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':end_time', $dateData['endTime'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':observation', $dateData['observation'], PDO::PARAM_STR);
+        return $eventStatement->execute();
     }
 
     public function updateEventDate($dateId, $dateData) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE 
                 eventos_datas 
             SET
@@ -414,27 +422,27 @@ class Events extends Core
             WHERE
                 evento_data_id = :id
         ');
-        $storeStatement->bindParam(':day', $dateData['day'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':start_time', $dateData['time'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':end_time', $dateData['endTime'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':observation', $dateData['observation'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':id', $dateId, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':day', $dateData['day'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':start_time', $dateData['time'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':end_time', $dateData['endTime'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':observation', $dateData['observation'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':id', $dateId, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function removeEventDate($id) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             DELETE FROM 
                 eventos_datas
             WHERE
                 evento_data_id = :id
         ');
-        $storeStatement->bindParam(':id', $id, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':id', $id, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function addEventPrice($eventId, $priceData) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             INSERT INTO eventos_taxas
                 (
                     evento_taxa_evento,
@@ -453,16 +461,16 @@ class Events extends Core
                 )
         ');
         $price = str_replace(',', '.', str_replace('.', '', $priceData['amount']));
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
-        $storeStatement->bindParam(':order', $priceData['order'], PDO::PARAM_INT);
-        $storeStatement->bindParam(':title', $priceData['name'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':value', $price, PDO::PARAM_STR);
-        $storeStatement->bindParam(':observation', $priceData['observation'], PDO::PARAM_STR);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->bindParam(':order', $priceData['order'], PDO::PARAM_INT);
+        $eventStatement->bindParam(':title', $priceData['name'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':value', $price, PDO::PARAM_STR);
+        $eventStatement->bindParam(':observation', $priceData['observation'], PDO::PARAM_STR);
+        return $eventStatement->execute();
     }
 
     public function updateEventPrice($priceId, $priceData) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE 
                 eventos_taxas 
             SET
@@ -474,23 +482,23 @@ class Events extends Core
                 evento_taxa_id = :id
         ');
         $price = str_replace(',', '.', str_replace('.', '', $priceData['amount']));
-        $storeStatement->bindParam(':order', $priceData['order'], PDO::PARAM_INT);
-        $storeStatement->bindParam(':title', $priceData['name'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':value', $price, PDO::PARAM_STR);
-        $storeStatement->bindParam(':observation', $priceData['observation'], PDO::PARAM_STR);
-        $storeStatement->bindParam(':id', $priceId, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':order', $priceData['order'], PDO::PARAM_INT);
+        $eventStatement->bindParam(':title', $priceData['name'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':value', $price, PDO::PARAM_STR);
+        $eventStatement->bindParam(':observation', $priceData['observation'], PDO::PARAM_STR);
+        $eventStatement->bindParam(':id', $priceId, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function removeEventPrice($id) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             DELETE FROM 
                 eventos_taxas
             WHERE
                 evento_taxa_id = :id
         ');
-        $storeStatement->bindParam(':id', $id, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':id', $id, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function updateEventComplementaryInfo($eventId) {
@@ -498,30 +506,30 @@ class Events extends Core
         //Data_final = A maior data e a hora final desta data
         // Iniciar transação
         $this->SQL->beginTransaction();
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE eventos SET
                 evento_data_inicial = (SELECT MIN(evento_data_dia) FROM eventos_datas WHERE evento_data_evento = :event),
                 evento_data_final = (SELECT MAX(evento_data_dia) FROM eventos_datas WHERE evento_data_evento = :event)
             WHERE
                 evento_id = :event
         ');
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
-        $storeStatement->execute();
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->execute();
         //Agora atualizar as datas com base na data inicial e final
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE eventos e1 SET
                 evento_data_inicial = (SELECT CONCAT(evento_data_dia, " ", evento_data_hora_inicial) FROM eventos_datas WHERE evento_data_evento = :event AND evento_data_dia = e1.evento_data_inicial LIMIT 1),
                 evento_data_final = (SELECT CONCAT(evento_data_dia, " ", evento_data_hora_final) FROM eventos_datas WHERE evento_data_evento = :event AND evento_data_dia = e1.evento_data_final LIMIT 1)
             WHERE
                 evento_id = :event
         ');
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
-        $storeStatement->execute();
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->execute();
         $this->SQL->commit();
     }
 
     public function subscribeToEvent($eventId, $storeId) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             INSERT INTO inscricoes
                 (
                     inscricao_evento,
@@ -535,14 +543,14 @@ class Events extends Core
                     NOW()
                 )
         ');
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
-        $storeStatement->bindParam(':store', $storeId, PDO::PARAM_INT);
-        $storeStatement->execute();
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->bindParam(':store', $storeId, PDO::PARAM_INT);
+        $eventStatement->execute();
         return $this->SQL->lastInsertId();
     }
 
     public function unsubscribeFromEvent($inscricaoId) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE 
                 inscricoes 
             SET
@@ -550,12 +558,12 @@ class Events extends Core
             WHERE
                 inscricao_id = :inscricao
         ');
-        $storeStatement->bindParam(':inscricao', $inscricaoId, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':inscricao', $inscricaoId, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function reactivateSubscription($inscricaoId) {
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE 
                 inscricoes 
             SET
@@ -563,15 +571,15 @@ class Events extends Core
             WHERE
                 inscricao_id = :inscricao
         ');
-        $storeStatement->bindParam(':inscricao', $inscricaoId, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':inscricao', $inscricaoId, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
     public function updateUserSubscription($eventId, $storeId, $status = null, $tags = null, $observation = null, $feedback = null) {
         $status = filter_var($status, FILTER_SANITIZE_STRING);
         $observation = filter_var($observation, FILTER_SANITIZE_STRING);
         $feedback = filter_var($feedback, FILTER_SANITIZE_STRING);
-        $storeStatement = $this->SQL->prepare('
+        $eventStatement = $this->SQL->prepare('
             UPDATE 
                 inscricoes 
             SET
@@ -607,14 +615,14 @@ class Events extends Core
                 $aprovada = -1;
                 break;
         }
-        $storeStatement->bindParam(':realizada', $realizada, PDO::PARAM_INT);
-        $storeStatement->bindParam(':aprovada', $aprovada, PDO::PARAM_INT);
-        $storeStatement->bindParam(':tags', $tagsString, PDO::PARAM_STR);
-        $storeStatement->bindParam(':observation', $observation, PDO::PARAM_STR);
-        $storeStatement->bindParam(':feedback', $feedback, PDO::PARAM_STR);
-        $storeStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
-        $storeStatement->bindParam(':store', $storeId, PDO::PARAM_INT);
-        return $storeStatement->execute();
+        $eventStatement->bindParam(':realizada', $realizada, PDO::PARAM_INT);
+        $eventStatement->bindParam(':aprovada', $aprovada, PDO::PARAM_INT);
+        $eventStatement->bindParam(':tags', $tagsString, PDO::PARAM_STR);
+        $eventStatement->bindParam(':observation', $observation, PDO::PARAM_STR);
+        $eventStatement->bindParam(':feedback', $feedback, PDO::PARAM_STR);
+        $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
+        $eventStatement->bindParam(':store', $storeId, PDO::PARAM_INT);
+        return $eventStatement->execute();
     }
 
 }

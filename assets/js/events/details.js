@@ -207,14 +207,14 @@ $('.slide-item').on('click', async function() {
 });
 
 $('#inputUserTags').select2({
-    placeholder: "Selecione as vantagens do evento",
+    placeholder: translator.tagsPlaceholder,
     allowClear: true,
     tags: true,
     // dropdownParent: $('#newModal .modal-body'),
     width: '100%',
     language: {
         noResults: function() {
-            return "Adicione tags personalizadas";
+            return translator.tagsLanguage;
         }
     }
 });
@@ -230,14 +230,14 @@ $('#form-userSubscription').on('submit', function(e) {
         success: async function(response) {
             response = JSON.parse(response);
             if (response.code == 200) {
-                $('#toastTitle').text('Alteração Salva!');
+                $('#toastTitle').text(translator.saveSuccessTitle);
                 $('#toastBody').text(response.message);
                 $('#myToast').removeClass('bg-danger')
                 $('#myToast').addClass('bg-success');
             } else if (response.code == 401) {
                 window.location.href = response.data.redirect;
             } else {
-                $('#toastTitle').text('Erro!');
+                $('#toastTitle').text(translator.errorTitle);
                 $('#toastBody').text(response.message);
                 $('#myToast').removeClass('bg-success')
                 $('#myToast').addClass('bg-danger');

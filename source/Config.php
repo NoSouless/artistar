@@ -7,7 +7,7 @@ define("ROOT", 'http://'.$_SERVER['HTTP_HOST']."/".PROJETO);
 define("KEY", "Art1st4r-C4t-S0u1");
 
 $host = $_SERVER['HTTP_HOST'];
-$raizSetup = dirname( __FILE__, 3)."/artistar/setup";
+$raizSetup = dirname( __FILE__, 3)."/setup";
 
 if (file_exists("$raizSetup/$host.json")) {
     $setup = file_get_contents("$raizSetup/$host.json");
