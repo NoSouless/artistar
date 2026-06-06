@@ -40,46 +40,48 @@
 
     function formatCurrencyBRL(value) {
         var number = Number(value);
-        if (!isFinite(number)) return 'R$ 0,00';
-        return 'R$ ' + number.toFixed(2).replace('.', ',');
+        if (!isFinite(number)) return '0,00';
+        return number.toFixed(2).replace('.', ',');
     }
 
     function buildPlaceholderCards(total) {
         var html = '';
         for (var i = 0; i < total; i++) {
-            html += '<div class="col-lg-3 col-md-4 col-sm-6 mb-4 evento">';
-            html += '  <div class="card h-100 d-flex flex-column product-card is-placeholder">';
-            html += '      <div class="card-img-top position-relative pt-2 px-2">';
-            html += '          <div class="store-product-image placeholder-glow thumbnail-product" style="display:block; width:100%;">';
-            html += '              <span class="placeholder w-100 h-100 d-block"></span>';
-            html += '          </div>';
-            html += '      </div>';
-            html += '      <div class="card-body d-flex flex-column">';
-            html += '          <h5 class="card-title d-flex justify-content-between align-items-center">';
-            html += '              <span class="color-stellar-blue nome-produto">Carregando...</span>';
-            html += '              <span class="badge bg-lavanda">Ativo</span>';
-            html += '          </h5>';
-            html += '          <p class="card-text mt-auto">';
-            html += '              <span class="badge bg-light text-dark me-1"></span>';
-            html += '          </p>';
-            html += '          <div class="card-text">';
-            html += '              <div class="d-flex justify-content-between align-items-center">';
-            html += '                  <div>';
-            html += '                      <span>Preco Base:</span><br>';
-            html += '                      <span class="badge bg-light text-dark me-1">R$ 0,00</span>';
-            html += '                  </div>';
-            html += '                  <div>';
-            html += '                      <span>Preco Atual:</span> <br>';
-            html += '                      <div class="text-end">';
-            html += '                          <span class="badge bg-light text-dark me-1">R$ 0,00</span>';
-            html += '                      </div>';
-            html += '                  </div>';
-            html += '              </div>';
-            html += '          </div>';
-            html += '          </p>';
-            html += '      </div>';
-            html += '  </div>';
-            html += '</div>';
+            html = `
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 evento">
+                <div class="card h-100 d-flex flex-column product-card is-placeholder">
+                    <div class="card-img-top position-relative pt-2 px-2">
+                        <div class="store-product-image placeholder-glow thumbnail-product" style="display:block; width:100%;">
+                            <span class="placeholder w-100 h-100 d-block"></span>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title d-flex justify-content-between align-items-center">
+                            <span class="color-stellar-blue nome-produto">Carregando...</span>
+                            <span class="badge bg-lavanda">Ativo</span>
+                        </h5>
+                        <p class="card-text mt-auto">
+                            <span class="badge bg-light text-dark me-1"></span>
+                        </p>
+                        <div class="card-text">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span>Preco Base:</span><br>
+                                    <span class="badge bg-light text-dark me-1">R$ 0,00</span>
+                                </div>
+                                <div>
+                                    <span>Preco Atual:</span> <br>
+                                    <div class="text-end">
+                                        <span class="badge bg-light text-dark me-1">R$ 0,00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </p>
+                    </div>
+                </div>
+                </div>
+            `;
         }
         return html;
     }
@@ -106,51 +108,47 @@
             var estoque = parseInt(product.estoque || 0, 10);
 
             var rawBasePrice = product.valor;
-            if (typeof rawBasePrice === 'string') {
-                rawBasePrice = rawBasePrice.replace(',', '.');
-            }
+            // if (typeof rawBasePrice === 'string') {
+            //     rawBasePrice = rawBasePrice.replace(',', '.');
+            // }
             var basePrice = formatCurrencyBRL(rawBasePrice);
 
             var hasDiscount = Number(product.valor_desconto || 0) > 0;
 
-            html += '<div class="col-lg-3 col-md-4 col-sm-6 mb-4 evento">';
-            html += '  <a href="' + productUrl + '" class="card h-100 d-flex flex-column product-card">';
-            html += '      <div class="card-img-top position-relative pt-2 px-2">';
-            html += '          <img src="' + thumbnail + '" alt="' + name + '" class="img-fluid rounded thumbnail-product">';
-            if (estoque === 0) {
-                html += '          <span class="badge bg-danger position-absolute top-0 end-0 m-3">Sem Estoque</span>';
-            }
-            html += '      </div>';
-            html += '      <div class="card-body d-flex flex-column">';
-            html += '          <h5 class="card-title d-flex justify-content-between align-items-center">';
-            html += '              <span class="color-stellar-blue nome-produto">' + name + '</span>';
-            html += '              <span class="badge bg-lavanda">Ativo</span>';
-            html += '          </h5>';
-            html += '          <p class="card-text mt-auto">';
-            html += '              <span class="badge bg-light text-dark me-1"></span>';
-            html += '          </p>';
-            html += '          <div class="card-text">';
-            html += '              <div class="d-flex justify-content-between align-items-center">';
-            html += '                  <div>';
-            html += '                      <span>Preco Base:</span><br>';
-            if (hasDiscount) {
-                html += '                      <span class="badge bg-light text-dark me-1 text-decoration-line-through">' + basePrice + '</span>';
-            } else {
-                html += '                      <span class="badge bg-light text-dark me-1">' + basePrice + '</span>';
-            }
-            html += '                  </div>';
-            html += '                  <div>';
-            html += '                      <span>Preco Atual:</span> <br>';
-            html += '                      <div class="text-end">';
-            html += '                          <span class="badge bg-light text-dark me-1">' + currentPrice + '</span>';
-            html += '                      </div>';
-            html += '                  </div>';
-            html += '              </div>';
-            html += '          </div>';
-            html += '          </p>';
-            html += '      </div>';
-            html += '  </a>';
-            html += '</div>';
+            var estoqueBadge = estoque === 0 ? '<span class="badge bg-danger position-absolute top-0 end-0 m-3">Sem Estoque</span>' : '';
+            var displayDiscount = product.valor != product.price ? 'block' : 'none';
+
+            html = `
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 evento">
+              <a href="${productUrl}" class="card h-100 d-flex flex-column product-card">
+                  <div class="card-img-top position-relative pt-2 px-2">
+                        <img src="${thumbnail}" alt="${name}" class="img-fluid rounded thumbnail-product">
+                        ${estoqueBadge}
+                  </div>
+                  <div class="card-body d-flex flex-column">
+                      <h5 class="card-title d-flex justify-content-between align-items-center">
+                          <span class="color-stellar-blue nome-produto">${name}</span>
+                      </h5>
+                      <p class="card-text mt-auto">
+                          <span class="badge bg-light text-dark me-1"></span>
+                      </p>
+                      <div class="card-text">
+                          <div class="d-flex justify-content-between align-items-center d-${displayDiscount}">
+                                <small class="text-end color-graphite-gray mb-0 fw-bold text-decoration-line-through">
+                                    R$ ${basePrice}
+                                </small>
+                          </div>
+                          <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-end color-graphite-gray h4 mb-0 fw-bold">
+                                    R$ ${currentPrice}
+                                </div>
+                          </div>
+                      </div>
+                      </p>
+                  </div>
+              </a>
+            </div>
+            `;
         });
 
         productsList.innerHTML = html;

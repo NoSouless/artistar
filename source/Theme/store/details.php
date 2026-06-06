@@ -30,33 +30,34 @@
 ?>
 
 <section class="minimum-height store-details-page py-4">
-	<div class="store-profile-top">
-		<div class="store-banner mb-0">
-			<img src="<?= $bannerPlaceholder ?>" alt="Banner da loja <?= ($storeName) ?>" class="store-banner-image">
-			<div class="store-banner-overlay"></div>
-			<div class="store-banner-actions">
-				<button type="button" class="btn store-action-icon" aria-label="Instagram da loja">
-					<i class="fa-brands fa-instagram"></i>
-				</button>
-				<button type="button" class="btn store-action-icon" aria-label="Twitter da loja">
-					<i class="fa-brands fa-x-twitter"></i>
-				</button>
-				<?php if ($isOwner): ?>
-					<a href="<?= url('store/manage') ?>" class="btn btn-outline-stellar-blue store-follow-btn">
-						<i class="fa-solid fa-pen"></i>
-						Editar
-					</a>
-				<?php elseif ($logado): ?>
-					<button type="button" class="btn btn-outline-stellar-blue store-follow-btn" data-store-id="<?= $storeId ?>" data-login-redirect="<?= $loginRedirect ?>">
-						<i class="fa-solid fa-plus"></i>
-						Seguir
+	<div class="store-profile-top" style="background-image:url('<?= $bannerPlaceholder ?>'); background-size:cover; background-position:center;">
+		<div class="mb-0 container d-md-flex flex-column  justify-content-end" style="min-height: 230px;">
+			<div class="row d-block d-md-none mb-5 pb-2"></div>
+			<div class="row ">
+				<div class="col-12 d-flex gap-2 justify-content-end mb-2">
+					<button type="button" class="btn store-action-icon" aria-label="Instagram da loja">
+						<i class="fa-brands fa-instagram"></i>
 					</button>
-				<?php else: ?>
-					<a href="<?= url('login?r=' . $loginRedirect) ?>" class="btn btn-outline-stellar-blue store-follow-btn">
-						<i class="fa-solid fa-plus"></i>
-						Seguir
-					</a>
-				<?php endif; ?>
+					<button type="button" class="btn store-action-icon" aria-label="Twitter da loja">
+						<i class="fa-brands fa-x-twitter"></i>
+					</button>
+					<?php if ($isOwner): ?>
+						<a href="<?= url('store/manage') ?>" class="btn btn-polar-gray store-follow-btn">
+							<i class="fa-solid fa-pen"></i>
+							Editar
+						</a>
+					<?php elseif ($logado): ?>
+						<button type="button" class="btn btn-stellar-blue store-follow-btn" data-store-id="<?= $storeId ?>" data-login-redirect="<?= $loginRedirect ?>">
+							<i class="fa-solid fa-plus"></i>
+							Seguir
+						</button>
+					<?php else: ?>
+						<a href="<?= url('login?r=' . $loginRedirect) ?>" class="btn btn-stellar-blue store-follow-btn">
+							<i class="fa-solid fa-plus"></i>
+							Seguir
+						</a>
+					<?php endif; ?>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -104,14 +105,14 @@
 						<div class="row g-3 mt-3">
 							<div class="col-12 d-flex gap-2 flex-wrap align-items-center store-catalog-toolbar">
 								<div class="d-flex gap-2 flex-wrap align-items-center store-catalog-filters">
-									<button type="button" class="btn btn-stellar-blue btn-md">
+									<!-- <button type="button" class="btn btn-stellar-blue btn-md">
 										<i class="fa-solid"></i>
 										Produtos
 									</button>
 									<button type="button" class="btn btn-stellar-blue btn-md">
 										<i class="fa-solid"></i>
 										Coleções
-									</button>
+									</button> -->
 								</div>
 								<div class="ms-auto text-end store-catalog-search">
 									<div class="store-search-wrap">
