@@ -25,6 +25,7 @@ class statisticsController extends Core {
         $totais = $statisticsModel->getTotals($store, $periodos[$periodoSelecionado], $dataReferencia);
         $bestSellers = $statisticsModel->getBestSellers($store, $periodos[$periodoSelecionado], $dataReferencia);
         $graphData = $statisticsModel->arrangeGraphData($totais, $periodoSelecionado, $dataReferencia);
+        // echo_r($graphData, true);
         $productRanking = $statisticsModel->getProductRanking($store, $periodos[$periodoSelecionado], $dataReferencia);
         $allProducts = $statisticsModel->getAllProducts($store);
         $allCategories = $statisticsModel->getAllCategories($store);

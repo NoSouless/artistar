@@ -75,5 +75,17 @@
     "Gráfico não encontrado.": "Graph not found.",
     "Loja não encontrada.": "Store not found.",
     "Gráfico atualizado com sucesso.": "Graph updated successfully.",
-    "Erro ao atualizar gráfico: ": "Error updating graph: "
+    "Erro ao atualizar gráfico: ": "Error updating graph: ",
+    "Janeiro": "January",
+    "Fevereiro": "February",
+    "Março": "March",
+    "Abril": "April",
+    "Maio": "May",
+    "Junho": "June",
+    "Julho": "July",
+    "Agosto": "August",
+    "Setembro": "September",
+    "Outubro": "October",
+    "Novembro": "November",
+    "Dezembro": "December"
 }

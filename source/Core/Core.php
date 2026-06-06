@@ -37,6 +37,10 @@ class Core {
         $this->verificaLogado();
 
         $this->defineRedirect();
+        if ($this->getLogado() && $this->isRedirect()) {
+            header("Location: " . $this->extractRedirect());
+            exit;
+        }
 
         $this->setLanguage(isset($_GET['lang']) ? $_GET['lang'] : (isset($_SESSION['artistar']['language']) ? $_SESSION['artistar']['language'] : 'pt-br'));
         $this->setTranslator(new Translator($this->getLanguage()));
@@ -156,12 +160,12 @@ class Core {
     }
 
     public function extractRedirect() {
-        return urldecode(base64_decode($this->redirect));
+        return urldecode(base64_decode($this->getRedirect()));
     }
 
     public function validaAcesso($redirectToValidation = true) {
         if(!$this->getLogado()){
-            header("location: /login?r=" . $this->getRedirect());
+            header("Location: /login?r=" . $this->getRedirect());
             exit;
         } 
         if($redirectToValidation) $this->checkIfEmailIsValidated();
@@ -169,7 +173,7 @@ class Core {
 
     public function checkIfEmailIsValidated() {
         if (!$this->getUser()['email_validado']) {
-            header("location: /register/validate-email?r=" . $this->getRedirect());
+            header("Location: /register/validate-email?r=" . $this->getRedirect());
             exit;
         } 
     }

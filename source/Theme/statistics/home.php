@@ -25,9 +25,9 @@
                     if ($periodoSelecionado == $key) {
                         echo '<a href="#" class="link-light link-underline-opacity-0 px-2 bg-nocturne-purple rounded-3 text-center align-middle">' . $periodo['name'] . '</a>';
                     } else if (($periodoSelecionado == $periodo['following']) || empty($periodo['following'])) {
-                        echo '<a href="'.url('statistics/?period='.$key).'" class="link-nocturne-purple px-2 text-center align-middle">' . $periodo['name'] . '</a>';
+                        echo '<a href="'.url('statistics/?period='.$key.'&date='.$dataReferencia).'" class="link-nocturne-purple px-2 text-center align-middle">' . $periodo['name'] . '</a>';
                     } else {
-                        echo '<a href="'.url('statistics/?period='.$key).'" class="link-nocturne-purple px-2 border-dark-subtle border-0 border-end text-center align-middle">' . $periodo['name'] . '</a>';
+                        echo '<a href="'.url('statistics/?period='.$key.'&date='.$dataReferencia).'" class="link-nocturne-purple px-2 border-dark-subtle border-0 border-end text-center align-middle">' . $periodo['name'] . '</a>';
                     }
 
                 } ?>

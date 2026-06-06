@@ -87,7 +87,7 @@ class Stock extends Core {
                 SELECT 
                     COUNT(IF(produto_estoque >= produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1, 1, NULL)) AS goodStock,
                     COUNT(IF(produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1, 1, NULL)) AS lowStock,
-                    COUNT(IF(produto_estoque = 0 AND produto_ativo = 1, 1, NULL)) AS outOfStock,
+                    COUNT(IF(produto_estoque <= 0 AND produto_ativo = 1, 1, NULL)) AS outOfStock,
                     COUNT(IF(produto_ativo = 0, 1, NULL)) AS deadStock,
                     COUNT(produto_id) AS totalProducts
                 FROM

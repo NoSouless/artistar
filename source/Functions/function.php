@@ -52,3 +52,10 @@ function storageURL($file) {
     $file = str_replace('{localPublico}', $localPublico, $file);
     return $file;
 }
+
+function echo_r($data, $exit = false) {
+    echo '<pre>';
+    print_r($data);
+    echo '</pre>';
+    if ($exit) exit;
+}

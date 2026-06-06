@@ -187,6 +187,7 @@ class Statistics extends Core {
     }
 
     public function arrangeGraphData($totais, $periodoSelecionado, $dataReferencia) {
+        $translator = $this->getTranslator();
         $graphData = [
             'labels' => [],
             'values' => [
@@ -246,6 +247,9 @@ class Statistics extends Core {
                     $graphData['labels'][] = getMonthName($nextMonth);
                     $graphData['values']['total_vendas'][$nextMonth] = 0;
                     $graphData['values']['total_transacoes'][$nextMonth] = 0;
+                    $graphData['labels'] = array_map(function($label) use ($translator) {
+                        return $translator->translate($label);
+                    }, $graphData['labels']);
                 }
                 break;
         }
@@ -297,28 +301,28 @@ class Statistics extends Core {
      * Calcula as datas de início e fim para cada período
      */
     private function getDataInicioFim($dataReferencia, $periodo) {
-        switch ($periodo['name']) {
-            case '24h':
+        switch ($periodo['id']) {
+            case 'day':
                 $dataInicio = $dataReferencia . ' 00:00:00';
                 $dataFim = $dataReferencia . ' 23:59:59';
                 break;
-            case '7 Dias':
+            case 'week':
                 $dataInicio = date('Y-m-d 00:00:00', strtotime($dataReferencia . ' -6 days'));
                 $dataFim = $dataReferencia . ' 23:59:59';
                 break;
-            case '15 Dias':
+            case 'fortnight':
                 $dataInicio = date('Y-m-d 00:00:00', strtotime($dataReferencia . ' -14 days'));
                 $dataFim = $dataReferencia . ' 23:59:59';
                 break;
-            case '1 Mês':
+            case 'month':
                 $dataInicio = date('Y-m-d 00:00:00', strtotime($dataReferencia . ' -1 month +1 day'));
                 $dataFim = $dataReferencia . ' 23:59:59';
                 break;
-            case '6 Meses':
+            case 'semester':
                 $dataInicio = date('Y-m-d 00:00:00', strtotime($dataReferencia . ' -5 months'));
                 $dataFim = $dataReferencia . ' 23:59:59';
                 break;
-            case 'Ano':
+            case 'year':
                 $dataInicio = date('Y-m-d 00:00:00', strtotime($dataReferencia . ' -11 months'));
                 $dataFim = $dataReferencia . ' 23:59:59';
                 break;
