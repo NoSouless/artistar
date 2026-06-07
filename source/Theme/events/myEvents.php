@@ -75,7 +75,7 @@
                 <?php foreach ($events as $event): ?>
                 <a class="col-lg-3 col-md-4 col-sm-6 mb-4 evento" href="<?= url('events/id/'.$event['evento_id']) ?>">
                     <div class="card">
-                        <img class="card-img-top" src="<?= !empty($event['thumbnail']) ? $event['thumbnail'] : '/assets/image/logo.png' ?>" alt="Card image cap">
+                        <img class="card-img-top" src="<?= !empty($event['thumbnail']) ? $event['thumbnail'] : '/assets/image/200x300.png' ?>" alt="Card image cap">
                         <?php if (!empty($event['evento_data_inicial']) && !empty($event['evento_data_final'])): ?>
                             <span class="image-overlay">
                                 <?php if (date('Y-m-d', strtotime($event['evento_data_inicial'])) != date('Y-m-d', strtotime($event['evento_data_final']))) : ?>

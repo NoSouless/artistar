@@ -42,9 +42,9 @@
 						<i class="fa-brands fa-x-twitter"></i>
 					</button>
 					<?php if ($isOwner): ?>
-						<a href="<?= url('store/manage') ?>" class="btn btn-polar-gray store-follow-btn">
+						<a href="<?= url('store/showcase') ?>" class="btn btn-polar-gray store-follow-btn">
 							<i class="fa-solid fa-pen"></i>
-							Editar
+							Editar Vitrine
 						</a>
 					<?php elseif ($logado): ?>
 						<button type="button" class="btn btn-stellar-blue store-follow-btn" data-store-id="<?= $storeId ?>" data-login-redirect="<?= $loginRedirect ?>">

@@ -1,0 +1,23 @@
+#storeManageSelectedProductsList .draggable-product {
+    cursor: move;
+}
+
+#storeManageSelectedProductsList:empty, #storeManageUnselectedProductsList:empty {
+    display: none;
+}
+
+#emptySelectedProductsList {
+    display: none;
+}
+
+#storeManageSelectedProductsList:empty ~ #emptySelectedProductsList {
+    display: block;
+}
+
+#storeManageSelectedProductsList .store-product-favorite .add-product {
+    display: none;
+}
+
+#storeManageUnselectedProductsList .store-product-favorite .remove-product {
+    display: none;
+}

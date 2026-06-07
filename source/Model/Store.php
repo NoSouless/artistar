@@ -198,13 +198,14 @@ class Store extends Core {
     public function getManageProducts($storeId, $search = '', $limit = 120) {
         $query = '
             SELECT
+                IF(ordenacao.produto_id IS NULL, "unselected", "selected") selecionado,
                 p.produto_id id,
                 p.produto_nome nome,
                 p.produto_thumbnail thumbnail,
                 p.produto_valor valor,
                 p.produto_valor_desconto valor_desconto,
-                CASE WHEN ordenacao.produto_id IS NULL THEN 0 ELSE 1 END selecionado,
-                COALESCE(ordenacao.produto_ordenacao_ordem, 0) ordem
+                COALESCE(ordenacao.produto_ordenacao_ordem, 0) ordem,
+                p.produto_palavras_chave palavras_chave
             FROM
                 produtos p
             LEFT JOIN (
@@ -253,7 +254,7 @@ class Store extends Core {
         $select->bindParam(':limit', $limit, PDO::PARAM_INT);
         $select->execute();
 
-        return $select->fetchAll(PDO::FETCH_ASSOC);
+        return $select->fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
     }
 
     public function toggleProductOrder($storeId, $productId) {

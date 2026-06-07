@@ -15,9 +15,11 @@ $router = new Router(ROOT);
 $router->namespace("Source\Controllers");
 
 $router->group(NULL);
+$router->get("/{friendlyUrl}", "storeController:details", "storeController.details");
+$router->get("/{friendlyUrl}/store", "storeController:details", "storeController.details");
+
 $router->get("/", "homeController:home", "homeController.home");
 $router->get("/login", "homeController:login", "homeController.login");
-// $router->get("/{userFriendlyUrl}", "publicProfileController:profile", "publicProfileController.profile");
 
 $router->group('register');
 $router->get("/", "registerController:home", "registerController.home");
@@ -97,22 +99,14 @@ $router->post("/edit", "eventsController:update", "eventsController.update"); //
 // $router->post("/delete", "eventsController:delete", "eventsController.delete");
 
 $router->group('store');
-// $router->get("/", "storeController:home", "storeController.home");
-$router->get("/manage", "storeController:manage", "storeController.manage");
-$router->get("/manage/", "storeController:manage", "storeController.manage.slash");
-$router->get("/id/{storeId}", "storeController:details", "storecontroller.details");
-$router->get("/id/{storeId}/edit", "storeController:edit", "storeController.edit");
-$router->post("/update", "storeController:update", "storeController.update");
-$router->post("/products", "storeController:products", "storeController.products");
-$router->post("/product/new", "storeController:newProduct", "storeController.newProduct");
-$router->post("/product/move", "storeController:moveProduct", "storeController.moveProduct");
-$router->post("/product/delete", "storeController:deleteProduct", "storeController.deleteProduct");
+$router->get("/showcase", "storeController:manage", "storeController.manage");
+$router->post("/showcase", "storeController:editShowcase", "storeController.editShowcase");
+$router->post("/products", "storeController:manageProducts", "storeController.manageProducts");
 $router->get("/product/{productId}", "storeController:detailsProduct", "storeController.detailsProduct");
 $router->post("/collection/new", "storeController:newCollection", "storeController.newCollection");
 $router->post("/collection/edit", "storeController:editCollection", "storeController.editCollection");
 $router->post("/collection/delete", "storeController:deleteCollection", "storeController.deleteCollection");
 $router->get("/collection/{collectionId}", "storeController:detailsCollection", "storeController.detailsCollection");
-$router->get("/{friendlyUrl}", "storeController:details", "storeController.details");
 
 
 $router->group('legal');

@@ -3,29 +3,25 @@
 <?= $this->start("css") ?>
 <link rel="stylesheet" href="<?= url("assets/css/store/details.css") ?>">
 <link rel="stylesheet" href="<?= url("assets/css/stock/home.css") ?>">
+<link rel="stylesheet" href="<?= url("assets/css/store/manage.css") ?>">
 <?= $this->stop() ?>
 
 <?= $this->start("conteudo") ?>
-<?php
-    $storeName = !empty($store['nome']) ? $store['nome'] : 'Loja sem nome';
-    $storeUsername = !empty($store['nome_unico']) ? '@' . $store['nome_unico'] : '@loja';
-    $storeDescription = !empty($store['descricao']) ? $store['descricao'] : 'Sem descricao cadastrada.';
-    $storePhoto = !empty($store['foto']) ? storageURL($store['foto']) : '';
-    $storeId = !empty($store['codigo']) ? (int) $store['codigo'] : 0;
-    $storeInitial = strtoupper(substr(trim($storeName), 0, 1));
-    $bannerPlaceholder = url('assets/image/800x400.png');
-?>
 
-<section class="minimum-height store-details-page py-4">
-    <div class="store-profile-top" style="background-image:url('<?= $bannerPlaceholder ?>'); background-size:cover; background-position:center;">
+<form class="minimum-height store-details-page py-4" method="post" enctype="multipart/form-data">
+    <div id="storeBannerWrap" class="store-profile-top" role="button" tabindex="0" aria-label="Editar foto de capa" style="background-image:url('<?= $bannerPlaceholder ?>'); background-size:cover; background-position:center;">
 		<div class="mb-0 container d-md-flex flex-column  justify-content-end" style="min-height: 230px;">
 			<div class="row d-block d-md-none mb-5 pb-2"></div>
 			<div class="row ">
-				<div class="col-12 d-flex gap-2 justify-content-end mb-2">
-                    <a href="<?= url('store/id/' . $storeId) ?>" class="btn btn-polar-gray store-follow-btn">
+                <div class="col-12 d-flex gap-2 justify-content-end mb-2">
+                    <a href="<?= url($storeUsername) ?>" class="btn btn-polar-gray store-follow-btn">
                         <i class="fa-solid fa-arrow-left me-1"></i>
                         Ver Loja
                     </a>
+                    <button type="submit" class="btn btn-stellar-blue store-follow-btn">
+                        <i class="fa-solid fa-save me-1"></i>
+                        Salvar
+                    </button>
 				</div>
 			</div>
 		</div>
@@ -35,21 +31,17 @@
         <div class="row g-4 align-items-start">
             <div class="col-lg-2 store-profile-column">
                 <aside class="store-profile-panel store-profile-overview">
-                    <div class="store-avatar-wrap">
+                    <div class="store-avatar-wrap" id="storePhotoWrap" role="button" tabindex="0" aria-label="Editar foto de perfil da loja">
                         <?php if (!empty($storePhoto)): ?>
-                            <img src="<?= $storePhoto ?>" class="store-avatar" alt="Foto da loja <?= ($storeName) ?>">
+                            <img src="<?= $storePhoto ?>" class="store-avatar" id="storePhotoPreview" alt="Foto da loja <?= ($storeName) ?>">
                         <?php else: ?>
-                            <div class="store-avatar store-avatar-fallback"><?= ($storeInitial) ?></div>
+                            <div class="store-avatar store-avatar-fallback" id="storePhotoPreview"><?= ($storeInitial) ?></div>
                         <?php endif; ?>
+                        
                     </div>
 
                     <h1 class="store-name mb-1"><?= ($storeName) ?></h1>
-                    <p class="store-username mb-2"><?= ($storeUsername) ?></p>
                     <p class="store-description mb-4"><?= ($storeDescription) ?></p>
-
-                    <div class="alert alert-light border small mb-0">
-                        Clique no coração para incluir ou remover produtos da vitrine publica.
-                    </div>
                 </aside>
             </div>
 
@@ -63,16 +55,16 @@
                             </div>
                         </div>
 
-                        <div class="row g-3 mt-3">
+                        <div class="g-3 mt-3">
                             <div class="col-12 d-flex gap-2 flex-wrap align-items-center store-catalog-toolbar">
                                 <div class="d-flex gap-2 flex-wrap align-items-center store-catalog-filters">
 									<!-- <button type="button" class="btn btn-stellar-blue btn-md">
 										<i class="fa-solid"></i>
-										Produtos
+										Destaques
 									</button>
 									<button type="button" class="btn btn-stellar-blue btn-md">
 										<i class="fa-solid"></i>
-										Coleções
+										Categorias
 									</button> -->
 								</div>
                                 <div class="ms-auto text-end store-catalog-search">
@@ -83,22 +75,49 @@
                                 </div>
                             </div>
 
-                            <div class="col-12">
-                                <div id="storeManageProductsList" class="row g-3" data-store-id="<?= $storeId ?>">
-                                    <?php for ($i = 1; $i <= 6; $i++): ?>
-                                        <div class="col-md-6 col-xl-2">
-                                            <div class="store-product-card is-placeholder h-100">
-                                                <div class="store-product-image placeholder-glow">
-                                                    <span class="placeholder w-100 h-100 d-block"></span>
-                                                </div>
-                                                <div class="store-product-info">
-                                                    <p class="store-product-name mb-1">Carregando...</p>
-                                                    <p class="store-product-price mb-0">R$ 0,00</p>
+                            <div class="col-12 mt-3">
+                                <div class="row" id="storeManageSkeletonList">
+                                        <?php for ($i = 1; $i <= 4; $i++): ?>
+                                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 evento placeholder-glow">
+                                                <div class="card h-100 d-flex flex-column product-card store-product-card is-placeholder">
+                                                    <div class="card-img-top position-relative pt-2 px-2">
+                                                        <div class="img-fluid rounded thumbnail-product store-product-image">
+                                                            <span class="placeholder w-100 h-100 d-block rounded"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body d-flex flex-column">
+                                                        <h5 class="card-title d-flex justify-content-between align-items-center">
+                                                            <span class="nome-produto placeholder col-7"></span>
+                                                            <span class="placeholder col-3"></span>
+                                                        </h5>
+                                                        <p class="card-text mt-auto">
+                                                            <span class="badge bg-light text-dark me-1"></span>
+                                                        </p>
+                                                        <div class="card-text">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <div class="col-6">
+                                                                    <span class="placeholder col-6"></span><br>
+                                                                    <span class="placeholder col-10"></span>
+                                                                </div>
+                                                                <div class="col-6 text-end">
+                                                                    <span class="placeholder col-6"></span><br>
+                                                                    <span class="placeholder col-10"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    <?php endfor; ?>
+                                        <?php endfor; ?>
                                 </div>
+                                <div class="row" id="storeManageSelectedProductsList"></div>
+                                <div class="row" id="emptySelectedProductsList" style="display:none;">
+                                    <div class="col-12 text-center">
+                                        <p class="text-muted">Nenhum produto selecionado.</p>
+                                    </div>
+                                </div>
+                                <hr id="storeManageProductsSeparator" class="m-0 mb-4 w-100">
+                                <div class="row" id="storeManageUnselectedProductsList"></div>
                             </div>
                         </div>
                     </div>
@@ -106,10 +125,23 @@
             </div>
         </div>
     </div>
-</section>
+</form>
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+        var messages = {
+        invalidStore: 'Loja invalida para carregar produtos.',
+        invalidApiResponse: 'Erro ao processar resposta da API.',
+        productsUnavailable: 'Nao foi possivel carregar os produtos.',
+        searchFailed: 'Falha ao buscar produtos da loja.',
+        processResponseFailed: 'Nao foi possivel processar a resposta da API.',
+        updateFailed: 'Falha ao atualizar produto da vitrine.',
+        saveOrderFailed: 'Falha ao salvar a nova ordem dos produtos.',
+        noProductsInStore: 'Nenhum produto encontrado na loja.',
+        noSelectedProducts: 'Nenhum produto encontrado na vitrine'
+    };
+</script>
 <script src="<?= url('assets/js/store/manage.js?t=' . time()) ?>"></script>
 <?= $this->stop() ?>

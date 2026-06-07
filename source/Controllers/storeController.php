@@ -92,8 +92,68 @@ class storeController extends Core {
                 'header' => true,
                 'footer' => true
             ],
-            'store' => $store
+            'store' => $store,
+            'storeName' => !empty($store['nome']) ? $store['nome'] : 'Loja sem nome',
+            'storeUsername' => $store['nome_unico'],
+            'storeDescription' => !empty($store['descricao']) ? $store['descricao'] : 'Sem descricao cadastrada.',
+            'storePhoto' => !empty($store['foto']) ? storageURL($store['foto']) : '',
+            'storeId' => !empty($store['codigo']) ? (int) $store['codigo'] : 0,
+            'storeInitial' => strtoupper(substr(trim($store['nome']), 0, 1)),
+            'bannerPlaceholder' => url('assets/image/800x400.png')
         ]);
+    }
+
+    public function editShowcase($data) {
+        $this->validaAcesso();
+
+        $storeId = !empty($data['storeId']) ? (int) $data['storeId'] : 0;
+        $loggedStoreId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
+
+        if ($storeId < 1 || $loggedStoreId < 1 || $storeId !== $loggedStoreId) {
+            header("location: /error/404");
+            return;
+        }
+
+        // Lógica para atualizar a vitrine da loja com os produtos selecionados
+
+        header("location: /store/manage");
+        return;
+    }
+
+    public function manageProducts($data) {
+        $this->validaAcesso();
+        try {
+            $storeId = $this->getUser()['loja_id'] ?? 0;
+            $search = isset($data['search']) ? trim((string) $data['search']) : '';
+
+            $storeModel = new Store();
+            $selecteds = $storeModel->getManageProducts($storeId, $search);
+
+            foreach($selecteds as &$products) {
+                foreach ($products as &$product) {
+                    $price = ((float) $product['valor']) - ((float) $product['valor_desconto']);
+                    if ($price < 0) $price = (float) $product['valor'];
+                    $product['thumbnail'] = !empty($product['thumbnail']) ? storageURL($product['thumbnail']) : url('assets/image/200x300.png');
+                    $product['price'] = moedaReal($price);
+                }
+            }
+
+            echo $this->view->render("apiResponse", [
+                'result' => [
+                    'code' => 200,
+                    'data' => $selecteds
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            echo $this->view->render("apiResponse", [
+                'result' => [
+                    'code' => 500,
+                    'message' => 'Erro interno ao carregar produtos para gestao.'
+                ]
+            ]);
+            return;
+        }
+
     }
 
     public function edit($data) {

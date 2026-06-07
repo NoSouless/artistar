@@ -89,7 +89,9 @@ class Core {
                     usu.usuario_email email,
                     usu.usuario_email_validado email_validado,
                     usu.usuario_envio_validacao envio_validacao,
-                    loj.loja_id loja_id
+                    loj.loja_id loja_id,
+                    loj.loja_nome_unico loja_nome_unico,
+                    loj.loja_nome loja_nome
                 FROM
                     usuarios usu
                 LEFT JOIN
