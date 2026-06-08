@@ -169,17 +169,6 @@
         </div>
     </form>
 </section>
-<section id="toasts-section">
-    <div class="toast align-items-center text-light bg-success border-0 toast-sucesso m-3" id="myToast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
-        <div class="toast-header">
-            <strong class="me-auto" id="toastTitle">Título</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body" id="toastBody">
-            Mensagem do toast.
-        </div>
-    </div>
-</section>
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>

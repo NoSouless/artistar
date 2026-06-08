@@ -70,18 +70,9 @@ class storeController extends Core {
         $this->validaAcesso();
 
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        if ($storeId < 1) {
-            header("location: /error/404");
-            return;
-        }
 
         $storeModel = new Store();
         $store = $storeModel->getStoreData($storeId);
-
-        if (empty($store)) {
-            header("location: /error/404");
-            return;
-        }
 
         $this->addLayout('Minha Loja');
 
@@ -103,23 +94,6 @@ class storeController extends Core {
         ]);
     }
 
-    public function editShowcase($data) {
-        $this->validaAcesso();
-
-        $storeId = !empty($data['storeId']) ? (int) $data['storeId'] : 0;
-        $loggedStoreId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-
-        if ($storeId < 1 || $loggedStoreId < 1 || $storeId !== $loggedStoreId) {
-            header("location: /error/404");
-            return;
-        }
-
-        // Lógica para atualizar a vitrine da loja com os produtos selecionados
-
-        header("location: /store/manage");
-        return;
-    }
-
     public function manageProducts($data) {
         $this->validaAcesso();
         try {
@@ -127,32 +101,58 @@ class storeController extends Core {
             $search = isset($data['search']) ? trim((string) $data['search']) : '';
 
             $storeModel = new Store();
-            $selecteds = $storeModel->getManageProducts($storeId, $search);
+            $selecteds = $storeModel->getShowcaseProductOrder($storeId, [
+                'search' => $search,
+                'collection_id' => 0
+            ], true);
 
             foreach($selecteds as &$products) {
                 foreach ($products as &$product) {
-                    $price = ((float) $product['valor']) - ((float) $product['valor_desconto']);
-                    if ($price < 0) $price = (float) $product['valor'];
                     $product['thumbnail'] = !empty($product['thumbnail']) ? storageURL($product['thumbnail']) : url('assets/image/200x300.png');
-                    $product['price'] = moedaReal($price);
                 }
             }
-
-            echo $this->view->render("apiResponse", [
-                'result' => [
-                    'code' => 200,
-                    'data' => $selecteds
-                ]
-            ]);
+            exit($this->renderApiResponse(200, null, $selecteds));
         } catch (\Throwable $e) {
-            echo $this->view->render("apiResponse", [
-                'result' => [
-                    'code' => 500,
-                    'message' => 'Erro interno ao carregar produtos para gestao.'
-                ]
-            ]);
-            return;
+            exit($this->renderApiResponse(500, 'Erro interno ao carregar produtos para gestao.'));
         }
+    }
+
+    public function editShowcase($data) {
+        $this->validaAcesso();
+
+        $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
+        $order = $data['selected_products_order'] ?? [];
+
+        $storeModel = new Store();
+
+        $products = $storeModel->getShowcaseProductOrder($storeId, [
+            'only_in_showcase' => true,
+            'collection_id' => 0
+        ]);
+
+        $existingOrder = [];
+        array_walk($products, function($product) use (&$existingOrder) {
+            $existingOrder[$product['id']] = [
+                'ordenacao_id' => $product['ordenacao_id'],
+                'ordem' => $product['ordem']
+            ];
+        });
+
+        foreach($order as $productId => $position) {
+            if (filter_var($productId, FILTER_VALIDATE_INT) !== false && filter_var($position, FILTER_VALIDATE_INT) !== false) {
+                if ($position < 0) continue;
+                if (isset($existingOrder[$productId])) {
+                    if ($existingOrder[$productId]['ordem'] != $position) 
+                        $storeModel->updateShowcaseProductOrder($existingOrder[$productId]['ordenacao_id'], $position);
+                } else {
+                    $storeModel->insertShowcaseProductOrder($productId, $position);
+                }
+            }
+            unset($existingOrder[$productId]);
+        }
+
+        foreach($existingOrder as $productId => $productData) $storeModel->deleteShowcaseProductOrder($productData['ordenacao_id']);
+        exit($this->renderApiResponse(200, 'Vitrine atualizada com sucesso.'));
 
     }
 
