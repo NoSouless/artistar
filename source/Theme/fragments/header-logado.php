@@ -169,6 +169,8 @@
                 </a>
             </li>
             <!-- <li class="border-top my-3"></li>  -->
+
+            <li class="border-top my-3"></li> 
             <li>
                 <a href="<?= url($_SESSION['artistar']['user']['loja_nome_unico']) ?>" class="nav-link link-nocturne-purple link-hover">
                     <div class="d-flex align-items-center">
@@ -177,6 +179,32 @@
                     </div>
                 </a>
             </li>
+            <li>
+                <a href="<?= url('settings/team') ?>" class="nav-link link-nocturne-purple link-hover">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-users bi me-4" style="width:24px; text-align: center;"></i>
+                        <span><?= $translator->translate('Equipe') ?></span>
+                    </div>
+                </a>
+            </li> 
+            <li class="border-top my-3"></li> 
+            <li>
+                <a href="<?= url('settings/profile') ?>" class="nav-link link-dark link-hover">
+                    <div class="d-flex align-items-center">
+                        <i class="icone-sidebar icone-config bi me-4" style="width:24px; text-align: center;"></i>
+                        <span><?= $translator->translate('Configurações') ?></span>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="<?= url('settings/partner') ?>" class="nav-link link-nocturne-purple link-hover">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-handshake bi me-4" style="width:24px; text-align: center;"></i>
+                        <span><?= $translator->translate('Parcerias') ?></span>
+                    </div>
+                </a>
+            </li>
+
             <?php if($_SESSION['artistar']['permissions']['prototype']): ?>
             <li>
                <a href="<?= url('events') ?>" class="nav-link link-nocturne-purple link-hover">
@@ -187,23 +215,6 @@
                 </a>
             </li>
             <li class="border-top my-3"></li>
-
-            <li>
-                <a href="#" class="nav-link link-dark link-hover">
-                    <div class="d-flex align-items-center">
-                        <i class="fa-solid fa-store bi me-4" style="width:24px; text-align: center;"></i>
-                        <span><?= $translator->translate('Loja') ?></span>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link link-dark link-hover">
-                    <div class="d-flex align-items-center">
-                        <i class="fa-solid fa-people-group bi me-4" style="width:24px; text-align: center;"></i>
-                        <span><?= $translator->translate('Equipe') ?></span>
-                    </div>
-                </a>
-            </li>
             <li class="mb-1">
                 <a href="#" class="nav-link link-dark link-hover item-parcerias" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
                     <div class="d-flex align-items-center">    
@@ -225,15 +236,6 @@
                         <li><a href="#" class="link-dark link-hover text-decoration-none">Gerenciar Parcerias</a></li>
                     </ul>
                 </div>
-            </li>
-            <li class="border-top my-3"></li>  
-            <li>
-                <a href="<?= url('settings') ?>" class="nav-link link-dark link-hover">
-                    <div class="d-flex align-items-center">
-                        <i class="icone-sidebar icone-config bi me-4" style="width:24px; text-align: center;"></i>
-                        <span><?= $translator->translate('Configurações') ?></span>
-                    </div>
-                </a>
             </li>
             <?php endif; ?>
 
@@ -260,10 +262,10 @@
         <div class="border-top my-3"></div>
         <div class="d-flex justify-content-between align-items-center">
             <div href="#" class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center px-2">
+                <a class="d-flex align-items-center px-2 text-decoration-none" href="<?= url('settings/profile') ?>">
                     <img src="<?= $_SESSION['artistar']['user']['foto_perfil'] ?>" class="rounded-circle me-4 store-logo">
-                    <span><strong><?= $_SESSION['artistar']['user']['nome_completo'] ?></strong></span>
-                </div>
+                    <span class="text-decoration-none color-gray"><strong><?= $_SESSION['artistar']['user']['nome_completo'] ?></strong></span>
+                </a>
             </div>
             <button style="border:none; background:none;" onclick="window.location.href='/auth/logout';" class="nav-link link-hover"><i class="icone-sidebar icone-sair px-2"></i></button>
         </div>

@@ -74,11 +74,18 @@ $router->get("/events", "adminController:events", "adminController.events");
 $router->get("/subscriptions", "adminController:subscriptions", "adminController.subscriptions");
 
 $router->group('settings');
-$router->get("/", "settingsController:home", "settingsController.home");
 $router->get("/profile", "settingsController:profile", "settingsController.profile");
 $router->post("/profile", "settingsController:updateProfile", "settingsController.updateProfile");
-$router->get("/password", "settingsController:password", "settingsController.password");
-$router->post("/password", "settingsController:updatePassword", "settingsController.updatePassword");
+$router->get("/security", "settingsController:security", "settingsController.security");
+$router->post("/security", "settingsController:updateSecurity", "settingsController.updateSecurity");
+$router->get("/partner", "settingsController:partner", "settingsController.partner");
+$router->post("/partner", "settingsController:updatepartner", "settingsController.updatepartner");
+$router->get("/store", "settingsController:store", "settingsController.store");
+$router->post("/store", "settingsController:updateStore", "settingsController.updateStore");
+$router->get("/categories", "settingsController:categories", "settingsController.categories");
+$router->post("/categories", "settingsController:updateCategories", "settingsController.updateCategories");
+$router->get("/team", "settingsController:team", "settingsController.team");
+$router->post("/team", "settingsController:updateTeam", "settingsController.updateTeam");
 
 $router->group('results');
 $router->get("/", "searchController:results", "searchController.results");

@@ -15,42 +15,23 @@ class storeController extends Core {
     }
 
     public function details($data) {
-
         $storeModel = new Store();
-        $storeId = null;
-
-        if (!empty($data['storeId'])) {
-            $storeId = (int) $data['storeId'];
-        } elseif (!empty($data['friendlyUrl'])) {
-            $friendlyUrl = strtolower(trim((string) $data['friendlyUrl'], '/'));
-
-            if ($friendlyUrl === 'manage') {
-                $this->manage();
-                return;
-            }
-
-            $storeBySlug = $storeModel->getStoreDataByFriendlyUrl((string) $data['friendlyUrl']);
-            $storeId = !empty($storeBySlug['codigo']) ? (int) $storeBySlug['codigo'] : null;
-        } elseif (!empty($this->getUser()['loja_id'])) {
-            $storeId = (int) $this->getUser()['loja_id'];
-        }
-
-        $store = $storeModel->getStoreData($storeId);
+        $store = $storeModel->getStoreData($data);   
 
         if (empty($store)) {
             header("location: /error/404");
             return;
         }
 
+        $storeId = $store['codigo'];
+
         $isOwner = false;
-        if ($this->getLogado() && !empty($this->getUser()['loja_id'])) {
+        if ($this->getLogado() && !empty($this->getUser()['loja_id'])) 
             $isOwner = ((int) $this->getUser()['loja_id']) === ((int) $store['codigo']);
-        }
 
         $this->addLayout(!empty($store['nome']) ? $store['nome'] : null);
 
-        $products = $storeModel->getPublicProducts($storeId, '', 24, true);
-        $followersCount = $storeModel->getStoreFollowersCount($storeId);
+        // $followersCount = $storeModel->getStoreFollowersCount($storeId);
 
         echo $this->view->render("store/details", [
             'layout' => [
@@ -60,9 +41,18 @@ class storeController extends Core {
                 'footer' => true
             ],
             'store' => $store,
+            'storeName' => $store['nome'],
+            'storeUsername' => '@' . $store['nome_unico'],
+            'storeDescription' => $store['descricao'],
+            'storePhoto' => !empty($store['foto']) ? storageURL($store['foto']) : '',
+            'storeId' => $storeId,
+            // 'followersCount' => $followersCount,
+            'followersCount' => 0,
+            'storeInitial' => strtoupper(substr(trim($store['nome']), 0, 1)),
+            'bannerPlaceholder' => url('assets/image/800x400.png'),
             'isOwner' => $isOwner,
-            'followersCount' => $followersCount,
-            'products' => $products ?? []
+            'loginRedirect' => base64_encode(urlencode($_SERVER['REQUEST_URI'] ?? '/')),
+            'products' => $store['produtos']
         ]);
     }
 
@@ -72,7 +62,9 @@ class storeController extends Core {
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
 
         $storeModel = new Store();
-        $store = $storeModel->getStoreData($storeId);
+        $store = $storeModel->getStoreData([
+            'storeId' => $storeId
+        ]);
 
         $this->addLayout('Minha Loja');
 
@@ -154,20 +146,5 @@ class storeController extends Core {
         foreach($existingOrder as $productId => $productData) $storeModel->deleteShowcaseProductOrder($productData['ordenacao_id']);
         exit($this->renderApiResponse(200, 'Vitrine atualizada com sucesso.'));
 
-    }
-
-    public function edit($data) {
-        $this->validaAcesso();
-
-        $storeId = !empty($data['storeId']) ? (int) $data['storeId'] : 0;
-        $loggedStoreId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-
-        if ($storeId < 1 || $loggedStoreId < 1 || $storeId !== $loggedStoreId) {
-            header("location: /error/404");
-            return;
-        }
-
-        header("location: /store/manage");
-        return;
     }
 }

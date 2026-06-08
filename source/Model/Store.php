@@ -8,8 +8,11 @@ use Source\Core\Core;
 
 class Store extends Core {
 
-    public function getStoreData($storeId) {
-        if ((int) $storeId < 1) return null;
+    public function getStoreData($data) {
+        $where = [];
+        if (isset($data['storeId'])) $where[] = 'loja.loja_id = :storeId';
+        if (isset($data['friendlyUrl'])) $where[] = 'loja.loja_nome_unico = :friendlyUrl';
+        if (empty($where)) return null;
 
         $select = $this->SQL->prepare(
             'SELECT
@@ -17,40 +20,18 @@ class Store extends Core {
                 loja.loja_nome nome,
                 loja.loja_nome_unico nome_unico,
                 loja.loja_descricao descricao,
-                loja.loja_foto foto
+                loja.loja_foto foto,
+                COALESCE(loja.loja_moeda, "R$") moeda,
+                (SELECT COUNT(*) FROM produtos WHERE produto_loja = loja.loja_id AND produto_ativo = 1) produtos
             FROM
                 lojas loja
             WHERE
-                loja.loja_id = :storeId'
+                ' . implode(' AND ', $where)
         );
 
-        $storeId = (int) $storeId;
-        $select->bindParam(':storeId', $storeId, PDO::PARAM_INT);
+        if (isset($data['storeId'])) $select->bindParam(':storeId', $data['storeId'], PDO::PARAM_INT);
+        if (isset($data['friendlyUrl'])) $select->bindParam(':friendlyUrl', $data['friendlyUrl'], PDO::PARAM_STR);
 
-        $select->execute();
-
-        return $select->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function getStoreDataByFriendlyUrl($friendlyUrl) {
-        $friendlyUrl = trim((string) $friendlyUrl);
-        if (empty($friendlyUrl)) return null;
-
-        $select = $this->SQL->prepare(
-            'SELECT
-                loja.loja_id codigo,
-                loja.loja_nome nome,
-                loja.loja_nome_unico nome_unico,
-                loja.loja_descricao descricao,
-                loja.loja_foto foto
-            FROM
-                lojas loja
-            WHERE
-                loja.loja_nome_unico = :friendlyUrl
-            LIMIT 1'
-        );
-
-        $select->bindParam(':friendlyUrl', $friendlyUrl, PDO::PARAM_STR);
         $select->execute();
 
         return $select->fetch(PDO::FETCH_ASSOC);
@@ -131,70 +112,6 @@ class Store extends Core {
         return $this->SQL->lastInsertId();
     }
 
-    public function getPublicProducts($storeId, $search = '', $limit = 24, $onlyOrdered = false) {
-        $query = '
-            SELECT
-                p.produto_id id,
-                p.produto_nome nome,
-                p.produto_thumbnail thumbnail,
-                p.produto_valor valor,
-                p.produto_valor_desconto valor_desconto,
-                p.produto_estoque estoque
-            FROM
-                produtos p
-        ';
-
-        if ($onlyOrdered) {
-            $query .= '
-                INNER JOIN produtos_ordenacao ordenacao ON ordenacao.produto_id = p.produto_id
-            ';
-        }
-
-        $query .= '
-            WHERE
-                p.produto_loja = :storeId
-            AND
-                p.produto_ativo = 1
-        ';
-
-        if (!empty($search)) {
-            $query .= '
-                AND (
-                    p.produto_nome LIKE :search
-                    OR p.produto_descricao LIKE :search
-                    OR p.produto_palavras_chave LIKE :search
-                )
-            ';
-        }
-
-        if ($onlyOrdered) {
-            $query .= '
-                ORDER BY ordenacao.produto_ordenacao_ordem ASC, p.produto_id DESC
-            ';
-        } else {
-            $query .= '
-                ORDER BY p.produto_id DESC
-            ';
-        }
-
-        $query .= '
-            LIMIT :limit
-        ';
-
-        $select = $this->SQL->prepare($query);
-        $storeId = (int) $storeId;
-        $select->bindParam(':storeId', $storeId, PDO::PARAM_INT);
-        if (!empty($search)) {
-            $searchTerm = '%' . $search . '%';
-            $select->bindParam(':search', $searchTerm, PDO::PARAM_STR);
-        }
-        $limit = (int) $limit;
-        $select->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $select->execute();
-
-        return $select->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function getShowcaseProductOrder($storeId, $filters = [], $groupBySelected = false) {
         $where = [];
         if (isset($filters['search']) && !empty($filters['search'])) {
@@ -220,7 +137,8 @@ class Store extends Core {
                 p.produto_id id,
                 p.produto_nome nome,
                 p.produto_thumbnail thumbnail,
-                p.produto_valor valor,
+                p.produto_valor valor_original,
+                p.produto_valor - p.produto_valor_desconto valor,
                 p.produto_valor_desconto valor_desconto,
                 ordenacao.produto_ordenacao_id ordenacao_id,
                 COALESCE(ordenacao.produto_ordenacao_ordem, 0) ordem,
