@@ -180,6 +180,7 @@ CREATE TABLE IF NOT EXISTS `lojas` (
   `loja_nome` varchar(255) DEFAULT NULL,
   `loja_descricao` text DEFAULT NULL,
   `loja_foto` text DEFAULT NULL,
+   `loja_banner` text DEFAULT NULL,
   `loja_proprietario` int(11) DEFAULT NULL,
   PRIMARY KEY (`loja_id`),
   UNIQUE KEY `loja_nome_unico` (`loja_nome_unico`),

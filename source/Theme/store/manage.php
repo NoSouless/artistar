@@ -9,7 +9,7 @@
 <?= $this->start("conteudo") ?>
 
 <form class="minimum-height store-details-page py-4" method="post" enctype="multipart/form-data" id="storeManageForm" action="<?= url('store/showcase') ?>">
-    <div id="storeBannerWrap" class="store-profile-top" role="button" tabindex="0" aria-label="Editar foto de capa" style="background-image:url('<?= $bannerPlaceholder ?>'); background-size:cover; background-position:center;">
+    <div id="storeBannerWrap" class="store-profile-top" role="button" tabindex="0" aria-label="Editar foto de capa" style="background-image:url('<?= $storeBanner ?>'); background-size:cover; background-position:center;">
 		<div class="mb-0 container d-md-flex flex-column  justify-content-end" style="min-height: 230px;">
 			<div class="row d-block d-md-none mb-5 pb-2"></div>
 			<div class="row ">

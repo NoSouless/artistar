@@ -45,6 +45,7 @@ class storeController extends Core {
             'storeUsername' => '@' . $store['nome_unico'],
             'storeDescription' => $store['descricao'],
             'storePhoto' => !empty($store['foto']) ? storageURL($store['foto']) : '',
+            'storeBanner' => !empty($store['banner']) ? storageURL($store['banner']) : url('assets/image/800x400.png'),
             'storeId' => $storeId,
             // 'followersCount' => $followersCount,
             'followersCount' => 0,
@@ -80,6 +81,7 @@ class storeController extends Core {
             'storeUsername' => $store['nome_unico'],
             'storeDescription' => !empty($store['descricao']) ? $store['descricao'] : 'Sem descricao cadastrada.',
             'storePhoto' => !empty($store['foto']) ? storageURL($store['foto']) : '',
+            'storeBanner' => !empty($store['banner']) ? storageURL($store['banner']) : url('assets/image/800x400.png'),
             'storeId' => !empty($store['codigo']) ? (int) $store['codigo'] : 0,
             'storeInitial' => strtoupper(substr(trim($store['nome']), 0, 1)),
             'bannerPlaceholder' => url('assets/image/800x400.png')

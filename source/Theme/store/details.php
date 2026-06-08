@@ -7,7 +7,7 @@
 
 <?= $this->start("conteudo") ?>
 <section class="minimum-height store-details-page py-4">
-	<div class="store-profile-top" style="background-image:url('<?= $bannerPlaceholder ?>'); background-size:cover; background-position:center;">
+	<div class="store-profile-top" style="background-image:url('<?= $storeBanner ?>'); background-size:cover; background-position:center;">
 		<div class="mb-0 container d-md-flex flex-column  justify-content-end" style="min-height: 230px;">
 			<div class="row d-block d-md-none mb-5 pb-2"></div>
 			<div class="row ">

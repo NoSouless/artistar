@@ -21,6 +21,7 @@ class Store extends Core {
                 loja.loja_nome_unico nome_unico,
                 loja.loja_descricao descricao,
                 loja.loja_foto foto,
+                loja.loja_banner banner,
                 COALESCE(loja.loja_moeda, "R$") moeda,
                 (SELECT COUNT(*) FROM produtos WHERE produto_loja = loja.loja_id AND produto_ativo = 1) produtos
             FROM
