@@ -32,7 +32,7 @@
                 <div class="toast-body" id="toastBody"></div>
             </div>
         </section>
-        <?php // $layout->buildFooter() ?>
+        <?= $layout->buildFooter() ?>
     </body>
     <script src="<?= url("assets/vendors/bootstrap-5.3.3/js/bootstrap.bundle.min.js") ?>" defer></script>
     <script src="<?= url("assets/js/jquery-3.6.0.js") ?>"></script>
