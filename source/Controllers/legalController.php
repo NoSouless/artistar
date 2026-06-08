@@ -8,20 +8,27 @@ use Source\Model\Legal;
 
 class legalController extends Core {
 
+    public function __construct($router = ROOT) {
+        parent::__construct($router);
+        $this->getLayout()->setHeader($this->getLogado() ? 'header-logado' : 'header');
+        $this->getLayout()->setFooter('footer');
+    }
+
     public function terms() {
-        echo $this->view->render("legal/terms", [
-            'title' =>  'Termos de Uso - Artistar', 
-            'header' => $this->header(),
-            'footer' => $this->footer(),
+        $this->addTranslator('legal/terms');
+        $this->addLayout($this->getTranslator()->translate("Termos de Uso"));
+
+        echo $this->view->render("legal/{$this->getTranslator()->getLang()}/terms", [
+
         ]);
         return;
     }
 
     public function privacy() {
-        echo $this->view->render("legal/privacy", [
-            'title' =>  'Políticas de Privacidade - Artistar', 
-            'header' => $this->header(),
-            'footer' => $this->footer(),
+        $this->addTranslator('legal/privacy');
+        $this->addLayout($this->getTranslator()->translate("Política de Privacidade"));
+
+        echo $this->view->render("legal/{$this->getTranslator()->getLang()}/privacy", [
         ]);
         return;
     }
