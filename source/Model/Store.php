@@ -195,207 +195,108 @@ class Store extends Core {
         return $select->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getManageProducts($storeId, $search = '', $limit = 120) {
+    public function getShowcaseProductOrder($storeId, $filters = [], $groupBySelected = false) {
+        $where = [];
+        if (isset($filters['search']) && !empty($filters['search'])) {
+            $search = trim($filters['search']);
+            $search = str_replace("'", "\'", $search);
+            $searchTerms = explode(' ', $search);
+            $search = '';
+            foreach ($searchTerms as $term) {
+                $term = trim($term);
+                if (!empty($term)) $search .= "+{$term}* ";
+            }
+            if (!empty($search)) $where[] = "(MATCH (produto_nome, produto_palavras_chave, produto_descricao, produto_codigo_interno) AGAINST ('{$search}' IN BOOLEAN MODE))";
+        }
+        if (isset($filters['only_in_showcase']) && !empty($filters['only_in_showcase'])) $where[] = "ordenacao.produto_id IS NOT NULL";
+        if (isset($filters['only_out_showcase']) && !empty($filters['only_out_showcase'])) $where[] = "ordenacao.produto_id IS NULL";
+        if (isset($filters['collection_id'])) $where[] = "COALESCE(ordenacao.colecao_id, 0) = {$filters['collection_id']}";
+
+        $where = !empty($where) ? ' AND ' . implode(' AND ', $where) : '';
+
         $query = '
             SELECT
-                IF(ordenacao.produto_id IS NULL, "unselected", "selected") selecionado,
+                '.($groupBySelected ? 'IF(ordenacao.produto_id IS NULL, "unselected", "selected") selecionado,' : '').'
                 p.produto_id id,
                 p.produto_nome nome,
                 p.produto_thumbnail thumbnail,
                 p.produto_valor valor,
                 p.produto_valor_desconto valor_desconto,
+                ordenacao.produto_ordenacao_id ordenacao_id,
                 COALESCE(ordenacao.produto_ordenacao_ordem, 0) ordem,
                 p.produto_palavras_chave palavras_chave
             FROM
                 produtos p
-            LEFT JOIN (
-                SELECT
-                    po.produto_id,
-                    MIN(po.produto_ordenacao_ordem) produto_ordenacao_ordem
-                FROM
-                    produtos_ordenacao po
-                GROUP BY
-                    po.produto_id
-            ) ordenacao ON ordenacao.produto_id = p.produto_id
+            LEFT JOIN 
+                produtos_ordenacao ordenacao ON ordenacao.produto_id = p.produto_id
             WHERE
                 p.produto_loja = :storeId
             AND
                 p.produto_ativo = 1
-        ';
-
-        if (!empty($search)) {
-            $query .= '
-                AND (
-                    p.produto_nome LIKE :search
-                    OR p.produto_descricao LIKE :search
-                    OR p.produto_palavras_chave LIKE :search
-                )
-            ';
-        }
-
-        $query .= '
+            '.$where.'
+            GROUP BY
+                p.produto_id
             ORDER BY
-                CASE WHEN ordenacao.produto_id IS NULL THEN 1 ELSE 0 END ASC,
-                ordenacao.produto_ordenacao_ordem ASC,
-                p.produto_id DESC
-            LIMIT :limit
+                ordem ASC, nome ASC
         ';
 
         $select = $this->SQL->prepare($query);
-        $storeId = (int) $storeId;
         $select->bindParam(':storeId', $storeId, PDO::PARAM_INT);
-
-        if (!empty($search)) {
-            $searchTerm = '%' . $search . '%';
-            $select->bindParam(':search', $searchTerm, PDO::PARAM_STR);
-        }
-
-        $limit = (int) $limit;
-        $select->bindParam(':limit', $limit, PDO::PARAM_INT);
         $select->execute();
 
-        return $select->fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
+        if ($groupBySelected) {
+            return $select->fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
+        } else {
+            return $select->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
     }
 
-    public function toggleProductOrder($storeId, $productId) {
-        $storeId = (int) $storeId;
-        $productId = (int) $productId;
-
-        if ($storeId < 1 || $productId < 1) {
-            return ['success' => false, 'selected' => false, 'message' => 'Dados invalidos.'];
-        }
-
-        $productCheck = $this->SQL->prepare('
-            SELECT produto_id
-            FROM produtos
-            WHERE produto_id = :productId
-              AND produto_loja = :storeId
-            LIMIT 1
+    public function updateShowcaseProductOrder($orderId, $newOrder) {
+        $update = $this->SQL->prepare('
+            UPDATE 
+                produtos_ordenacao
+            SET 
+                produto_ordenacao_ordem = :newOrder
+            WHERE 
+                produto_ordenacao_id = :orderId
         ');
-        $productCheck->bindParam(':productId', $productId, PDO::PARAM_INT);
-        $productCheck->bindParam(':storeId', $storeId, PDO::PARAM_INT);
-        $productCheck->execute();
 
-        if (!$productCheck->fetch(PDO::FETCH_ASSOC)) {
-            return ['success' => false, 'selected' => false, 'message' => 'Produto nao pertence a loja.'];
-        }
+        $update->bindParam(':newOrder', $newOrder, PDO::PARAM_INT);
+        $update->bindParam(':orderId', $orderId, PDO::PARAM_INT);
 
-        $existing = $this->SQL->prepare('SELECT produto_ordenacao_id FROM produtos_ordenacao WHERE produto_id = :productId LIMIT 1');
-        $existing->bindParam(':productId', $productId, PDO::PARAM_INT);
-        $existing->execute();
-        $exists = $existing->fetch(PDO::FETCH_ASSOC);
+        return $update->execute();
+    }
 
-        if ($exists) {
-            $delete = $this->SQL->prepare('DELETE FROM produtos_ordenacao WHERE produto_id = :productId');
-            $delete->bindParam(':productId', $productId, PDO::PARAM_INT);
-            $ok = $delete->execute();
-
-            return ['success' => (bool) $ok, 'selected' => false, 'message' => $ok ? 'Produto removido da vitrine.' : 'Erro ao remover produto.'];
-        }
-
-        $countSelected = $this->SQL->prepare('
-            SELECT COUNT(*) total
-            FROM produtos_ordenacao po
-            INNER JOIN produtos p ON p.produto_id = po.produto_id
-            WHERE p.produto_loja = :storeId
-        ');
-        $countSelected->bindParam(':storeId', $storeId, PDO::PARAM_INT);
-        $countSelected->execute();
-        $totalSelected = (int) ($countSelected->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-
-        if ($totalSelected >= 10) {
-            return [
-                'success' => false,
-                'selected' => false,
-                'message' => 'Voce pode selecionar no maximo 10 produtos na vitrine.'
-            ];
-        }
-
-        $nextOrderQuery = $this->SQL->prepare('
-            SELECT COALESCE(MAX(po.produto_ordenacao_ordem), 0) max_ordem
-            FROM produtos_ordenacao po
-            INNER JOIN produtos p ON p.produto_id = po.produto_id
-            WHERE p.produto_loja = :storeId
-        ');
-        $nextOrderQuery->bindParam(':storeId', $storeId, PDO::PARAM_INT);
-        $nextOrderQuery->execute();
-        $maxOrder = (int) ($nextOrderQuery->fetch(PDO::FETCH_ASSOC)['max_ordem'] ?? 0);
-        $nextOrder = $maxOrder + 1;
-
+    public function insertShowcaseProductOrder($productId, $order, $collectionId = 0) {
         $insert = $this->SQL->prepare('
-            INSERT INTO produtos_ordenacao (produto_id, produto_ordenacao_ordem)
-            VALUES (:productId, :nextOrder)
+            INSERT INTO 
+                produtos_ordenacao (
+                    produto_id, 
+                    produto_ordenacao_ordem, 
+                    colecao_id
+                )
+            VALUES (
+                :productId, 
+                :order, 
+                :collectionId
+            )
         ');
         $insert->bindParam(':productId', $productId, PDO::PARAM_INT);
-        $insert->bindParam(':nextOrder', $nextOrder, PDO::PARAM_INT);
-        $ok = $insert->execute();
-
-        return ['success' => (bool) $ok, 'selected' => true, 'message' => $ok ? 'Produto adicionado a vitrine.' : 'Erro ao adicionar produto.'];
+        $insert->bindParam(':order', $order, PDO::PARAM_INT);
+        $insert->bindParam(':collectionId', $collectionId, empty($collectionId) ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $insert->execute();
+        return $this->SQL->lastInsertId();
     }
 
-    public function reorderProductOrders($storeId, $productIds) {
-        $storeId = (int) $storeId;
-
-        if ($storeId < 1 || !is_array($productIds)) {
-            return ['success' => false, 'message' => 'Dados invalidos.'];
-        }
-
-        $orderedIds = [];
-        foreach ($productIds as $productId) {
-            $productId = (int) $productId;
-            if ($productId > 0 && !in_array($productId, $orderedIds, true)) {
-                $orderedIds[] = $productId;
-            }
-        }
-
-        if (empty($orderedIds)) {
-            return ['success' => false, 'message' => 'Nenhum produto para ordenar.'];
-        }
-
-        $selectedQuery = $this->SQL->prepare('
-            SELECT po.produto_id
-            FROM produtos_ordenacao po
-            INNER JOIN produtos p ON p.produto_id = po.produto_id
-            WHERE p.produto_loja = :storeId
-            ORDER BY po.produto_ordenacao_ordem ASC, po.produto_ordenacao_id ASC
+    public function deleteShowcaseProductOrder($orderId) {
+        $delete = $this->SQL->prepare('
+            DELETE FROM 
+                produtos_ordenacao
+            WHERE 
+                produto_ordenacao_id = :orderId
         ');
-        $selectedQuery->bindParam(':storeId', $storeId, PDO::PARAM_INT);
-        $selectedQuery->execute();
-        $existingIds = array_map('intval', array_column($selectedQuery->fetchAll(PDO::FETCH_ASSOC), 'produto_id'));
-
-        sort($existingIds);
-        $sortedOrderedIds = $orderedIds;
-        sort($sortedOrderedIds);
-
-        if ($existingIds !== $sortedOrderedIds) {
-            return ['success' => false, 'message' => 'A lista de produtos selecionados nao confere com a loja.'];
-        }
-
-        try {
-            $this->SQL->beginTransaction();
-
-            $update = $this->SQL->prepare('
-                UPDATE produtos_ordenacao
-                SET produto_ordenacao_ordem = :orderValue
-                WHERE produto_id = :productId
-            ');
-
-            foreach ($orderedIds as $index => $productId) {
-                $orderValue = $index + 1;
-                $update->bindParam(':orderValue', $orderValue, PDO::PARAM_INT);
-                $update->bindParam(':productId', $productId, PDO::PARAM_INT);
-                $update->execute();
-            }
-
-            $this->SQL->commit();
-
-            return ['success' => true, 'message' => 'Ordem dos produtos atualizada.'];
-        } catch (\Throwable $e) {
-            if ($this->SQL->inTransaction()) {
-                $this->SQL->rollBack();
-            }
-
-            return ['success' => false, 'message' => 'Erro ao atualizar ordem dos produtos.'];
-        }
+        $delete->bindParam(':orderId', $orderId, PDO::PARAM_INT);
+        return $delete->execute();
     }
 }
