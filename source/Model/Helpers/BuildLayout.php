@@ -116,7 +116,9 @@ class buildLayout {
 
     public function buildFooter() {
         if (!empty($this->getFooter())) {
-            return $this->getView()->render("fragments/" . $this->getFooter());
+            return $this->getView()->render("fragments/" . $this->getFooter(), [
+                "translator" => $this->getTranslator()
+            ]);
         }
     }
 
