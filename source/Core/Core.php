@@ -89,6 +89,7 @@ class Core {
                     usu.usuario_email email,
                     usu.usuario_email_validado email_validado,
                     usu.usuario_envio_validacao envio_validacao,
+                    usu.usuario_foto foto,
                     loj.loja_id loja_id,
                     loj.loja_nome_unico loja_nome_unico,
                     loj.loja_nome loja_nome
@@ -103,7 +104,7 @@ class Core {
             $userStatement->bindParam(':id', $userId, PDO::PARAM_INT);
             $userStatement->execute();
             $result = $userStatement->fetch();
-            $result['foto_perfil'] = url('assets/image/favicon.png');
+            $result['foto_perfil'] = empty($result['foto']) ? url('assets/image/favicon.png') : storageURL($result['foto']);
             if($result) {
                 $this->setLogado(true);
                 $this->setUser($result);

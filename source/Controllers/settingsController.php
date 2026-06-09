@@ -34,22 +34,53 @@ class settingsController extends Core {
 
     public function profile() {
         $this->addTranslator('store/edit');
-        $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        $storeModel = new Settings();
-        $store = $storeModel->getStoreData($storeId);  
+        $userId = !empty($this->getUser()['id']) ? (int) $this->getUser()['id'] : 0;
+        $model = new Settings();
+        $user = $model->getUserData($userId);  
         $this->addLayout('Editar Perfil');
 
         echo $this->view->render("settings/profile", [
-            'store' => $store,
+            'user' => $user,
             'menu' => $this->renderMenu('profile'),
         ]);
+    }
+
+    public function updateProfile($post) {
+        $this->addTranslator('store/edit');
+        $userId = !empty($this->getUser()['id']) ? (int) $this->getUser()['id'] : 0;
+        $model = new Settings();
+        $user = $model->getUserData($userId);
+
+        if (empty($userId) || empty($user)) {
+            exit($this->renderApiResponse(400, $this->getTranslator()->translate("Usuário não encontrado.")));
+        }
+
+        $updateData = [
+            'usuario_nome_completo' => trim((string) ($post['nome'] ?? '')),
+        ];
+
+        try {
+            if (!empty($_FILES['profilePhoto']['tmp_name'])) {
+                $storagePhoto = new Storage();
+                $folder = 'uploads/users/'.$userId.'/';
+                $imageName = $folder.'profile.'. pathinfo($_FILES['profilePhoto']['name'] ?? '', PATHINFO_EXTENSION);
+                // $storagePhoto->cleanFolderFromBucket($folder);
+                $newLogo = $storagePhoto->sendFileToBucket($_FILES['profilePhoto']['tmp_name'], $imageName, true)['message'];
+                $updateData['usuario_foto'] = $newLogo;
+            }
+            $model->updateUserData($userId, $updateData);
+        } catch (Exception $e) {
+            exit($this->renderApiResponse(500, $this->getTranslator()->translate("Erro ao atualizar o perfil: ") . $e->getMessage()));
+        }
+
+        exit($this->renderApiResponse(200, $this->getTranslator()->translate("Perfil atualizado com sucesso.")));
     }
 
     public function security() {
         $this->addTranslator('store/edit');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        $storeModel = new Settings();
-        $store = $storeModel->getStoreData($storeId);  
+        $model = new Settings();
+        $store = $model->getStoreData($storeId);  
         $this->addLayout('Senha e Segurança');
 
         echo $this->view->render("settings/security", [
@@ -61,8 +92,8 @@ class settingsController extends Core {
     public function partner() {
         $this->addTranslator('store/edit');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        $storeModel = new Settings();
-        $store = $storeModel->getStoreData($storeId);  
+        $model = new Settings();
+        $store = $model->getStoreData($storeId);  
         $this->addLayout('Filiações');
 
         echo $this->view->render("settings/partner", [
@@ -74,8 +105,8 @@ class settingsController extends Core {
     public function store() {
         $this->addTranslator('store/edit');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        $storeModel = new Settings();
-        $store = $storeModel->getStoreData($storeId);  
+        $model = new Settings();
+        $store = $model->getStoreData($storeId);  
         $this->addLayout('Editar Loja');
 
         echo $this->view->render("settings/store", [
@@ -87,8 +118,8 @@ class settingsController extends Core {
     public function updateStore($post) {
         $this->addTranslator('store/edit');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        $storeModel = new Settings();
-        $store = $storeModel->getStoreData($storeId);
+        $model = new Settings();
+        $store = $model->getStoreData($storeId);
 
         if (empty($storeId) || empty($store)) {
             exit($this->renderApiResponse(400, $this->getTranslator()->translate("Loja não encontrada.")));
@@ -120,7 +151,7 @@ class settingsController extends Core {
                 $updateData['loja_banner'] = $newBanner;
             }
 
-            $storeModel->updateStoreData($storeId, $updateData);
+            $model->updateStoreData($storeId, $updateData);
         } catch (Exception $e) {
             exit($this->renderApiResponse(500, $this->getTranslator()->translate("Erro ao atualizar a loja: ") . $e->getMessage()));
         }
@@ -131,12 +162,12 @@ class settingsController extends Core {
     public function categories() {
         $this->addTranslator('store/edit');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        $storeModel = new Settings();
-        $store = $storeModel->getStoreData($storeId);  
+        $model = new Settings();
+        $categories = $model->getStoreCategories($storeId);  
         $this->addLayout('Categorias');
 
         echo $this->view->render("settings/categories", [
-            'store' => $store,
+            'categories' => $categories,
             'menu' => $this->renderMenu('categories'),
         ]);
     }
@@ -144,8 +175,8 @@ class settingsController extends Core {
     public function team() {
         $this->addTranslator('store/edit');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
-        $storeModel = new Settings();
-        $store = $storeModel->getStoreData($storeId);  
+        $model = new Settings();
+        $store = $model->getStoreData($storeId);  
         $this->addLayout('Equipe');
 
         echo $this->view->render("settings/team", [

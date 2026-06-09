@@ -4,22 +4,22 @@
     </div>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-        <!-- <li class="mt-2 mb-1 px-3">
+        <li class="mt-2 mb-1 px-3">
             <small class="text-uppercase fw-semibold color-stellar-blue">Meu Usuário</small>
-        </li> -->
-        <!-- <li>
+        </li>
+        <li>
             <a href="<?= url("settings/profile") ?>" class="nav-link link-graphite-gray <?= $selected === 'profile' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-user bi me-4" style="width:24px; text-align: center;"></i>
                 Editar Perfil
             </a>
-        </li> -->
+        </li>
         <!-- <li>
             <a href="<?= url("settings/security") ?>" class="nav-link link-graphite-gray <?= $selected === 'security' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-lock bi me-4" style="width:24px; text-align: center;"></i>
                 Senha e Segurança
             </a>
-        </li>
-        <li>
+        </li> -->
+        <!-- <li>
             <a href="<?= url("settings/partner") ?>" class="nav-link link-graphite-gray <?= $selected === 'partner' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-handshake bi me-4" style="width:24px; text-align: center;"></i>
                 Parcerias
@@ -34,7 +34,7 @@
                 Editar Loja
             </a>
         </li>
-        <!-- <li>
+        <li>
             <a href="<?= url("settings/categories") ?>" class="nav-link link-graphite-gray <?= $selected === 'categories' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-list bi me-4" style="width:24px; text-align: center;"></i>
                 Categorias
@@ -45,6 +45,6 @@
                 <i class="fa fa-users bi me-4" style="width:24px; text-align: center;"></i>
                 Equipe
             </a>
-        </li> -->
+        </li>
     </ul>
 </div>

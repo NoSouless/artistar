@@ -1,0 +1,11 @@
+.category-handle {
+    cursor: grab;
+}
+
+.category-children[data-accept-children="1"] {
+    min-height: 50px;
+}
+
+.category-children[data-accept-children="0"] {
+    display: none;
+}

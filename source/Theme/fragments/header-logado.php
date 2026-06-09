@@ -179,23 +179,23 @@
                     </div>
                 </a>
             </li>
-            <!-- <li>
+            <li>
                 <a href="<?= url('settings/team') ?>" class="nav-link link-nocturne-purple link-hover">
                     <div class="d-flex align-items-center">
                         <i class="fa-solid fa-users bi me-4" style="width:24px; text-align: center;"></i>
                         <span><?= $translator->translate('Equipe') ?></span>
                     </div>
                 </a>
-            </li>  -->
-            <!-- <li class="border-top my-3"></li>  -->
-            <!-- <li>
+            </li> 
+            <li class="border-top my-3"></li> 
+            <li>
                 <a href="<?= url('settings/profile') ?>" class="nav-link link-dark link-hover">
                     <div class="d-flex align-items-center">
                         <i class="icone-sidebar icone-config bi me-4" style="width:24px; text-align: center;"></i>
                         <span><?= $translator->translate('Configurações') ?></span>
                     </div>
                 </a>
-            </li> -->
+            </li>
             <!-- <li>
                 <a href="<?= url('settings/partner') ?>" class="nav-link link-nocturne-purple link-hover">
                     <div class="d-flex align-items-center">
