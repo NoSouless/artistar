@@ -46,7 +46,7 @@ function initCategorySortables() {
         return;
     }
 
-    document.querySelectorAll('#categories-tree, .category-children').forEach(function(container) {
+    document.querySelectorAll('#categories-table-body').forEach(function(container) {
         new Sortable(container, {
             animation: 150,
             ghostClass: 'ghost',
@@ -55,28 +55,17 @@ function initCategorySortables() {
             draggable: '.category-row',
             filter: '.unsortable',
             preventOnFilter: false,
-            // Core Scrolling Options
             scroll: true,                // Enable autoscroll plugin
             scrollSensitivity: 50,       // Distance from edge (in pixels) to trigger scroll
             scrollSpeed: 10,             // Speed of scroll (in pixels per frame)
             bubbleScroll: true,          // Apply scroll to parent containers if true
-            group: {
-                name: 'categories-tree',
-                pull: true,
-                put: true
-            },
             onMove: function(evt) {
                 if (evt.to && evt.to.classList && evt.to.classList.contains('category-children') && evt.to.dataset.acceptChildren !== '1') {
                     return false;
                 }
-
                 return true;
             },
             onEnd: function() {
-                // Um item com filhos não pode ser movido para dentro de um item sem filhos, não desabilita o destino de ter filhos, mas apenas desfaz o ato de mover
-                // if (evt.to && evt.to.classList && evt.to.classList.contains('category-children') && evt.to.dataset.acceptChildren !== '1') {
-                //     evt.from.insertBefore(evt.item, evt.from.children[evt.oldIndex]);
-                // }
             }
         });
     });

@@ -6,53 +6,6 @@
 <?= $this->stop() ?>
 
 <?= $this->start("conteudo") ?>
-
-<?php 
-function buildCategoryTree($category, $translator = null, $firstLevel = true) {
-    global $categories;
-    ob_start();
-
- ?>
-<div class="row category-row border rounded p-3 mb-3" data-category-id="<?= $category['id'] ?>">
-    <div class="col-1"><i class="fas fa-grip-lines category-handle"></i></div>
-    <div class="col-4"><input type="text" class="form-control" name="category[<?= $category['id'] ?>][nome]" value="<?= htmlspecialchars($category['nome']) ?>"></div>
-    <div class="col-1 text-center">                  
-        <div class="mb-3 form-check form-switch form-switch-sm d-flex justify-content-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="active" value="1" <?= $category['ativa'] ? 'checked' : '' ?>>
-        </div>
-    </div>
-    <div class="col-1 text-center">                  
-        <div class="mb-3 form-check form-switch form-switch-sm d-flex justify-content-center">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="public" value="1" <?= $category['publica'] ? 'checked' : '' ?>>
-        </div>
-    </div>
-    <div class="col-2 text-center"><?= $category['total_produtos'] ?></div>
-    <div class="col-3 text-end">
-        <button type="button" class="btn btn-sm btn-outline-danger delete-category-btn" data-category-id="<?= $category['id'] ?>"><?= $translator->translate("Excluir") ?></button>
-    </div>
-    <?php if ((isset($categories[$category['id']]) || $category['total_produtos'] == 0) && $firstLevel): ?>
-    <div class="col-12 category-children mt-3" data-accept-children="1">
-        <?php
-            if (isset($categories[$category['id']])) {
-                foreach ($categories[$category['id']] as $child) {
-                    buildCategoryTree($child, $translator, false);
-                }
-            }
-        ?>
-    </div>
-    <?php endif; ?>
-</div>
-    <?php 
-    $html = ob_get_clean();
-    echo $html;
-
-
-
-}
-
-?>
-
-
 <div class="container pt-3 minimum-height">
     <div class="row avoid-navbar">
         <?= $menu ?>
@@ -64,25 +17,61 @@ function buildCategoryTree($category, $translator = null, $firstLevel = true) {
                     </div>
                 </div>
                 <div class="col-12">
-                    <div class="row p-3">
-                        <div class="col-1">&nbsp;</div>
-                        <div class="col-4"><strong><?= $translator->translate("Categoria") ?></strong></div>
-                        <div class="col-1 text-center"><strong><?= $translator->translate("Ativa") ?></strong></div>
-                        <div class="col-1 text-center"><strong><?= $translator->translate("Pública") ?></strong></div>
-                        <div class="col-2 text-center"><strong><?= $translator->translate("Produtos") ?></strong></div>
-                        <div class="col-3 text-end"><a href="#" class="btn btn-sm btn-outline-primary"><?= $translator->translate("Adicionar Categoria") ?></a></div>
+                    <div class="table-responsive">
+                        <table class="table" style="margin-top: 20px;">
+                            <thead>
+                                <tr>
+                                    <th width="5%" scope="col">&nbsp;</th>
+                                    <th width="55%" scope="col">Categoria</th>
+                                    <th width="5%" class="text-center" scope="col">Ativa</th>
+                                    <th width="5%" class="text-center" scope="col">Pública</th>
+                                    <th width="5%" class="text-center" scope="col">Produtos</th>
+                                    <th width="25%" class="text-end" scope="col">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body">
+                                <?php foreach($categories as $category): ?>
+                                <tr class="category-row" data-category-id="<?= $category['id'] ?>">
+                                    <td scope="row"><i class="fas fa-grip-lines category-handle"></i></td>
+                                    <td><input type="text" class="form-control" name="category[<?= $category['id'] ?>][nome]" value="<?= htmlspecialchars($category['nome']) ?>"></td>
+                                    <td class="text-center">                  
+                                        <div class="mb-3 form-check form-switch form-switch-sm d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="active" value="1" <?= $category['ativa'] ? 'checked' : '' ?>>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">                  
+                                        <div class="mb-3 form-check form-switch form-switch-sm d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="public" value="1" <?= $category['publica'] ? 'checked' : '' ?>>
+                                        </div>
+                                    </td>
+                                    <td class="text-center"><?= $category['total_produtos'] ?></td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-category-btn" data-category-id="<?= $category['id'] ?>"><?= $translator->translate("Excluir") ?></button>
+                                        <button type="button" class="btn btn-sm btn-outline-success save-category-btn" data-category-id="<?= $category['id'] ?>"><?= $translator->translate("Salvar") ?></button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <tr class="unsortable">
+                                    <td scope="row"></td>
+                                    <td><input type="text" class="form-control"  value=""></td>
+                                    <td class="text-center">                  
+                                        <div class="mb-3 form-check form-switch form-switch-sm d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="active" value="1">
+                                        </div>
+                                    </td>
+                                    <td class="text-center">                  
+                                        <div class="mb-3 form-check form-switch form-switch-sm d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="public" value="1">
+                                        </div>
+                                    </td>
+                                    <td class="text-center">0</td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-success" id="add-category-btn"><?= $translator->translate("Adicionar") ?></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="container-categories">
-                        <div id="categories-tree" class="categories-sortable">
-                            <?php foreach($categories[0] as $category): ?>
-                                <?php buildCategoryTree($category, $translator); ?>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 d-flex justify-content-end">
-                    <button type="button" class="btn btn-gray" id="discard-categories-btn"><?= $translator->translate("Descartar Alterações") ?></button>
-                    <button type="button" class="btn btn-nocturne-purple ms-2" id="save-categories-btn"><?= $translator->translate("Salvar Alterações") ?></button>
                 </div>
             </div>  
         </div>

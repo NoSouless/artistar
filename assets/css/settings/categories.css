@@ -2,10 +2,10 @@
     cursor: grab;
 }
 
-.category-children[data-accept-children="1"] {
-    min-height: 50px;
-}
-
-.category-children[data-accept-children="0"] {
-    display: none;
+#categories-table-body {
+    max-height: 70vh;
+    overflow-y: auto;
+    /* scroll lateral invisivel */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }

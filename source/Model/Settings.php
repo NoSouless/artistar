@@ -47,7 +47,6 @@ class Settings extends Core {
     public function getStoreCategories($storeId) {
         $select = $this->SQL->prepare(
             'SELECT
-                COALESCE(c.categoria_pai, 0) AS pai,
                 c.categoria_id AS id,
                 c.categoria_nome AS nome,
                 c.categoria_ordem AS ordem,
@@ -65,7 +64,6 @@ class Settings extends Core {
             GROUP BY
                 id
             ORDER BY
-                pai ASC,
                 ordem ASC,
                 nome ASC
         ');
@@ -74,7 +72,7 @@ class Settings extends Core {
 
         $select->execute();
 
-        return $select->fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
+        return $select->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function updateStoreData($storeId, array $data) {
