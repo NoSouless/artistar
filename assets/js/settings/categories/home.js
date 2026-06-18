@@ -65,12 +65,80 @@ function initCategorySortables() {
                 }
                 return true;
             },
-            onEnd: function() {
+            onEnd: function(evt) {
+                var defaultToast = new ToastManager('myToast');
+                $.ajax({
+                    url: '/settings/categories/reorder',
+                    type: 'POST',
+                    data: {
+                        order: Array.from(evt.to.children).map(child => child.dataset.categoryId)
+                    }
+                }).done(function(response) {
+                    response = JSON.parse(response);
+                    if (response.code == 200) {
+                        defaultToast.showSuccess('Sucesso', response.message);
+                    } else {
+                        defaultToast.showError('Erro', response.message);
+                    }
+                }).fail(function() {
+                    defaultToast.showError('Erro', 'Erro ao salvar a ordem das categorias.');
+                });
             }
         });
     });
 }
 
 $(document).ready(function() {
+    var defaultToast = new ToastManager('myToast');
     initCategorySortables();
+});
+
+$('#add-category-btn').on('click', function() {
+    var formData = new FormData();
+    formData.append('name', $('#new-category-name').val());
+    formData.append('active', $('#flexSwitchCheckActive').is(':checked') ? 1 : 0);
+    formData.append('public', $('#flexSwitchCheckPublic').is(':checked') ? 1 : 0);
+    $.ajax({
+        url: '/settings/categories/new',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false
+    }).done(function(response) {
+        response = JSON.parse(response);
+        if (response.code == 200) {
+            window.location.reload();
+        } else {
+            defaultToast.showError('Erro', response.message);  
+        }
+    }).fail(function() {
+        defaultToast.showError('Erro', 'Erro ao criar a categoria.');  
+    });
+});
+
+$(document).on('click', '.save-category-btn', function() {
+    var categoryId = $(this).data('category-id');
+    var defaultToast = new ToastManager('myToast');
+    var formData = new FormData();
+    formData.append('id', categoryId);
+    formData.append('name', $('#category-name-' + categoryId).val());
+    formData.append('active', $('#category-active-' + categoryId).is(':checked') ? 1 : 0);
+    formData.append('public', $('#category-public-' + categoryId).is(':checked') ? 1 : 0);
+
+    $.ajax({
+        url: '/settings/categories/update',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false
+    }).done(function(response) {
+        response = JSON.parse(response);
+        if (response.code == 200) {
+            defaultToast.showSuccess('Sucesso', response.message);
+        } else {
+            defaultToast.showError('Erro', response.message);
+        }
+    }).fail(function() {
+        defaultToast.showError('Erro', 'Erro ao salvar as alterações.');
+    });
 });

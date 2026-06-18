@@ -70,7 +70,7 @@
                             <input type="hidden" id="storeCurrency" name="storeCurrency" value='<?= $store['loja_moeda'] ?>'>
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="<?= url('settings/store') ?>" class="btn btn-gray"><?= $translator->translate("Descartar") ?></a>
-                                <button type="submit" class="btn btn-nocturne-purple w-25" id="settings-store-submit"><?= $translator->translate("Salvar") ?></button>
+                                <button type="submit" class="btn btn-stellar-blue w-25" id="settings-store-submit"><?= $translator->translate("Salvar") ?></button>
                             </div>
                         </form>
                     </div>

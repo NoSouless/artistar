@@ -73,20 +73,6 @@ $router->get("/graphs", "adminController:graphs", "adminController.graphs");
 $router->get("/events", "adminController:events", "adminController.events");
 $router->get("/subscriptions", "adminController:subscriptions", "adminController.subscriptions");
 
-$router->group('settings');
-$router->get("/profile", "settingsController:profile", "settingsController.profile");
-$router->post("/profile", "settingsController:updateProfile", "settingsController.updateProfile");
-$router->get("/security", "settingsController:security", "settingsController.security");
-$router->post("/security", "settingsController:updateSecurity", "settingsController.updateSecurity");
-$router->get("/partner", "settingsController:partner", "settingsController.partner");
-$router->post("/partner", "settingsController:updatepartner", "settingsController.updatepartner");
-$router->get("/store", "settingsController:store", "settingsController.store");
-$router->post("/store", "settingsController:updateStore", "settingsController.updateStore");
-$router->get("/categories", "settingsController:categories", "settingsController.categories");
-$router->post("/categories", "settingsController:updateCategories", "settingsController.updateCategories");
-$router->get("/team", "settingsController:team", "settingsController.team");
-$router->post("/team", "settingsController:updateTeam", "settingsController.updateTeam");
-
 $router->group('results');
 $router->get("/", "searchController:results", "searchController.results");
 
@@ -132,10 +118,26 @@ $router->post("/store/toggle-collection-product", "apiController:toggleCollectio
 $router->post("/store/reorder-collection-product-order", "apiController:reorderCollectionProductOrder", "apiController.reorderCollectionProductOrder");
 $router->post("/store/follow", "apiController:followStore", "apiController.followStore");
 
-
 $router->group("error");
 $router->get("/404", "errorController:error404", "errorController.error404");
 $router->get("/400", "errorController:error400", "errorController.error400");
+
+$router->group('settings')->namespace("Source\Controllers\Settings");
+$router->get("/profile", "profileController:profile", "profileController.profile");
+$router->post("/profile", "profileController:updateProfile", "profileController.updateProfile");
+$router->get("/security", "securityController:security", "securityController.security");
+$router->post("/security", "securityController:updateSecurity", "securityController.updateSecurity");
+$router->get("/partner", "partnerController:partner", "partnerController.partner");
+$router->post("/partner", "partnerController:updatePartner", "partnerController.updatePartner");
+$router->get("/store", "storeController:store", "storeController.store");
+$router->post("/store", "storeController:updateStore", "storeController.updateStore");
+$router->get("/categories", "categoriesController:categories", "categoriesController.categories");
+$router->get("/categories/category/{categoryId}", "categoriesController:categoryDetails", "categoriesController.categoryDetails");
+$router->post("/categories/new", "categoriesController:newCategory", "categoriesController.newCategory");
+$router->post("/categories/update", "categoriesController:updateCategory", "categoriesController.updateCategory");
+$router->post("/categories/reorder", "categoriesController:reorderCategories", "categoriesController.reorderCategories");
+$router->get("/team", "teamController:team", "teamController.team");
+$router->post("/team", "teamController:updateTeam", "teamController.updateTeam");
 
 
 $router->dispatch();

@@ -38,7 +38,7 @@
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="<?= url('settings/profile') ?>" class="btn btn-gray"><?= $translator->translate("Descartar") ?></a>
-                                <button type="submit" class="btn btn-nocturne-purple w-25" id="settings-profile-submit"><?= $translator->translate("Salvar") ?></button>
+                                <button type="submit" class="btn btn-stellar-blue w-25" id="settings-profile-submit"><?= $translator->translate("Salvar") ?></button>
                             </div>
                         </form>
                     </div>
