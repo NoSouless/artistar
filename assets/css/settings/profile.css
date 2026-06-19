@@ -1,8 +1,8 @@
 .image-drop-area {
-	width: 100%;
-	min-height: 180px;
+	width: 200px;
+	height: 200px;
 	border: 2px dashed #ccc;
-	border-radius: 12px;
+	border-radius: 50%;
 	cursor: pointer;
 	position: relative;
 	background: #fafafa;
@@ -19,7 +19,7 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	border-radius: 12px;
+	border-radius: 50%;
 	position: absolute;
 	top: 0;
 	left: 0;

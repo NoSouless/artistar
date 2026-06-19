@@ -27,4 +27,21 @@ $(document).ready(function() {
             defaultToast.showError('Erro', 'Erro ao salvar as alterações.');
         });
     });
+
+    $(document).on('click', '#accept-delete', function() {
+        $.ajax({
+            url: '/settings/categories/delete',
+            type: 'POST',
+            data: { categoryId: $('#category-id').val() },
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.code == 200) {
+                window.location.href = '/settings/categories';
+            } else {
+                defaultToast.showError('Erro', response.message || 'Erro ao excluir a categoria.');
+            }
+        }).fail(function() {
+            defaultToast.showError('Erro', 'Erro ao excluir a categoria.');
+        });
+    });
 });

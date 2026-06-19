@@ -40,11 +40,11 @@
                 Categorias
             </a>
         </li>
-        <li>
+        <!-- <li>
             <a href="<?= url("settings/team") ?>" class="nav-link link-graphite-gray <?= $selected === 'team' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-users bi me-4" style="width:24px; text-align: center;"></i>
                 Equipe
             </a>
-        </li>
+        </li> -->
     </ul>
 </div>

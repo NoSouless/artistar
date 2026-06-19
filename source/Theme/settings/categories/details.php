@@ -54,12 +54,12 @@
                                     </div>      
                                 </div>
                             </div> 
-                            <input type="hidden" name="id" value="<?= $category['id'] ?>">
+                            <input type="hidden" name="id" id="category-id" value="<?= $category['id'] ?>">
                             <div class="row">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <a href="<?= url('settings/categories') ?>" class="btn btn-gray"><?= $translator->translate("Voltar") ?></a>
                                     <div class="w-50 d-flex justify-content-end gap-2">
-                                        <button class="btn btn-danger w-50" id="delete-category"><?= $translator->translate("Excluir") ?></button>
+                                        <a class="btn btn-cotton-candy w-50" href="#" id="delete-category" data-bs-toggle="modal" data-bs-target="#deleteModal"><?= $translator->translate("Excluir") ?></a>
                                         <button type="submit" class="btn btn-stellar-blue w-50" id="update-category"><?= $translator->translate("Salvar") ?></button>
                                     </div>
                                 </div>
@@ -71,6 +71,26 @@
         </div>
     </div>
 </div>
+<section class="modal-form">
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel"><?= $translator->translate("Excluir") ?></h5>
+                    <button type="button" class="btn-close input-stellar-blue" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <?= $translator->translate("Você tem certeza que deseja excluir a categoria") ?> <strong>"<?= $category['nome'] ?>"</strong>?<br>
+                    <?= $translator->translate("Esta ação não poderá ser desfeita.") ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-fog-gray" data-bs-dismiss="modal"><?= $translator->translate("Cancelar") ?></button>
+                    <button type="button" class="btn btn-cotton-candy" id="accept-delete"><?= $translator->translate("Excluir!") ?></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>

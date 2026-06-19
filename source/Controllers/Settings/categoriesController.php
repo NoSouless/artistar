@@ -21,13 +21,13 @@ class categoriesController extends settingsController {
         ]);
     }
 
-    public function categoryDetails($categoryId) {
+    public function categoryDetails($get) {
         $this->addTranslator('settings/categories');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
         $model = new Categories();
-        $category = $model->getCategoryById($storeId, $categoryId);
+        $category = $model->getCategoryById($storeId, $get['categoryId']);
         if (empty($category)) {
-            header('Location: ' . url('/settings/categories'));
+            header('Location: ' . url('settings/categories'));
             exit;
         }
         echo $this->view->render("settings/categories/details", [
@@ -96,6 +96,36 @@ class categoriesController extends settingsController {
             exit($this->renderApiResponse(200, $tradutor->translate("Categorias reordenadas com sucesso.")));
         } else {
             exit($this->renderApiResponse(500, $tradutor->translate("Erro ao reordenar categorias.")));
+        }
+    }
+
+    public function deleteCategory($post) {
+        $this->addTranslator('settings/categories');
+        $tradutor = $this->getTranslator();
+        $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
+        $categoryId = filter_var($post['categoryId'] ?? '', FILTER_SANITIZE_NUMBER_INT);
+        if (empty($categoryId)) exit($this->renderApiResponse(400, $tradutor->translate("ID da categoria é obrigatório.")));
+        $model = new Categories();
+        $category = $model->getCategoryById($storeId, $categoryId);
+        if (empty($category)) exit($this->renderApiResponse(404, $tradutor->translate("Categoria não encontrada.")));
+        try {
+            if (!empty($category['foto'])) {
+                $folder = 'uploads/categories/'.$categoryId.'/';
+                $storagePhoto = new Storage();
+                $storagePhoto->cleanFolderFromBucket($folder);
+            }
+        } catch (Exception $e) {
+            // não interrompe a execução, apenas loga o erro e continua
+            // error_log("Erro ao deletar thumbnail da categoria: " . $e->getMessage());
+        }
+        try {
+            if ($model->deleteCategory($storeId, $categoryId)) {
+                exit($this->renderApiResponse(200, $tradutor->translate("Categoria deletada com sucesso.")));
+            } else {
+                exit($this->renderApiResponse(500, $tradutor->translate("Erro ao deletar categoria.")));
+            }
+        } catch (Exception $e) {
+            exit($this->renderApiResponse(500, $tradutor->translate("Erro ao deletar categoria.")));
         }
     }
 

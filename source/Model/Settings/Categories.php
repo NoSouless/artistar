@@ -149,4 +149,31 @@ class Categories extends Settings {
             $this->SQL->rollBack();
         }
     }
+
+    public function deleteCategory($storeId, $categoryId) {
+        $this->SQL->beginTransaction();
+        try {
+            // Primeiro, desvincula os produtos dessa categoria
+            $deleteProducts = $this->SQL->prepare(
+                'DELETE FROM categoria_produtos
+                 WHERE categoria_produto_categoria = :categoryId'
+            );
+            $deleteProducts->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
+            $deleteProducts->execute();
+
+            $delete = $this->SQL->prepare(
+                'DELETE FROM categoria_loja
+                WHERE categoria_loja = :storeId AND categoria_id = :categoryId'
+            );
+
+            $delete->bindParam(':storeId', $storeId, PDO::PARAM_INT);
+            $delete->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
+            $delete->execute();
+            $this->SQL->commit();
+            return true;
+        } catch (\Exception $e) {
+            $this->SQL->rollBack();
+            return false;
+        }
+    }
 }

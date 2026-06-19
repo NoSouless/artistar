@@ -20,8 +20,8 @@
                     <div class="login-form p-5">
                         <form id="settings-store-form" method="post" action="<?= url('settings/store') ?>" enctype="multipart/form-data" data-success="<?= $translator->translate("Alteração Salva!") ?>" data-error="<?= $translator->translate("Erro ao Salvar!") ?>">
                             <div class="row g-4 mb-4">
-                                <div class="col-lg-4 col-12">
-                                    <div class="h-100">
+                                <div class="col-xxl-4 col-12">
+                                    <div class="h-100 d-flex flex-column align-items-center">
                                         <label class="form-label mb-2" for="store-photo-input"><?= $translator->translate("Logo da loja") ?></label>
                                         <div id="store-photo-drop-area" class="image-drop-area store-image-drop-area store-photo-drop-area d-flex align-items-center justify-content-center">
                                             <?php if (!empty($store['loja_foto'])): ?>
@@ -36,8 +36,8 @@
                                         <input type="file" id="store-photo-input" name="storePhoto" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 5MB") ?>">
                                     </div>
                                 </div>
-                                <div class="col-lg-8 col-12">
-                                    <div class="h-100">
+                                <div class="col-xxl-8 col-12">
+                                    <div class="h-100 d-flex flex-column align-items-center">
                                         <label class="form-label mb-2" for="store-banner-input"><?= $translator->translate("Banner da loja") ?></label>
                                         <div id="store-banner-drop-area" class="image-drop-area store-image-drop-area store-banner-drop-area d-flex align-items-center justify-content-center">
                                             <?php if (!empty($store['loja_banner'])): ?>

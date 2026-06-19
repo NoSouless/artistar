@@ -136,6 +136,7 @@ $router->get("/categories/category/{categoryId}", "categoriesController:category
 $router->post("/categories/new", "categoriesController:newCategory", "categoriesController.newCategory");
 $router->post("/categories/update", "categoriesController:updateCategory", "categoriesController.updateCategory");
 $router->post("/categories/reorder", "categoriesController:reorderCategories", "categoriesController.reorderCategories");
+$router->post("/categories/delete", "categoriesController:deleteCategory", "categoriesController.deleteCategory");
 $router->get("/team", "teamController:team", "teamController.team");
 $router->post("/team", "teamController:updateTeam", "teamController.updateTeam");
 

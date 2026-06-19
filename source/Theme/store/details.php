@@ -85,14 +85,7 @@
 						<div class="row g-3 mt-3">
 							<div class="col-12 d-flex gap-2 flex-wrap align-items-center store-catalog-toolbar">
 								<div class="d-flex gap-2 flex-wrap align-items-center store-catalog-filters">
-									<!-- <button type="button" class="btn btn-stellar-blue btn-md">
-										<i class="fa-solid"></i>
-										Produtos
-									</button>
-									<button type="button" class="btn btn-stellar-blue btn-md">
-										<i class="fa-solid"></i>
-										Coleções
-									</button> -->
+									
 								</div>
 								<div class="ms-auto text-end store-catalog-search">
 									<div class="store-search-wrap">
