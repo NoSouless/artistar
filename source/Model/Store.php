@@ -38,6 +38,33 @@ class Store extends Core {
         return $select->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getStorePublicCategories($storeId) {
+        $select = $this->SQL->prepare(
+            'SELECT
+                c.categoria_id AS id,
+                c.categoria_nome AS nome,
+                c.categoria_foto AS foto
+            FROM
+                categoria_loja c
+            WHERE
+                c.categoria_loja = :storeId
+            AND
+                c.categoria_publica = 1
+            AND
+                c.categoria_ativa = 1
+            GROUP BY
+                id
+            ORDER BY
+                c.categoria_ordem ASC,
+                nome ASC
+        ');
+
+        $select->bindParam(':storeId', $storeId, PDO::PARAM_INT);
+        $select->execute();
+
+        return $select->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getStoreFollowersCount($storeId) {
         $storeId = (int) $storeId;
         if ($storeId < 1) return 0;
@@ -129,6 +156,7 @@ class Store extends Core {
         if (isset($filters['only_in_showcase']) && !empty($filters['only_in_showcase'])) $where[] = "ordenacao.produto_id IS NOT NULL";
         if (isset($filters['only_out_showcase']) && !empty($filters['only_out_showcase'])) $where[] = "ordenacao.produto_id IS NULL";
         if (isset($filters['collection_id'])) $where[] = "COALESCE(ordenacao.colecao_id, 0) = {$filters['collection_id']}";
+        if (isset($filters['category_id']) && !empty($filters['category_id'])) $where[] = "cp.categoria_produto_categoria = {$filters['category_id']}";
 
         $where = !empty($where) ? ' AND ' . implode(' AND ', $where) : '';
 
@@ -148,6 +176,8 @@ class Store extends Core {
                 produtos p
             LEFT JOIN 
                 produtos_ordenacao ordenacao ON ordenacao.produto_id = p.produto_id
+            LEFT JOIN
+                categoria_produtos cp ON cp.categoria_produto_produto = p.produto_id
             WHERE
                 p.produto_loja = :storeId
             AND

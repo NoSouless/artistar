@@ -110,12 +110,7 @@ $router->group('apis');
 $router->post("/states", "apiController:states", "apiController.states");
 $router->post("/cities", "apiController:cities", "apiController.cities");
 $router->post("/store/products", "apiController:storeProducts", "apiController.storeProducts");
-$router->post("/store/manage-products", "apiController:manageStoreProducts", "apiController.manageStoreProducts");
-$router->post("/store/toggle-product-order", "apiController:toggleStoreProductOrder", "apiController.toggleStoreProductOrder");
-$router->post("/store/reorder-product-order", "apiController:reorderStoreProductOrder", "apiController.reorderStoreProductOrder");
-$router->post("/store/manage-collection-products", "apiController:manageCollectionProducts", "apiController.manageCollectionProducts");
-$router->post("/store/toggle-collection-product", "apiController:toggleCollectionProductOrder", "apiController.toggleCollectionProductOrder");
-$router->post("/store/reorder-collection-product-order", "apiController:reorderCollectionProductOrder", "apiController.reorderCollectionProductOrder");
+$router->post("/store/categories", "apiController:storeCategories", "apiController.storeCategories");
 $router->post("/store/follow", "apiController:followStore", "apiController.followStore");
 
 $router->group("error");

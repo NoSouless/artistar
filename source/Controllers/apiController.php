@@ -94,16 +94,23 @@ class apiController extends Core {
     }
 
     public function storeProducts($data) {
-        try {
+        // try {
             $storeId = isset($data['storeId']) ? (int) $data['storeId'] : 0;
 
             if (empty($storeId) || $storeId < 1) exit($this->renderApiResponse(400, 'Loja invalida.'));
 
             $storeModel = new Store();
-            $products = $storeModel->getShowcaseProductOrder($storeId, [
-                'only_in_showcase' => true,
-                'collection_id' => 0
-            ]);
+            $filters = [];
+            if (isset($data['categoryId']) && !empty($data['categoryId'])) {
+                $filters['category_id'] = filter_var($data['categoryId'], FILTER_SANITIZE_NUMBER_INT);
+            }
+            if (isset($data['collectionId']) && !empty($data['collectionId'])) {
+                $filters['collection_id'] = filter_var($data['collectionId'], FILTER_SANITIZE_NUMBER_INT);
+            }
+            if (empty($filters)) {
+                $filters['only_in_showcase'] = true;
+            }
+            $products = $storeModel->getShowcaseProductOrder($storeId, $filters);
 
             foreach ($products as &$product) {
                 $product['thumbnail'] = !empty($product['thumbnail']) ? storageURL($product['thumbnail']) : url('assets/image/200x300.png');
@@ -115,8 +122,33 @@ class apiController extends Core {
             ]));
 
             return;
+        // } catch (\Throwable $e) {
+        //     exit($this->renderApiResponse(500, 'Erro interno ao carregar produtos da loja.'));
+        //     return;
+        // }
+    }
+
+    public function storeCategories($data) {
+        try {
+            $storeId = isset($data['storeId']) ? (int) $data['storeId'] : 0;
+
+            if (empty($storeId) || $storeId < 1) exit($this->renderApiResponse(400, 'Loja invalida.'));
+
+            $storeModel = new Store();
+            $categories = $storeModel->getStorePublicCategories($storeId);
+
+            $categories = array_map(function($category) {
+                $category['thumbnail'] = !empty($category['foto']) ? storageURL($category['foto']) : url('assets/image/200x300.png');
+                return $category;
+            }, $categories);
+
+            exit($this->renderApiResponse(200, null, [
+                'categories' => $categories
+            ]));
+
+            return;
         } catch (\Throwable $e) {
-            exit($this->renderApiResponse(500, 'Erro interno ao carregar produtos da loja.'));
+            exit($this->renderApiResponse(500, 'Erro interno ao carregar categorias da loja.'));
             return;
         }
     }

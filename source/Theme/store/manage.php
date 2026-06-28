@@ -58,15 +58,11 @@
                         <div class="g-3 mt-3">
                             <div class="col-12 d-flex gap-2 flex-wrap align-items-center store-catalog-toolbar">
                                 <div class="d-flex gap-2 flex-wrap align-items-center store-catalog-filters">
-									<!-- <button type="button" class="btn btn-stellar-blue btn-md">
-										<i class="fa-solid"></i>
-										Destaques
-									</button>
-									<button type="button" class="btn btn-stellar-blue btn-md">
-										<i class="fa-solid"></i>
-										Categorias
-									</button> -->
-								</div>
+                                    <a href="<?= url('settings/categories') ?>" class="btn btn-outline-stellar-blue btn-sm ms-2" aria-label="Editar vitrine da loja">
+                                        <i class="fa-solid fa-pen"></i>
+                                        Editar Categorias
+                                    </a>
+                                </div>
                                 <div class="ms-auto text-end store-catalog-search">
                                     <div class="store-search-wrap">
                                         <i class="fa-solid fa-search store-search-icon"></i>
