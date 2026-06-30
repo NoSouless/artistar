@@ -14,7 +14,7 @@
         <span class="h1 text-start fw-bold color-nocturne-purple" style="padding-top: 100px;font-size: 50px">Privacy Policy</span>
         <div class="col-12 mt-2 text-justify">
 
-            <p class="color-gray">Last updated: June 2025</p>
+            <p class="color-gray">Last updated: June 2026</p>
 
             <p class="h4 py-4 fw-bold color-stellar-blue">1. WHO WE ARE</p>
             <p>Artistar is a digital platform for sales, inventory, events, and catalog management designed for artists and creative sellers. The platform is operated by its founders, headquartered in the city of Santos, State of São Paulo, Brazil, and is currently undergoing legal formalization.</p>

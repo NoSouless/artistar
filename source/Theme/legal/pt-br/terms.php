@@ -10,7 +10,7 @@
         <span class="h1 text-start fw-bold color-nocturne-purple" style="padding-top: 100px;font-size: 50px">Termos de Uso</span>
         <div class="col-12 mt-2 text-justify">
 
-            <p class="color-gray">Última atualização: Junho de 2025</p>
+            <p class="color-gray">Última atualização: Junho de 2026</p>
 
             <p class="h4 py-4 fw-bold color-stellar-blue">1. DEFINIÇÕES</p>
             <p>Para facilitar a leitura deste documento, adotamos os seguintes termos:</p>
