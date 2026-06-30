@@ -49,6 +49,7 @@ $router->post("/insert", "salesController:insert", "salesController.insert");
 $router->group('stock');
 $router->get("/", "stockController:home", "stockController.home");
 $router->post("/newProduct", "stockController:newProduct", "stockController.newProduct");
+$router->post("/importProducts", "stockController:importProducts", "stockController.importProducts");
 $router->post("/product/alter", "stockController:alterProduct", "stockController.alterProduct");
 $router->post("/product/duplicate", "stockController:duplicateProduct", "stockController.duplicateProduct");
 $router->post("/product/delete", "stockController:deleteProduct", "stockController.deleteProduct");

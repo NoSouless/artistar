@@ -171,6 +171,8 @@ class Store extends Core {
                 p.produto_valor_desconto valor_desconto,
                 ordenacao.produto_ordenacao_id ordenacao_id,
                 COALESCE(ordenacao.produto_ordenacao_ordem, 0) ordem,
+                IF(p.produto_estoque <= p.produto_estoque_minimo, 1, 0) mostrar_estoque,
+                IF(p.produto_estoque <= p.produto_estoque_minimo, p.produto_estoque, 0) estoque,
                 p.produto_palavras_chave palavras_chave
             FROM
                 produtos p

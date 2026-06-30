@@ -26,7 +26,7 @@
     "Palavras-Chave ajudam na busca de produtos, sem serem parte do nome oficial.": "Keywords help in product search, without being part of the official name.",
     "Estoque": "Stock",
     "Estoque Mínimo": "Minimum Stock",
-    "Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos.": "Minimum stock is the minimum quantity you want to keep in stock to avoid running out of products.",
+    "Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos. Quando o produto está na vitrine da loja, ele será exibido com um aviso de estoque baixo.": "Minimum stock is the minimum quantity you want to keep in stock to avoid running out of products. When the product is in the store window, it will be displayed with a low stock warning.",
     "Descartar Alterações": "Discard Changes",
     "Você tem certeza que deseja duplicar o produto": "Are you sure you want to duplicate the product",
     "com o nome": "with the name",

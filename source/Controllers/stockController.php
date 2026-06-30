@@ -108,6 +108,26 @@ class stockController extends Core {
         exit($this->renderApiResponse(200, $tradutor->translate("Produto inserido com sucesso."), ['productId' => $productId]));
     }
 
+    public function importProducts($post) {
+        $this->addTranslator('stock/home');
+        $tradutor = $this->getTranslator();
+        $stockModel = new Stock();
+        $store = $this->getUser()['loja_id'] ?? 0;
+        if (empty($store)) exit($this->renderApiResponse(400, $tradutor->translate("Loja não encontrada.")));
+        if (empty($_FILES['importFile']['tmp_name'])) {
+            exit($this->renderApiResponse(400, $tradutor->translate("Nenhum arquivo enviado.")));
+        }
+        try {
+            $result = $stockModel->importProductsFromFile($_FILES['importFile'], $store);
+            exit($this->renderApiResponse(200, $tradutor->translate("Produtos importados com sucesso!"), [
+                'created' => $result['created'], 
+                'updated' => $result['updated']
+            ]));
+        } catch (Exception $e) {
+            exit($this->renderApiResponse(500, $tradutor->translate("Erro ao importar produtos: ") . $e->getMessage()));
+        }
+    }
+
     public function productDetails($get) {
         $this->addTranslator('stock/productDetails');
         $productId = $get['productId'] ?? 0;

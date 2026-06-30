@@ -129,6 +129,23 @@
                                 <?php endforeach; ?>
                             </select>
                         </form>
+                        <div class="me-3">
+                            <button type="button" class="btn btn-cotton-candy dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-screwdriver-wrench bi" style="width:24px; text-align: center;"></i> <?= $translator->translate('Ações') ?>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#importModal">
+                                        <i class="fa fa-file-import me-1" aria-hidden="true"></i> <?= $translator->translate('Importar Produtos') ?>                   
+                                    </a>
+                                </li>
+                                <!-- <li>
+                                    <a class="dropdown-item" href="#" id="export-products" data-bs-toggle="modal">
+                                        <i class="fa fa-file-export me-1" aria-hidden="true"></i> <?= $translator->translate('Exportar Produtos') ?>                      
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </div>
                         <a class="btn btn-stellar-blue btn-md" id="newProduct" data-bs-toggle="modal" data-bs-target="#newModal">
                             <i class="fa-solid fa-plus bi" style="width:24px; text-align: center;"></i> <?= $translator->translate('Novo Produto') ?>
                         </a>
@@ -255,186 +272,226 @@
     </section>
 </section>
 <section class="modal-form">
-<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filterModalLabel"><?= $translator->translate('Opções de Filtros') ?></h5>
-                <button type="button" class="btn-close input-stellar-blue" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="filter-form" method="GET" action="<?= url('stock') ?>">
-                    <div class="mb-3">
-                        <label for="filter-status" class="form-label"><?= $translator->translate('Status') ?></label>
-                        <select class="form-select" id="filter-status" name="filter[status]">
-                            <option value=""><?= $translator->translate('Selecione') ?></option>
-                            <option value="active" <?= $filter['status'] == 'active' ? 'selected' : '' ?>><?= $translator->translate('Ativo') ?></option>
-                            <option value="inactive" <?= $filter['status'] == 'inactive' ? 'selected' : '' ?>><?= $translator->translate('Inativo') ?></option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="filter-category" class="form-label"><?= $translator->translate('Categoria(s)') ?></label>
-                        <select class="form-select" id="filter-category" name="filter[category][]" multiple>
-                            <?php foreach ($categories as $category): ?>
-                                <option value="<?= $category['id'] ?>" <?= in_array($category['id'], $filter['category']) ? 'selected' : '' ?>><?= $category['nome'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 col-6">
-                            <label for="filter-price" class="form-label"><?= $translator->translate('Preço') ?></label>
-                            <input type="text" class="form-control moedaReal" id="filter-price" name="filter[price]" value="<?= $filter['price'] ?? '0,00' ?>">
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel"><?= $translator->translate('Opções de Filtros') ?></h5>
+                    <button type="button" class="btn-close input-stellar-blue" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filter-form" method="GET" action="<?= url('stock') ?>">
+                        <div class="mb-3">
+                            <label for="filter-status" class="form-label"><?= $translator->translate('Status') ?></label>
+                            <select class="form-select" id="filter-status" name="filter[status]">
+                                <option value=""><?= $translator->translate('Selecione') ?></option>
+                                <option value="active" <?= $filter['status'] == 'active' ? 'selected' : '' ?>><?= $translator->translate('Ativo') ?></option>
+                                <option value="inactive" <?= $filter['status'] == 'inactive' ? 'selected' : '' ?>><?= $translator->translate('Inativo') ?></option>
+                            </select>
                         </div>
-                        <div class="mb-3 col-6">
-                            <label for="filter-cost" class="form-label"><?= $translator->translate('Custo') ?></label>
-                            <input type="text" class="form-control moedaReal" id="filter-cost" name="filter[cost]" value="<?= $filter['cost'] ?? '0,00' ?>">
+                        <div class="mb-3">
+                            <label for="filter-category" class="form-label"><?= $translator->translate('Categoria(s)') ?></label>
+                            <select class="form-select" id="filter-category" name="filter[category][]" multiple>
+                                <?php foreach ($categories as $category): ?>
+                                    <option value="<?= $category['id'] ?>" <?= in_array($category['id'], $filter['category']) ? 'selected' : '' ?>><?= $category['nome'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 col-6">
-                            <label for="filter-discount" class="form-label"><?= $translator->translate('Desconto') ?></label>
-                            <input type="text" class="form-control moedaReal" id="filter-discount" name="filter[discount]" value="<?= $filter['discount'] ?? '0,00' ?>">
+                        <div class="row">
+                            <div class="mb-3 col-6">
+                                <label for="filter-price" class="form-label"><?= $translator->translate('Preço') ?></label>
+                                <input type="text" class="form-control moedaReal" id="filter-price" name="filter[price]" value="<?= $filter['price'] ?? '0,00' ?>">
+                            </div>
+                            <div class="mb-3 col-6">
+                                <label for="filter-cost" class="form-label"><?= $translator->translate('Custo') ?></label>
+                                <input type="text" class="form-control moedaReal" id="filter-cost" name="filter[cost]" value="<?= $filter['cost'] ?? '0,00' ?>">
+                            </div>
                         </div>
-                        <div class="mb-3 col-6">
-                            <label for="filter-real_price" class="form-label"><?= $translator->translate('Preço Atual') ?></label>
-                            <input type="text" class="form-control moedaReal" id="filter-real_price" name="filter[real_price]" value="<?= $filter['real_price'] ?? '0,00' ?>">
+                        <div class="row">
+                            <div class="mb-3 col-6">
+                                <label for="filter-discount" class="form-label"><?= $translator->translate('Desconto') ?></label>
+                                <input type="text" class="form-control moedaReal" id="filter-discount" name="filter[discount]" value="<?= $filter['discount'] ?? '0,00' ?>">
+                            </div>
+                            <div class="mb-3 col-6">
+                                <label for="filter-real_price" class="form-label"><?= $translator->translate('Preço Atual') ?></label>
+                                <input type="text" class="form-control moedaReal" id="filter-real_price" name="filter[real_price]" value="<?= $filter['real_price'] ?? '0,00' ?>">
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 col-6">
-                            <label for="filter-stock" class="form-label"><?= $translator->translate('Estoque') ?></label>
-                            <input type="number" class="form-control" id="filter-stock" name="filter[stock]" value="<?= $filter['stock'] ?? '0' ?>" min="0">
+                        <div class="row">
+                            <div class="mb-3 col-6">
+                                <label for="filter-stock" class="form-label"><?= $translator->translate('Estoque') ?></label>
+                                <input type="number" class="form-control" id="filter-stock" name="filter[stock]" value="<?= $filter['stock'] ?? '0' ?>" min="0">
+                            </div>
+                            <div class="mb-3 col-6">
+                                <label for="filter-min-stock" class="form-label"><?= $translator->translate('Estoque Mín.') ?></label>
+                                <input type="number" class="form-control" id="filter-min-stock" name="filter[min_stock]" value="<?= $filter['min_stock'] ?? '0' ?>" min="0">
+                            </div>
                         </div>
-                        <div class="mb-3 col-6">
-                            <label for="filter-min-stock" class="form-label"><?= $translator->translate('Estoque Mín.') ?></label>
-                            <input type="number" class="form-control" id="filter-min-stock" name="filter[min_stock]" value="<?= $filter['min_stock'] ?? '0' ?>" min="0">
-                        </div>
-                    </div>
-                    <input type="hidden" name="search" value="<?= $get['search'] ?? '' ?>">
-                    <?php
-                        if (!empty($filter['stock_status'])) echo '<input type="hidden" name="filter[stock_status]" value="' . htmlspecialchars($filter['stock_status']) . '">';
-                    ?>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-fog-gray" data-bs-dismiss="modal"><?= $translator->translate('Fechar') ?></button>
-                <a href="<?= url('stock') ?>" class="btn btn-cotton-candy" id="clear-filters"><?= $translator->translate('Limpar Filtros') ?></a>
-                <button type="submit" class="btn btn-stellar-blue" form="filter-form"><?= $translator->translate('Aplicar Filtros') ?></button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="newModal" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filterModalLabel"><?= $translator->translate('Novo Produto') ?></h5>
-                <button type="button" class="btn-close input-stellar-blue" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="form-new-product" method="post" action="<?= url("stock") ?>">
-
-                    
-                    <div class="form-check form-switch form-switch-sm">
-                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="active" checked>
-                        <label class="form-check-label" for="flexSwitchCheckDefault" value="1"><?= $translator->translate('Produto Ativo') ?></label>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label"><?= $translator->translate('Imagem do Produto') ?></label>
-                        <div id="image-drop-area" class="image-drop-area d-flex align-items-center justify-content-center">
-                            <span id="image-drop-text"><?= $translator->translate('Clique ou arraste uma imagem aqui') ?></span>
-                        </div>
-                    </div>
-                    <small id="new-nameHelp" class="form-text text-muted">
-                        <?= $translator->translate('Tamanho máximo') ?>: 5MB
-                    </small>
-                    <input type="file" id="new-image" name="thumbnail" accept="image/*" style="display:none;">
-
-                    
-                    <div class="mb-3">
-                        <label for="filter-name" class="form-label">*<?= $translator->translate('Nome') ?></label>
-                        <input type="text" class="form-control" id="new-name" name="name" placeholder="<?= $translator->translate('Digite o nome do produto') ?>">
-                        <small id="new-nameHelp" class="form-text text-muted d-flex justify-content-between">
-                            <span><?= $translator->translate('Nome oficial do produto') ?></span>
-                            <span><span id="new-nameCount">0</span>/50</span>
-                        </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="filter-insideId" class="form-label"><?= $translator->translate('Identificação Interna') ?></label>
-                        <input type="text" class="form-control" id="new-insideId" name="insideId" placeholder="<?= $translator->translate('Digite a identificação interna') ?>">
-                        <small id="new-insideIdHelp" class="form-text text-muted d-flex justify-content-between">
-                            <span><?= $translator->translate('Um nome não oficial do produto') ?></span>
-                            <span><span id="new-insideIdCount">0</span>/50</span>
-                        </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="new-category" class="form-label"><?= $translator->translate('Categorias') ?></label>
-                        <select class="form-select select2" id="new-category" name="category[]" multiple="multiple">
-                            <?php foreach ($categories as $category): ?>
-                                <option value="{existing}<?= $category['id'] ?>"><?= $category['nome'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="new-keywords" class="form-label">
-                            <?= $translator->translate('Palavras-Chave') ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('Palavras-Chave ajudam na busca de produtos, sem serem parte do nome oficial.') ?>"></i>
-                        </label>
-                        <select class="form-select select2" id="new-keywords" name="keywords[]" multiple="multiple">
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="filter-name" class="form-label"><?= $translator->translate('Descrição') ?></label>
-                        <textarea class="form-control" id="filter-description" name="description" rows="3" placeholder="<?= $translator->translate('Digite a descrição do produto') ?>"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 col-6">
-                            <label for="new-price" class="form-label"><?= $translator->translate('Preço') ?></label>
-                            <input type="text" class="form-control moedaReal" id="new-price" name="price" value="0,00">
-                        </div>
-                        <div class="mb-3 col-6">
-                            <label for="new-cost" class="form-label"><?= $translator->translate('Custo') ?></label>
-                            <input type="text" class="form-control moedaReal" id="new-cost" name="cost" value="0,00">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 col-6">
-                            <label for="new-discount" class="form-label"><?= $translator->translate('Desconto') ?></label>
-                            <input type="text" class="form-control moedaReal" id="new-discount" name="discount" value="0,00">
-                        </div>
-                        <div class="mb-3 col-6">
-                            <label for="new-profit" class="form-label">
-                                <?= $translator->translate('Margem') ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('A margem de contribuição é calculada subtraindo o custo e o desconto do preço de venda, ajuda a identificar a lucratividade do produto.') ?>"></i>
-                            </label>
-                            <input type="text" disabled class="form-control" id="new-profit" name="profit" value="0,00">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 col-6">
-                            <label for="new-stock" class="form-label"><?= $translator->translate('Estoque') ?></label>
-                            <input type="number" class="form-control" id="new-stock" name="stock" value="0" min="0">
-                        </div>
-                        <div class="mb-3 col-6">
-                            <label for="new-min-stock" class="form-label">
-                                <?= $translator->translate('Estoque Mín.') ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos.') ?>"></i>
-                            </label>
-                            <input type="number" class="form-control" id="new-min-stock" name="min_stock" value="0" min="0">
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-fog-gray" data-bs-dismiss="modal"><?= $translator->translate('Fechar') ?></button>
-                <button type="submit" class="btn btn-stellar-blue" id="create-product-btn" form="new-product-form"><?= $translator->translate('Inserir') ?></button>
+                        <input type="hidden" name="search" value="<?= $get['search'] ?? '' ?>">
+                        <?php
+                            if (!empty($filter['stock_status'])) echo '<input type="hidden" name="filter[stock_status]" value="' . htmlspecialchars($filter['stock_status']) . '">';
+                        ?>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-fog-gray" data-bs-dismiss="modal"><?= $translator->translate('Fechar') ?></button>
+                    <a href="<?= url('stock') ?>" class="btn btn-cotton-candy" id="clear-filters"><?= $translator->translate('Limpar Filtros') ?></a>
+                    <button type="submit" class="btn btn-stellar-blue" form="filter-form"><?= $translator->translate('Aplicar Filtros') ?></button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <div class="modal fade" id="newModal" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel"><?= $translator->translate('Novo Produto') ?></h5>
+                    <button type="button" class="btn-close input-stellar-blue" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-new-product" method="post" action="<?= url("stock") ?>">
+
+                        
+                        <div class="form-check form-switch form-switch-sm">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="active" checked>
+                            <label class="form-check-label" for="flexSwitchCheckDefault" value="1"><?= $translator->translate('Produto Ativo') ?></label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><?= $translator->translate('Imagem do Produto') ?></label>
+                            <div id="image-drop-area" class="image-drop-area d-flex align-items-center justify-content-center">
+                                <span id="image-drop-text"><?= $translator->translate('Clique ou arraste uma imagem aqui') ?></span>
+                            </div>
+                        </div>
+                        <small id="new-nameHelp" class="form-text text-muted">
+                            <?= $translator->translate('Tamanho máximo') ?>: 5MB
+                        </small>
+                        <input type="file" id="new-image" name="thumbnail" accept="image/*" style="display:none;">
+
+                        
+                        <div class="mb-3">
+                            <label for="filter-name" class="form-label">*<?= $translator->translate('Nome') ?></label>
+                            <input type="text" class="form-control" id="new-name" name="name" placeholder="<?= $translator->translate('Digite o nome do produto') ?>">
+                            <small id="new-nameHelp" class="form-text text-muted d-flex justify-content-between">
+                                <span><?= $translator->translate('Nome oficial do produto') ?></span>
+                                <span><span id="new-nameCount">0</span>/50</span>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="filter-insideId" class="form-label"><?= $translator->translate('Identificação Interna') ?></label>
+                            <input type="text" class="form-control" id="new-insideId" name="insideId" placeholder="<?= $translator->translate('Digite a identificação interna') ?>">
+                            <small id="new-insideIdHelp" class="form-text text-muted d-flex justify-content-between">
+                                <span><?= $translator->translate('Um nome não oficial do produto') ?></span>
+                                <span><span id="new-insideIdCount">0</span>/50</span>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new-category" class="form-label"><?= $translator->translate('Categorias') ?></label>
+                            <select class="form-select select2" id="new-category" name="category[]" multiple="multiple">
+                                <?php foreach ($categories as $category): ?>
+                                    <option value="{existing}<?= $category['id'] ?>"><?= $category['nome'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new-keywords" class="form-label">
+                                <?= $translator->translate('Palavras-Chave') ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('Palavras-Chave ajudam na busca de produtos, sem serem parte do nome oficial.') ?>"></i>
+                            </label>
+                            <select class="form-select select2" id="new-keywords" name="keywords[]" multiple="multiple">
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="filter-name" class="form-label"><?= $translator->translate('Descrição') ?></label>
+                            <textarea class="form-control" id="filter-description" name="description" rows="3" placeholder="<?= $translator->translate('Digite a descrição do produto') ?>"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-6">
+                                <label for="new-price" class="form-label"><?= $translator->translate('Preço') ?></label>
+                                <input type="text" class="form-control moedaReal" id="new-price" name="price" value="0,00">
+                            </div>
+                            <div class="mb-3 col-6">
+                                <label for="new-cost" class="form-label"><?= $translator->translate('Custo') ?></label>
+                                <input type="text" class="form-control moedaReal" id="new-cost" name="cost" value="0,00">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-6">
+                                <label for="new-discount" class="form-label"><?= $translator->translate('Desconto') ?></label>
+                                <input type="text" class="form-control moedaReal" id="new-discount" name="discount" value="0,00">
+                            </div>
+                            <div class="mb-3 col-6">
+                                <label for="new-profit" class="form-label">
+                                    <?= $translator->translate('Margem') ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('A margem de contribuição é calculada subtraindo o custo e o desconto do preço de venda, ajuda a identificar a lucratividade do produto.') ?>"></i>
+                                </label>
+                                <input type="text" disabled class="form-control" id="new-profit" name="profit" value="0,00">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-6">
+                                <label for="new-stock" class="form-label"><?= $translator->translate('Estoque') ?></label>
+                                <input type="number" class="form-control" id="new-stock" name="stock" value="0" min="0">
+                            </div>
+                            <div class="mb-3 col-6">
+                                <label for="new-min-stock" class="form-label">
+                                    <?= $translator->translate('Estoque Mín.') ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos. Quando o produto está na vitrine da loja, ele será exibido com um aviso de estoque baixo.') ?>"></i>
+                                </label>
+                                <input type="number" class="form-control" id="new-min-stock" name="min_stock" value="0" min="0">
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-fog-gray" data-bs-dismiss="modal"><?= $translator->translate('Fechar') ?></button>
+                    <button type="submit" class="btn btn-stellar-blue" id="create-product-btn" form="new-product-form"><?= $translator->translate('Inserir') ?></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importModalLabel"><?= $translator->translate('Importar Produtos') ?></h5>
+                    <button type="button" class="btn-close input-stellar-blue" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="import-modal-body">
+                    <form id="import-form" method="POST" action="<?= url('stock') ?>">
+                        <div class="mb-3">
+                            <p><?= $translator->translate('Ao importar produtos, aqueles com nomes iguais serão atualizados, enquanto produtos com nomes diferentes serão criados.') ?></p>
+                            <p><?= $translator->translate('Categorias com nomes iguais serão vinculadas aos produtos, e categorias não encontradas serão criadas automaticamente.') ?></p>
+                            <p><?= $translator->translate('Você pode baixar o modelo de importação clicando no botão abaixo.') ?></p>
+                            <p><?= $translator->translate('Não troque o nome das colunas do arquivo.') ?></p>
+                        </div>
+                        <div class="mb-3">
+                            <a href="<?= url('assets/template/import_products_template.csv') ?>" class="btn btn-stellar-blue" download>
+                                <i class="fa-solid fa-file-excel me-1"></i> <?= $translator->translate('Baixar Modelo de Importação') ?>
+                            </a>
+                        </div>
+                        <div class="mb-3">
+                            <label for="importFile" class="form-label"><?= $translator->translate('Envie um arquivo .csv') ?></label>
+                            <input class="form-control" type="file" id="importFile" name="importFile" accept=".csv">
+                            <small id="importFileHelp" class="form-text text-muted">
+                                <?= $translator->translate('Tamanho máximo') ?>: 2MB
+                            </small>
+                            <br>
+                            <small id="importFileError" class="form-text text-danger d-none">
+                                <?= $translator->translate('Erro ao importar o arquivo. Por favor, verifique se o arquivo está no formato correto e tente novamente.') ?>
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-fog-gray" data-bs-dismiss="modal"><?= $translator->translate('Fechar') ?></button>
+                    <button type="submit" class="btn btn-stellar-blue" id="import-form-btn" form="import-form"><i class="fa-solid fa-file-import me-1"></i> <?= $translator->translate('Importar') ?></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 <?= $this->stop() ?>
 

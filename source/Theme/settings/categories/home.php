@@ -22,10 +22,10 @@
                             <thead>
                                 <tr>
                                     <th width="5%" scope="col">&nbsp;</th>
-                                    <th width="55%" scope="col">Categoria</th>
-                                    <th width="5%" class="text-center" scope="col">Ativa</th>
-                                    <th width="5%" class="text-center" scope="col">Pública</th>
-                                    <th width="5%" class="text-center" scope="col">Produtos</th>
+                                    <th width="55%" scope="col"><?= $translator->translate("Categoria") ?></th>
+                                    <th width="5%" class="text-center" scope="col"><?= $translator->translate("Ativa") ?></th>
+                                    <th width="5%" class="text-center" scope="col"><?= $translator->translate("Pública") ?></th>
+                                    <th width="5%" class="text-center" scope="col"><?= $translator->translate("Produtos") ?></th>
                                     <th width="25%" class="text-end" scope="col">&nbsp;</th>
                                 </tr>
                             </thead>
@@ -82,5 +82,11 @@
 
 <?= $this->start("js") ?>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+    const translator = {
+        success: "<?= $translator->translate("Sucesso") ?>",
+        error: "<?= $translator->translate("Erro") ?>"
+    };
+</script>
 <script src="<?= url("assets/js/settings/categories/home.js") ?>"></script>
 <?= $this->stop() ?>

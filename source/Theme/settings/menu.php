@@ -5,45 +5,45 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="mt-2 mb-1 px-3">
-            <small class="text-uppercase fw-semibold color-stellar-blue">Meu Usuário</small>
+            <small class="text-uppercase fw-semibold color-stellar-blue"><?= $translator->translate("Meu Usuário") ?></small>
         </li>
         <li>
             <a href="<?= url("settings/profile") ?>" class="nav-link link-graphite-gray <?= $selected === 'profile' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-user bi me-4" style="width:24px; text-align: center;"></i>
-                Editar Perfil
+                <?= $translator->translate("Editar Perfil") ?>
             </a>
         </li>
         <!-- <li>
             <a href="<?= url("settings/security") ?>" class="nav-link link-graphite-gray <?= $selected === 'security' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-lock bi me-4" style="width:24px; text-align: center;"></i>
-                Senha e Segurança
+                <?= $translator->translate("Senha e Segurança") ?>
             </a>
         </li> -->
         <!-- <li>
             <a href="<?= url("settings/partner") ?>" class="nav-link link-graphite-gray <?= $selected === 'partner' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-handshake bi me-4" style="width:24px; text-align: center;"></i>
-                Parcerias
+                <?= $translator->translate("Parcerias") ?>
             </a>
         </li> -->
         <li class="mt-2 mb-2 px-3">
-            <small class="text-uppercase fw-semibold color-stellar-blue">Minha Loja</small>
+            <small class="text-uppercase fw-semibold color-stellar-blue"><?= $translator->translate("Minha Loja") ?></small>
         </li>
         <li>
             <a href="<?= url("settings/store") ?>" class="nav-link link-graphite-gray <?= $selected === 'store' ? 'bg-stellar-blue link-light' : '' ?>" aria-current="page">
                 <i class="fa fa-edit bi me-4" style="width:24px; text-align: center;"></i>
-                Editar Loja
+                <?= $translator->translate("Editar Loja") ?>
             </a>
         </li>
         <li>
             <a href="<?= url("settings/categories") ?>" class="nav-link link-graphite-gray <?= $selected === 'categories' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-list bi me-4" style="width:24px; text-align: center;"></i>
-                Categorias
+                <?= $translator->translate("Categorias") ?>
             </a>
         </li>
         <!-- <li>
             <a href="<?= url("settings/team") ?>" class="nav-link link-graphite-gray <?= $selected === 'team' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-users bi me-4" style="width:24px; text-align: center;"></i>
-                Equipe
+                <?= $translator->translate("Equipe") ?>
             </a>
         </li> -->
     </ul>

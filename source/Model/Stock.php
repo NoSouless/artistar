@@ -314,11 +314,14 @@ class Stock extends Core {
     public function insertProductCategories($categories, $store, $productId) {
         if (empty($categories)) return [];
         $trueCategories = [];
+        $createdCategories = [];
         foreach ($categories as $key => $category) {
             if (strpos($category, '{existing}') === 0) {
                 $trueCategories[] = str_replace('{existing}', '', $category);
             } else {
-                $trueCategories[] = $this->insertNewStoreCategory($category, $store);
+                $createdCategoryId      = $this->insertNewStoreCategory($category, $store);
+                $createdCategories[$category]   = $createdCategoryId;
+                $trueCategories[]               = $createdCategoryId;
             }
         }
         unset($categories);  
@@ -348,7 +351,6 @@ class Stock extends Core {
         $existingCategories = $this->SQL->prepare($sql);
         $existingCategories->execute($params);
         $existingCategories = $existingCategories->fetchAll(PDO::FETCH_COLUMN);
-        
         if (!empty($existingCategories))  {
             $stmt = $this->SQL->prepare("
                 INSERT INTO categoria_produtos (categoria_produto_categoria, categoria_produto_produto)
@@ -362,7 +364,7 @@ class Stock extends Core {
             }
         }
     
-        return true;     
+        return $createdCategories;     
     }
 
     public function getProductById($productId, $store) {
@@ -554,6 +556,98 @@ class Stock extends Core {
         ");
         $stmt->bindValue(":productId", $productId);
         return $stmt->execute();
+    }
+
+    public function importProductsFromFile($file, $store) {
+        $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        if ($fileExtension === 'csv') {
+            return $this->importProductsFromCSV($file['tmp_name'], $store);
+        // } elseif (in_array($fileExtension, ['xlsx', 'xls'])) {
+        //     return $this->importProductsFromExcel($filename, $store);
+        } else {
+            throw new \Exception("Formato de arquivo não suportado.");
+        }
+    }
+
+    public function importProductsFromCSV($filename, $store) {
+        if (!file_exists($filename) || !is_readable($filename)) {
+            throw new \Exception("Arquivo CSV não encontrado ou não legível.");
+        }
+
+        $existingProducts = $this->getProducts($store, ['offset' => 0, 'limit' => 100000], '', 'produto_id ASC');
+        $existingProductsNames = array_column($existingProducts, 'id', 'nome');
+        $existingCategories = $this->getCategories($store);
+        $existingCategories = array_column($existingCategories, 'id', 'nome');
+
+        $header = null;
+        $data = [];
+        if (($handle = fopen($filename, 'r')) !== false) {
+            while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+                if (!$header) {
+                    $header = $row;
+                } else {
+                    $data[] = array_combine($header, $row);
+                }
+            }
+            fclose($handle);
+        }
+        // iniciar a transação
+        $result = [
+            'updated' => 0,
+            'created' => 0,
+        ];
+        try {
+            $this->SQL->beginTransaction();
+            foreach ($data as $productData) {   
+                $productData = array_map('trim', $productData);
+                $productData = array_map('htmlspecialchars', $productData);
+                if (isset($existingProductsNames[$productData['name']])) {
+                    $productId = $existingProductsNames[$productData['name']];
+                    $this->updateProduct($productId, $store, [
+                        ':produto_nome'             => $productData['name'],
+                        ':produto_descricao'        => filter_var($productData['description'], FILTER_SANITIZE_STRING),
+                        ':produto_valor'            => filter_var($productData['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
+                        ':produto_valor_desconto'   => filter_var($productData['discount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
+                        ':produto_custo'            => filter_var($productData['cost'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
+                        ':produto_estoque'          => filter_var($productData['stock'], FILTER_SANITIZE_NUMBER_INT),
+                        ':produto_estoque_minimo'   => filter_var($productData['minimum_stock'], FILTER_SANITIZE_NUMBER_INT),
+                        ':produto_ativo'            => $existingProduct[$productId]['ativo'] ?? 1,
+                        ':produto_palavras_chave'   => $productData['keywords'],
+                        ':produto_codigo_interno'   => $productData['internal_id']
+                    ]);
+                    $result['updated']++;
+                } else {
+                    $productId = $this->insertProduct([
+                        ':produto_nome'             => $productData['name'],
+                        ':produto_descricao'        => filter_var($productData['description'], FILTER_SANITIZE_STRING),
+                        ':produto_valor'            => filter_var($productData['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
+                        ':produto_valor_desconto'   => filter_var($productData['discount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
+                        ':produto_custo'            => filter_var($productData['cost'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
+                        ':produto_estoque'          => filter_var($productData['stock'], FILTER_SANITIZE_NUMBER_INT),
+                        ':produto_estoque_minimo'   => filter_var($productData['minimum_stock'], FILTER_SANITIZE_NUMBER_INT),
+                        ':produto_loja'             => $store,
+                        ':produto_ativo'            => 1,
+                        ':produto_palavras_chave'   => $productData['keywords'],
+                        ':produto_codigo_interno'   => $productData['internal_id']
+                    ]);
+                    $result['created']++;
+                }
+                $productCategories = isset($productData['categories']) ? explode('|', $productData['categories']) : [];
+                $productCategories = array_map(function($category) use ($existingCategories) {
+                    $category = trim($category);
+                    if (isset($existingCategories[$category])) {
+                        return '{existing}' . $existingCategories[$category];
+                    }
+                    return $category;
+                }, $productCategories);
+                $existingCategories = array_merge($existingCategories, $this->insertProductCategories($productCategories, $store, $productId));
+            }
+            $this->SQL->commit();
+            return $result;
+        } catch (\Exception $e) {
+            $this->SQL->rollBack();
+            throw $e;
+        }
     }
 
 }

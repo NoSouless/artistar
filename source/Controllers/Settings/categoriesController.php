@@ -13,7 +13,7 @@ class categoriesController extends settingsController {
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
         $model = new Categories();
         $categories = $model->getStoreCategories($storeId);  
-        $this->addLayout('Categorias');
+        $this->addLayout($this->getTranslator()->translate("Categorias"));
 
         echo $this->view->render("settings/categories/home", [
             'categories' => $categories,
@@ -30,6 +30,7 @@ class categoriesController extends settingsController {
             header('Location: ' . url('settings/categories'));
             exit;
         }
+        $this->addLayout($this->getTranslator()->translate("Categoria: ") . $category['nome']);
         echo $this->view->render("settings/categories/details", [
             'category' => $category,
             'menu' => $this->renderMenu('categories'),

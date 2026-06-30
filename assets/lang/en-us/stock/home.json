@@ -54,7 +54,7 @@
     "Digite a descrição do produto": "Enter the product description",
     "Margem": "Margin",
     "A margem de contribuição é calculada subtraindo o custo e o desconto do preço de venda, ajuda a identificar a lucratividade do produto.": "The contribution margin is calculated by subtracting the cost and discount from the selling price, it helps to identify the profitability of the product.",
-    "Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos.": "Minimum stock is the minimum quantity you want to keep in stock to avoid running out of products.",
+    "Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos. Quando o produto está na vitrine da loja, ele será exibido com um aviso de estoque baixo.": "Minimum stock is the minimum quantity you want to keep in stock to avoid running out of products. When the product is in the store window, it will be displayed with a low stock warning.",
     "Inserir": "Insert",
     "Produtos": "Products",
     "Selecione ou adicione uma nova categoria": "Select or add a new category: ",
@@ -83,5 +83,16 @@
     "Nome do produto é obrigatório.": "Product name is required.",
     "Erro ao inserir produto.": "Error inserting product.",
     "Produto inserido com sucesso.": "Product inserted successfully.",
-    "Loja não encontrada.": "Store not found."
+    "Loja não encontrada.": "Store not found.",
+    "Ações": "Actions",
+    "Importar Produtos": "Import Products",
+    "Exportar Produtos": "Export Products",
+    "Ao importar produtos, aqueles com nomes iguais serão atualizados, enquanto produtos com nomes diferentes serão criados.": "When importing products, those with the same names will be updated, while products with different names will be created.",
+    "Categorias com nomes iguais serão vinculadas aos produtos, e categorias não encontradas serão criadas automaticamente.": "Categories with the same names will be linked to the products, and categories not found will be created automatically.",
+    "Você pode baixar o modelo de importação clicando no botão abaixo.": "You can download the import template by clicking the button below.",
+    "Não troque o nome das colunas do arquivo.": "Do not change the column names in the file.",
+    "Baixar Modelo de Importação": "Download Import Template",
+    "Erro ao importar o arquivo. Por favor, verifique se o arquivo está no formato correto e tente novamente.": "Error importing the file. Please check if the file is in the correct format and try again.",
+    "Envie um arquivo .csv": "Upload a .csv file",
+    "Importar": "Import"
 }

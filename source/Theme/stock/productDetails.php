@@ -143,7 +143,7 @@
                             <input type="number" class="form-control" id="stock" name="stock" value="<?= $product['estoque'] ?>">
                         </div>
                         <div class="mb-3 col-sm-6 col-12">
-                            <label for="min_stock" class="form-label"><?= $translator->translate("Estoque Mínimo") ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate("Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos.") ?>"></i></label>
+                            <label for="min_stock" class="form-label"><?= $translator->translate("Estoque Mínimo") ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate("Estoque mínimo é a quantidade mínima que você deseja manter em estoque para evitar falta de produtos. Quando o produto está na vitrine da loja, ele será exibido com um aviso de estoque baixo.") ?>"></i></label>
                             <input type="number" min="0" class="form-control" id="min_stock" name="min_stock" value="<?= $product['estoque_minimo'] ?>">
                         </div>
                     </div>

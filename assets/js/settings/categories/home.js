@@ -76,12 +76,12 @@ function initCategorySortables() {
                 }).done(function(response) {
                     response = JSON.parse(response);
                     if (response.code == 200) {
-                        defaultToast.showSuccess('Sucesso', response.message);
+                        defaultToast.showSuccess(translator.success, response.message);
                     } else {
-                        defaultToast.showError('Erro', response.message);
+                        defaultToast.showError(translator.error, response.message);
                     }
                 }).fail(function() {
-                    defaultToast.showError('Erro', 'Erro ao salvar a ordem das categorias.');
+                    defaultToast.showError(translator.error, 'Erro ao salvar a ordem das categorias.');
                 });
             }
         });
@@ -95,6 +95,7 @@ $(document).ready(function() {
 
 $('#add-category-btn').on('click', function() {
     var formData = new FormData();
+    var defaultToast = new ToastManager('myToast');
     formData.append('name', $('#new-category-name').val());
     formData.append('active', $('#flexSwitchCheckActive').is(':checked') ? 1 : 0);
     formData.append('public', $('#flexSwitchCheckPublic').is(':checked') ? 1 : 0);
@@ -109,10 +110,10 @@ $('#add-category-btn').on('click', function() {
         if (response.code == 200) {
             window.location.reload();
         } else {
-            defaultToast.showError('Erro', response.message);  
+            defaultToast.showError(translator.error, response.message);  
         }
     }).fail(function() {
-        defaultToast.showError('Erro', 'Erro ao criar a categoria.');  
+        defaultToast.showError(translator.error, 'Erro ao criar a categoria.');  
     });
 });
 
@@ -134,11 +135,11 @@ $(document).on('click', '.save-category-btn', function() {
     }).done(function(response) {
         response = JSON.parse(response);
         if (response.code == 200) {
-            defaultToast.showSuccess('Sucesso', response.message);
+            defaultToast.showSuccess(translator.success, response.message);
         } else {
-            defaultToast.showError('Erro', response.message);
+            defaultToast.showError(translator.error, response.message);
         }
     }).fail(function() {
-        defaultToast.showError('Erro', 'Erro ao salvar as alterações.');
+        defaultToast.showError(translator.error, 'Erro ao salvar as alterações.');
     });
 });

@@ -234,8 +234,7 @@ class Statistics extends Core {
                 break;
             case 'semester':
                 for ($i=5; $i >= 0; $i--) {
-                    $nextMonth = date('m', strtotime($dataReferencia." -$i month"));
-                    //Nome do Mês em Português
+                    $nextMonth = date('m', strtotime(date('Y-m-01', strtotime($dataReferencia))." -$i month"));
                     $graphData['labels'][] = getMonthName($nextMonth);
                     $graphData['values']['total_vendas'][$nextMonth] = 0;
                     $graphData['values']['total_transacoes'][$nextMonth] = 0;
@@ -243,7 +242,8 @@ class Statistics extends Core {
                 break;
             case 'year':
                 for ($i=11; $i >= 0; $i--) {
-                    $nextMonth = date('m', strtotime($dataReferencia." -$i month"));
+                    // $nextMonth = date('m', strtotime($dataReferencia." -$i month")); não está funcionado para fevereiro
+                    $nextMonth = date('m', strtotime(date('Y-m-01', strtotime($dataReferencia))." -$i month"));
                     $graphData['labels'][] = getMonthName($nextMonth);
                     $graphData['values']['total_vendas'][$nextMonth] = 0;
                     $graphData['values']['total_transacoes'][$nextMonth] = 0;
@@ -500,13 +500,15 @@ class Statistics extends Core {
                 break;
             case 'semester':
                 for ($i=5; $i >= 0; $i--) {
-                    $nextMonth = date('m', strtotime($dataReferencia." -$i month"));
+                    // $nextMonth = date('m', strtotime($dataReferencia." -$i month"));
+                    $nextMonth = date('m', strtotime(date('Y-m-01', strtotime($dataReferencia))." -$i month"));
                     $graphData[$nextMonth] = 0;
                 }
                 break;
             case 'year':
                 for ($i=11; $i >= 0; $i--) {
-                    $nextMonth = date('m', strtotime($dataReferencia." -$i month"));
+                    // $nextMonth = date('m', strtotime($dataReferencia." -$i month"));
+                    $nextMonth = date('m', strtotime(date('Y-m-01', strtotime($dataReferencia))." -$i month"));
                     $graphData[$nextMonth] = 0;
                 }
                 break;

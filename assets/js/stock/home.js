@@ -284,6 +284,51 @@ $(document).on('click', '#create-product-btn', function() {
         console.error('An error occurred:', error);
     });
 });
+
+$('#importFile').on('change', function() {
+    // Limitar extensões e tamanho do arquivo
+    const file = this.files[0];
+    if (file) {
+        const fileSize = file.size / 1024 / 1024;
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (fileSize > 2) {
+            alert(dictionary.validation.fileSizeError);
+            this.value = '';
+        } else if (fileExtension !== 'csv') {
+            alert(dictionary.validation.fileTypeError);
+            this.value = '';
+        }
+    }
+});
+
+
+$(document).on('click', '#import-form-btn', function(e) {
+
+    e.preventDefault();
+
+    var form = $('#import-form')[0];
+    var formData = new FormData(form);
+
+    $.ajax({
+        url: '/stock/importProducts',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false
+    }).done(function (response) {
+        response = JSON.parse(response);
+        if (response.code == 200) {
+            alert(response.message);
+            location.href = $('#import-form').attr('action');
+        } else {
+            $('#importFileError').text(response.message);
+            $('#importFileError').removeClass('d-none');
+            // alert(response.message);
+        }
+    }).fail(function (error) {
+        console.error('An error occurred:', error);
+    });
+});
     
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
