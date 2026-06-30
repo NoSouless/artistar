@@ -17,11 +17,11 @@ $('.moedaReal').inputmask('decimal', {
 //     width: '100%',
 // });
 
-$('#eventCountry').select2({
-    placeholder: translator.selectCountry,
-    allowClear: true,
-    width: '100%'
-});
+// $('#eventCountry').select2({
+//     placeholder: translator.selectCountry,
+//     allowClear: true,
+//     width: '100%'
+// });
 
 // DATAS
 
@@ -309,8 +309,13 @@ new Sortable(document.getElementById('pricesRow'), {
 
 // searchCities($('#eventState').attr('data-default'), $('#eventCity').attr('data-default'));
 
-$('#eventCountry').on('change', function() {
-    var currency = $(this).find('option:selected').data('currency');
+// $('#eventCountry').on('change', function() {
+//     var currency = $(this).find('option:selected').data('currency');
+//     $('#eventCurrency').val(currency);
+//     $('.priceCurrency').text(currency);
+// });
+$('#eventCurrency').on('input', function() {
+    var currency = $(this).val();
     $('#eventCurrency').val(currency);
     $('.priceCurrency').text(currency);
 });
@@ -357,7 +362,7 @@ function searchCountries() {
     });
 }
 
-searchCountries();
+// searchCountries();
 
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()

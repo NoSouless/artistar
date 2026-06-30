@@ -23,14 +23,14 @@ $(document).ready(function() {
                 myToast.show();
             } else {
                 $('#toastTitle').text($('#settings-profile-form').attr('data-error'));
-                $('#toastBody').text(response.message || 'Erro ao salvar as alterações.');
+                $('#toastBody').text(response.message || translator["Erro ao Salvar!"]);
                 $('#myToast').removeClass('bg-success').addClass('bg-danger');
                 var myToast = new bootstrap.Toast(document.getElementById('myToast'));
                 myToast.show();
             }
         }).fail(function() {
             $('#toastTitle').text($('#settings-profile-form').attr('data-error'));
-            $('#toastBody').text('Erro ao salvar as alterações.');
+            $('#toastBody').text(translator["Erro ao Salvar!"]);
             $('#myToast').removeClass('bg-success').addClass('bg-danger');
             var myToast = new bootstrap.Toast(document.getElementById('myToast'));
             myToast.show();

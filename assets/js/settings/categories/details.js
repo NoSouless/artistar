@@ -19,12 +19,12 @@ $(document).ready(function() {
         }).done(function(response) {
             response = JSON.parse(response);
             if (response.code == 200) {
-                defaultToast.showSuccess('Sucesso', response.message || 'Alterações salvas com sucesso!');
+                defaultToast.showSuccess(translator.success, response.message);
             } else {
-                defaultToast.showError('Erro', response.message || 'Erro ao salvar as alterações.');
+                defaultToast.showError(translator.error, response.message || translator.errorSave);
             }
         }).fail(function() {
-            defaultToast.showError('Erro', 'Erro ao salvar as alterações.');
+            defaultToast.showError(translator.error, translator.errorSave);
         });
     });
 
@@ -38,10 +38,10 @@ $(document).ready(function() {
             if (response.code == 200) {
                 window.location.href = '/settings/categories';
             } else {
-                defaultToast.showError('Erro', response.message || 'Erro ao excluir a categoria.');
+                defaultToast.showError(translator.error, response.message);
             }
         }).fail(function() {
-            defaultToast.showError('Erro', 'Erro ao excluir a categoria.');
+            defaultToast.showError(translator.error, translator.errorDelete);
         });
     });
 });

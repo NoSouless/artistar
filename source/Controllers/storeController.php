@@ -15,6 +15,7 @@ class storeController extends Core {
     }
 
     public function details($data) {
+        $this->addTranslator('store');
         $storeModel = new Store();
         $store = $storeModel->getStoreData($data);   
 
@@ -34,12 +35,6 @@ class storeController extends Core {
         // $followersCount = $storeModel->getStoreFollowersCount($storeId);
 
         echo $this->view->render("store/details", [
-            'layout' => [
-                'title' =>  $store['nome'] . ' - Artistar', 
-                'logado' => $this->getLogado(),
-                'header' => true,
-                'footer' => true
-            ],
             'store' => $store,
             'storeName' => $store['nome'],
             'storeUsername' => '@' . $store['nome_unico'],
@@ -58,6 +53,7 @@ class storeController extends Core {
     }
 
     public function manage() {
+        $this->addTranslator('store');
         $this->validaAcesso();
 
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
@@ -67,15 +63,9 @@ class storeController extends Core {
             'storeId' => $storeId
         ]);
 
-        $this->addLayout('Minha Loja');
+        $this->addLayout($this->getTranslator()->translate("Minha Loja"));
 
         echo $this->view->render("store/manage", [
-            'layout' => [
-                'title' =>  'Minha Loja - Artistar',
-                'logado' => $this->getLogado(),
-                'header' => true,
-                'footer' => true
-            ],
             'store' => $store,
             'storeName' => !empty($store['nome']) ? $store['nome'] : 'Loja sem nome',
             'storeUsername' => $store['nome_unico'],
@@ -89,6 +79,7 @@ class storeController extends Core {
     }
 
     public function manageProducts($data) {
+        $this->addTranslator('store');
         $this->validaAcesso();
         try {
             $storeId = $this->getUser()['loja_id'] ?? 0;
@@ -107,11 +98,12 @@ class storeController extends Core {
             }
             exit($this->renderApiResponse(200, null, $selecteds));
         } catch (\Throwable $e) {
-            exit($this->renderApiResponse(500, 'Erro interno ao carregar produtos para gestao.'));
+            exit($this->renderApiResponse(500, $this->getTranslator()->translate('Erro interno ao carregar produtos para gestao.')));
         }
     }
 
     public function editShowcase($data) {
+        $this->addTranslator('store');
         $this->validaAcesso();
 
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
@@ -146,7 +138,7 @@ class storeController extends Core {
         }
 
         foreach($existingOrder as $productId => $productData) $storeModel->deleteShowcaseProductOrder($productData['ordenacao_id']);
-        exit($this->renderApiResponse(200, 'Vitrine atualizada com sucesso.'));
+        exit($this->renderApiResponse(200, $this->getTranslator()->translate('Vitrine atualizada com sucesso.')));
 
     }
 }

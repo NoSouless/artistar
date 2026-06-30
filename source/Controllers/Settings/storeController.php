@@ -9,7 +9,7 @@ use Source\Model\Settings\Store;
 class storeController extends settingsController {
 
     public function store() {
-        $this->addTranslator('store/edit');
+        $this->addTranslator('settings/store');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
         $model = new Store();
         $store = $model->getStoreData($storeId);  
@@ -22,7 +22,7 @@ class storeController extends settingsController {
     }
 
     public function updateStore($post) {
-        $this->addTranslator('store/edit');
+        $this->addTranslator('settings/store');
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
         $model = new Store();
         $store = $model->getStoreData($storeId);

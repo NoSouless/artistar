@@ -76,6 +76,23 @@ class apiController extends Core {
         return;
     }
 
+    public function countries() {
+
+        $dados = new API();
+        $countries = $dados->listCountries();
+
+        echo $this->view->render("apiResponse", [
+            'result' => [
+                'code' => 200,
+                'data' => [
+                    'countries' => $countries ?? []
+                ]
+            ]
+        ]);
+    
+        return;
+    }
+
     public function cities($data) {
 
         $dados = new API();

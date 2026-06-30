@@ -17,11 +17,11 @@ $('.moedaReal').inputmask('decimal', {
 //     width: '100%',
 // });
 
-$('#eventCountry').select2({
-    placeholder: translator.selectCountry,
-    allowClear: true,
-    width: '100%'
-});
+// $('#eventCountry').select2({
+//     placeholder: translator.selectCountry,
+//     allowClear: true,
+//     width: '100%'
+// });
 
 // DATAS
 
@@ -235,8 +235,8 @@ new Sortable(document.getElementById('pricesRow'), {
     }
 });
 
-$('#eventCountry').on('change', function() {
-    var currency = $(this).find('option:selected').data('currency');
+$('#eventCurrency').on('input', function() {
+    var currency = $(this).val();
     $('#eventCurrency').val(currency);
     $('.priceCurrency').text(currency);
 });
@@ -280,7 +280,7 @@ function searchCountries() {
     });
 }
 
-searchCountries();
+// searchCountries();
 
 
 $(function () {

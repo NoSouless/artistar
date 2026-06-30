@@ -29,7 +29,7 @@
                                         <?php endif; ?>
                                     </div>
                                     <small class="form-text text-muted d-block mt-2">
-                                        <?= $translator->translate("Tamanho máximo: 5MB") ?>
+                                        <?= $translator->translate("Tamanho máximo: ") ?> 5MB
                                     </small>
                                     <input type="file" id="thumbnail-input" name="thumbnail" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 5MB") ?>">
                                 </div>
@@ -94,5 +94,13 @@
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>
+<script>
+    const translator = {
+        success: "<?= $translator->translate("Sucesso") ?>",
+        error: "<?= $translator->translate("Erro") ?>",
+        errorDelete: "<?= $translator->translate("Erro ao excluir a categoria.") ?>",
+        errorSave: "<?= $translator->translate("Erro ao salvar as alterações.") ?>",
+    };
+</script>
 <script src="<?= url("assets/js/settings/categories/details.js") ?>"></script>
 <?= $this->stop() ?>

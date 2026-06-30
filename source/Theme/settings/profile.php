@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-12 mb-3">
                     <div class="px-5">
-                        <h2 class="text-center text-sm-start color-nocturne-purple"><?= $translator->translate("Editar Perfil ") ?></h2>
+                        <h2 class="text-center text-sm-start color-nocturne-purple"><?= $translator->translate("Editar Perfil") ?></h2>
                     </div>
                 </div>
                 <div class="col-12">
@@ -23,7 +23,7 @@
                                     <label class="form-label mb-2" for="profile-photo-input"><?= $translator->translate("Foto de Perfil") ?></label>
                                     <div id="profile-photo-drop-area" class="image-drop-area profile-image-drop-area profile-photo-drop-area d-flex align-items-center justify-content-center">
                                         <?php if (!empty($user['usuario_foto'])): ?>
-                                            <img id="profile-photo-preview" src="<?= storageURL($user['usuario_foto']) ?>" alt="Preview da foto de perfil">
+                                            <img id="profile-photo-preview" src="<?= storageURL($user['usuario_foto']) ?>" alt="<?= $translator->translate("Foto de Perfil") ?>" class="profile-photo-preview">
                                         <?php else: ?>
                                             <span id="profile-photo-drop-text"><?= $translator->translate("Clique ou arraste uma imagem aqui") ?></span>
                                         <?php endif; ?>
@@ -56,5 +56,11 @@
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>
+<script>
+    const translator = {
+        "Alteração Salva!": "<?= $translator->translate("Alteração Salva!") ?>",
+        "Erro ao Salvar!": "<?= $translator->translate("Erro ao Salvar!") ?>"
+    };
+</script>
 <script src="<?= url("assets/js/settings/profile.js") ?>"></script>
 <?= $this->stop() ?>

@@ -61,13 +61,20 @@
                                 <label for="descricao" class="form-label"><?= $translator->translate("Bio") ?></label>
                                 <textarea class="form-control input-stellar-blue" id="descricao" name="descricao" rows="3"  ><?= $store['loja_descricao'] ?></textarea>
                             </div>
-                            <div class="mb-3">
-                                <label for="filter-name" class="form-label"><?= $translator->translate("Moeda") ?></label>
-                                <select class="form-select input-stellar-blue" name="storeCountry" id="storeCountry" data-default="<?= $store['loja_pais'] ?>">
-                                    <option value="" selected><?= $translator->translate("Selecione a Moeda") ?></option>
-                                </select>
+                            <div class="row">
+                                <div class="col-md-6 col-12 mb-3">
+                                    <label for="storeCountry" class="form-label"><?= $translator->translate("País") ?></label>
+                                    <!-- <select class="form-select input-stellar-blue" name="storeCountry" id="storeCountry" data-default="<?= $store['loja_pais'] ?>">
+                                        <option value="" selected><?= $translator->translate("Selecione a Moeda") ?></option>
+                                    </select> -->
+                                    <input type="text" class="form-control input-stellar-blue" id="storeCountry" name="storeCountry" required="true" value="<?= $store['loja_pais'] ?>" placeholder="<?= $translator->translate("Ex: Brasil") ?>">
+                                </div>  
+                                <div class="col-md-6 col-12 mb-3">
+                                    <label for="storeCurrency" class="form-label"><?= $translator->translate("Moeda") ?></label>
+                                    <input type="text" class="form-control input-stellar-blue" id="storeCurrency" name="storeCurrency" required="true" value="<?= $store['loja_moeda'] ?>" placeholder="<?= $translator->translate("Ex: R$") ?>">
+                                </div>  
                             </div> 
-                            <input type="hidden" id="storeCurrency" name="storeCurrency" value='<?= $store['loja_moeda'] ?>'>
+        
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="<?= url('settings/store') ?>" class="btn btn-gray"><?= $translator->translate("Descartar") ?></a>
                                 <button type="submit" class="btn btn-stellar-blue w-25" id="settings-store-submit"><?= $translator->translate("Salvar") ?></button>
@@ -85,7 +92,9 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     const translator = {
-        selectCountry: "<?= $translator->translate("Selecione a Moeda") ?>"
+        selectCountry: "<?= $translator->translate("Selecione a Moeda") ?>",
+        errorSaving: "<?= $translator->translate("Erro ao Salvar!") ?>",
+        successSaving: "<?= $translator->translate("Alteração Salva!") ?>",
     };
 </script>
 <script src="<?= url("assets/js/settings/store.js") ?>"></script>

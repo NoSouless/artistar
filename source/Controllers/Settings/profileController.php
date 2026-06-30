@@ -9,11 +9,11 @@ use Source\Model\Settings\Profile;
 class profileController extends settingsController {
 
     public function profile() {
-        $this->addTranslator('store/edit');
+        $this->addTranslator('settings/profile');
         $userId = !empty($this->getUser()['id']) ? (int) $this->getUser()['id'] : 0;
         $model = new Profile();
         $user = $model->getUserData($userId);  
-        $this->addLayout('Editar Perfil');
+        $this->addLayout($this->getTranslator()->translate('Editar Perfil'));
 
         echo $this->view->render("settings/profile", [
             'user' => $user,
@@ -22,7 +22,7 @@ class profileController extends settingsController {
     }
 
     public function updateProfile($post) {
-        $this->addTranslator('store/edit');
+        $this->addTranslator('settings/profile');
         $userId = !empty($this->getUser()['id']) ? (int) $this->getUser()['id'] : 0;
         $model = new Profile();
         $user = $model->getUserData($userId);

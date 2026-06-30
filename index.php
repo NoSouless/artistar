@@ -110,6 +110,7 @@ $router->get("/privacy", "legalController:privacy");
 $router->group('apis');
 $router->post("/states", "apiController:states", "apiController.states");
 $router->post("/cities", "apiController:cities", "apiController.cities");
+$router->post("/countries", "apiController:countries", "apiController.countries");
 $router->post("/store/products", "apiController:storeProducts", "apiController.storeProducts");
 $router->post("/store/categories", "apiController:storeCategories", "apiController.storeCategories");
 $router->post("/store/follow", "apiController:followStore", "apiController.followStore");

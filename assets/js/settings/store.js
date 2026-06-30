@@ -1,14 +1,14 @@
 $(document).ready(function() {
-    $('#storeCountry').select2({
-        placeholder: translator.selectCountry,
-        allowClear: true,
-        width: '100%'
-    });
+    // $('#storeCountry').select2({
+    //     placeholder: translator.selectCountry,
+    //     allowClear: true,
+    //     width: '100%'
+    // });
 
     function searchCountries() {
         $.ajax({
-            url: 'https://restcountries.com/v3.1/all?fields=name,currencies,cca2',
-            type: 'GET',
+            url: '/apis/countries',
+            type: 'POST',
             success: function(response) {
                 response.sort((a, b) => a.name.common.localeCompare(b.name.common));
                 var select = document.getElementById('storeCountry');
@@ -45,7 +45,7 @@ $(document).ready(function() {
 
     initImageDropArea('#store-photo-drop-area', '#store-photo-input', '#store-photo-drop-text');
     initImageDropArea('#store-banner-drop-area', '#store-banner-input', '#store-banner-drop-text');
-    searchCountries();
+    // searchCountries();
 
     $(document).on('submit', '#settings-store-form', function(event) {
         event.preventDefault();
@@ -69,14 +69,14 @@ $(document).ready(function() {
                 myToast.show();
             } else {
                 $('#toastTitle').text($('#settings-store-form').attr('data-error'));
-                $('#toastBody').text(response.message || 'Erro ao salvar as alterações.');
+                $('#toastBody').text(response.message || translator.errorSaving);
                 $('#myToast').removeClass('bg-success').addClass('bg-danger');
                 var myToast = new bootstrap.Toast(document.getElementById('myToast'));
                 myToast.show();
             }
         }).fail(function() {
             $('#toastTitle').text($('#settings-store-form').attr('data-error'));
-            $('#toastBody').text('Erro ao salvar as alterações.');
+            $('#toastBody').text(translator.errorSaving);
             $('#myToast').removeClass('bg-success').addClass('bg-danger');
             var myToast = new bootstrap.Toast(document.getElementById('myToast'));
             myToast.show();

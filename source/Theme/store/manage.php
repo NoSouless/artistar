@@ -1,4 +1,4 @@
-<?= $this->layout("base", $layout); ?>
+<?= $this->layout("base"); ?>
 
 <?= $this->start("css") ?>
 <link rel="stylesheet" href="<?= url("assets/css/store/details.css") ?>">
@@ -9,18 +9,18 @@
 <?= $this->start("conteudo") ?>
 
 <form class="minimum-height store-details-page py-4" method="post" enctype="multipart/form-data" id="storeManageForm" action="<?= url('store/showcase') ?>">
-    <div id="storeBannerWrap" class="store-profile-top" role="button" tabindex="0" aria-label="Editar foto de capa" style="background-image:url('<?= $storeBanner ?>'); background-size:cover; background-position:center;">
+    <div id="storeBannerWrap" class="store-profile-top" role="button" tabindex="0" style="background-image:url('<?= $storeBanner ?>'); background-size:cover; background-position:center;">
 		<div class="mb-0 container d-md-flex flex-column  justify-content-end" style="min-height: 230px;">
 			<div class="row d-block d-md-none mb-5 pb-2"></div>
 			<div class="row ">
                 <div class="col-12 d-flex gap-2 justify-content-end mb-2">
                     <a href="<?= url($storeUsername) ?>" class="btn btn-polar-gray store-follow-btn">
                         <i class="fa-solid fa-arrow-left me-1"></i>
-                        Ver Loja
+                        <?= $translator->translate("Ver Loja") ?>
                     </a>
                     <button type="submit" class="btn btn-stellar-blue store-follow-btn" id="saveShowcaseBtn">
                         <i class="fa-solid fa-save me-1"></i>
-                        Salvar
+                        <?= $translator->translate("Salvar") ?>
                     </button>
 				</div>
 			</div>
@@ -42,6 +42,11 @@
 
                     <h1 class="store-name mb-1"><?= ($storeName) ?></h1>
                     <p class="store-description mb-4"><?= ($storeDescription) ?></p>
+
+                    <a href="<?= url('settings/store') ?>" class="btn btn-outline-stellar-blue btn-sm ms-2" aria-label="Editar vitrine da loja">
+                        <i class="fa-solid fa-pen"></i>
+                        <?= $translator->translate("Editar Loja") ?>
+                    </a>
                 </aside>
             </div>
 
@@ -50,8 +55,8 @@
                     <div class="store-content-panel">
                         <div class="store-content-header">
                             <div>
-                                <p class="store-content-subtitle mb-1">gestao</p>
-                                <h2 class="store-content-title mb-0">Selecione os produtos da vitrine</h2>
+                                <p class="store-content-subtitle mb-1"><?= $translator->translate("gestao") ?></p>
+                                <h2 class="store-content-title mb-0"><?= $translator->translate("Selecione os produtos da vitrine") ?></h2>
                             </div>
                         </div>
 
@@ -60,13 +65,13 @@
                                 <div class="d-flex gap-2 flex-wrap align-items-center store-catalog-filters">
                                     <a href="<?= url('settings/categories') ?>" class="btn btn-outline-stellar-blue btn-sm ms-2" aria-label="Editar vitrine da loja">
                                         <i class="fa-solid fa-pen"></i>
-                                        Editar Categorias
+                                        <?= $translator->translate("Editar Categorias") ?>
                                     </a>
                                 </div>
                                 <div class="ms-auto text-end store-catalog-search">
                                     <div class="store-search-wrap">
                                         <i class="fa-solid fa-search store-search-icon"></i>
-                                        <input type="search" id="storeManageSearchInput" class="store-search-input" aria-label="Buscar no catalogo" placeholder="Buscar produtos...">
+                                        <input type="search" id="storeManageSearchInput" class="store-search-input" aria-label="<?= $translator->translate("Buscar no catalogo") ?>" placeholder="<?= $translator->translate("Buscar produtos...") ?>">
                                     </div>
                                 </div>
                             </div>
@@ -109,7 +114,7 @@
                                 <div class="row" id="storeManageSelectedProductsList"></div>
                                 <div class="row" id="emptySelectedProductsList" style="display:none;">
                                     <div class="col-12 text-center">
-                                        <p class="text-muted">Nenhum produto selecionado.</p>
+                                        <p class="text-muted"><?= $translator->translate("Nenhum produto selecionado.") ?></p>
                                     </div>
                                 </div>
                                 <hr id="storeManageProductsSeparator" class="m-0 mb-4 w-100">
@@ -127,16 +132,19 @@
 <?= $this->start("js") ?>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
-        var messages = {
-        invalidStore: 'Loja invalida para carregar produtos.',
-        invalidApiResponse: 'Erro ao processar resposta da API.',
-        productsUnavailable: 'Nao foi possivel carregar os produtos.',
-        searchFailed: 'Falha ao buscar produtos da loja.',
-        processResponseFailed: 'Nao foi possivel processar a resposta da API.',
-        updateFailed: 'Falha ao atualizar produto da vitrine.',
-        saveOrderFailed: 'Falha ao salvar a nova ordem dos produtos.',
-        noProductsInStore: 'Nenhum produto encontrado na loja.',
-        noSelectedProducts: 'Nenhum produto encontrado na vitrine'
+    const messages = {
+        invalidStore: "<?= $translator->translate("Loja invalida para carregar produtos.") ?>",
+        invalidApiResponse: "<?= $translator->translate("Erro ao processar resposta da API.") ?>",
+        productsUnavailable: "<?= $translator->translate("Nao foi possivel carregar os produtos.") ?>",
+        searchFailed: "<?= $translator->translate("Falha ao buscar produtos da loja.") ?>",
+        processResponseFailed: "<?= $translator->translate("Nao foi possivel processar a resposta da API.") ?>",
+        updateFailed: "<?= $translator->translate("Falha ao atualizar produto da vitrine.") ?>",
+        saveOrderFailed: "<?= $translator->translate("Falha ao salvar a nova ordem dos produtos.") ?>",
+        noProductsInStore: "<?= $translator->translate("Nenhum produto encontrado na loja.") ?>",
+        noSelectedProducts: "<?= $translator->translate("Nenhum produto encontrado na vitrine.") ?>",
+        successUpdate: "<?= $translator->translate("Alterações salvas com sucesso!") ?>",
+        errorTitle: "<?= $translator->translate("Erro") ?>",
+        errorBody: "<?= $translator->translate("Um erro ocorreu ao salvar as alterações. Por favor, tente novamente.") ?>"
     };
 </script>
 <script src="<?= url('assets/js/store/manage.js?t=' . time()) ?>"></script>

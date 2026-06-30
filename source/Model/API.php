@@ -156,4 +156,33 @@ class API extends Core
         return json_decode($response, true);
     }
 
+    public function listCountries() {
+        // Voltarei nisso no futuro
+        $resultadoFinal = [];
+        $offset = 0;
+        do {
+            $ch = curl_init('https://api.restcountries.com/countries/v5?limit=50&offset=' . $offset);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer rc_live_6b814c25895d4cd4851799e01a37206c'
+            ]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = json_decode(curl_exec($ch), true);
+            $offset += 50;
+            if (isset($response['data'])) {
+                foreach($response['data']['objects'] as &$country) {
+                    $resultadoFinal[] = [
+                        'name' => $country['name'] ?? '',
+                        'code' => $country['code'] ?? '',
+                        'currency' => $country['currency'] ?? '',
+                    ];
+                }
+                $resultadoFinal = array_merge($resultadoFinal, $response['data']['objects']);
+            } else {
+                break;
+            }
+        } while ($response['data']['meta']['total'] > $offset);
+
+        return $resultadoFinal;
+    }
+
 }

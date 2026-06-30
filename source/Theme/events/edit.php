@@ -57,12 +57,13 @@
                 </div> -->
                 <div class="col-md-2 col-12 mb-3">
                     <label for="filter-name" class="form-label"><?= $translator->translate("País") ?></label>
-                    <select class="form-select input-stellar-blue" name="eventCountry" id="eventCountry" data-default="<?= $event['evento_pais'] ?>">
-                        <option value="" selected><?= $translator->translate("Selecione o País") ?></option>
-                    </select>
+                    <input type="text" class="form-control input-stellar-blue" name="eventCountry" id="eventCountry" placeholder="<?= $translator->translate("Ex: Brasil") ?>" value="<?= $event['evento_pais'] ?>">
                 </div> 
-                <input type="hidden" id="eventCurrency" name="eventCurrency" value='<?= $event['evento_moeda'] ?>'>
-                <div class="col-md-3 col-12 mb-3">
+                <div class="col-md-1 col-12 mb-3">
+                    <label for="filter-name" class="form-label"><?= $translator->translate("Moeda") ?></label>
+                    <input type="text" class="form-control input-stellar-blue" name="eventCurrency" id="eventCurrency" placeholder="<?= $translator->translate("Ex: R$") ?>" value="<?= $event['evento_moeda'] ?>">
+                </div> 
+                <div class="col-md-2 col-12 mb-3">
                     <label for="filter-name" class="form-label"><?= $translator->translate("Estado/Província") ?></label>
                     <input type="text" class="form-control input-stellar-blue" name="eventState" id="eventState" placeholder="<?= $translator->translate("Estado/Província") ?>" value="<?= $event['evento_endereco_estado'] ?>">
                 </div>

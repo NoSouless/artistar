@@ -1,4 +1,4 @@
-<?= $this->layout("base", $layout); ?>
+<?= $this->layout("base"); ?>
 
 <?= $this->start("css") ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css" integrity="sha512-6lLUdeQ5uheMFbWm3CP271l14RsX1xtx+J5x2yeIDkkiBpeVTNhTqijME7GgRKKi6hCqovwCoBTlRBEC20M8Mg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -39,7 +39,7 @@
 				<aside class="store-profile-panel store-profile-overview">
 					<div class="store-avatar-wrap">
 						<?php if (!empty($storePhoto)): ?>
-							<img src="<?= $storePhoto ?>" class="store-avatar" alt="Foto da loja <?= ($storeName) ?>">
+							<img src="<?= $storePhoto ?>" class="store-avatar" alt="<?= $translator->translate("Foto da loja") ?> <?= ($storeName) ?>">
 						<?php else: ?>
 							<div class="store-avatar store-avatar-fallback"><?= ($storeInitial) ?></div>
 						<?php endif; ?>
@@ -51,17 +51,17 @@
 					<?php if ($isOwner): ?>
 						<a href="<?= url('settings/store') ?>" class="btn btn-outline-stellar-blue btn-sm ms-2" aria-label="Editar vitrine da loja">
 							<i class="fa-solid fa-pen"></i>
-							Editar Loja
+							<?= $translator->translate("Editar Loja") ?>
 						</a>
 					<?php endif; ?>
 					<div class="store-stats mt-4" style="display:flex; flex-wrap:nowrap; gap:0.65rem; align-items:stretch;">
 						<div class="store-stat-item" style="flex:1 1 0; min-width:0;">
 							<span class="store-stat-value"><?= $products ?></span>
-							<span class="store-stat-label">produtos</span>
+							<span class="store-stat-label"><?= $translator->translate("produtos") ?></span>
 						</div>
 						<!-- <div class="store-stat-item" style="flex:1 1 0; min-width:0;">
 							<span class="store-stat-value"><?= $followersCount ?></span>
-							<span class="store-stat-label">seguidores</span>
+							<span class="store-stat-label"><?= $translator->translate("seguidores") ?></span>
 						</div> -->
 					</div>
 				</aside>
@@ -72,22 +72,22 @@
 					<div class="store-content-panel">
 						<div class="row">
 							<div class="col-12">
-								<p class="store-content-subtitle mb-1">vitrine</p>
+								<p class="store-content-subtitle mb-1"><?= $translator->translate("vitrine") ?></p>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-lg-8 col-12">
 								<!-- <p class="store-content-subtitle mb-1">vitrine</p> -->
 								<h2 class="store-content-title mb-0">
-									<span id="storeShowcaseTitle">Destaques da loja</span>
+									<span id="storeShowcaseTitle"><?= $translator->translate("Destaques") ?></span>
 									<a class="btn btn-outline-stellar-blue btn-sm ms-2" aria-label="Voltar aos destaques da loja" id="backToShowcaseBtn" style="display:none;">
 										<i class="fa-solid fa-arrow-left"></i>
-										Voltar aos Destaques
+										<?= $translator->translate("Voltar aos Destaques") ?>
 									</a>
 									<?php if ($isOwner): ?>
 										<a href="<?= url('store/showcase') ?>" class="btn btn-outline-stellar-blue btn-sm ms-2" aria-label="Editar vitrine da loja">
 											<i class="fa-solid fa-pen"></i>
-											Editar Vitrine de Destaques
+											<?= $translator->translate("Editar Vitrine de Destaques") ?>
 										</a>
 									<?php endif; ?>
 								</h2>
@@ -95,7 +95,7 @@
 							<div class="col-lg-4 col-12 ms-auto text-end store-catalog-search mt-3 mt-lg-0">
 								<div class="store-search-wrap">
 									<i class="fa-solid fa-search store-search-icon"></i>
-									<input type="search" id="storeSearchInput" class="store-search-input" aria-label="Buscar no catalogo" placeholder="Buscar produtos...">
+									<input type="search" id="storeSearchInput" class="store-search-input" aria-label="<?= $translator->translate("Buscar no catalogo") ?>" placeholder="<?= $translator->translate("Buscar produtos...") ?>">
 								</div>
 							</div>
 						</div>
@@ -145,7 +145,7 @@
                                 <div class="row" id="storeSelectedProductsList" data-store-id="<?= $storeId ?>"></div>
                                 <div class="row" id="emptySelectedProductsList" style="display:none;">
                                     <div class="col-12 text-center">
-                                        <p class="text-muted">Nenhum produto selecionado.</p>
+                                        <p class="text-muted"><?= $translator->translate("Nenhum produto selecionado.") ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -163,6 +163,11 @@
 <script>
 	const storeId = "<?= $storeId ?>";
 	const currency = "<?= $store['moeda'] ?>";
+	const translator = {
+		"Destaques": "<?= $translator->translate("Destaques") ?>",
+		"Esgotado!": "<?= $translator->translate("Esgotado!") ?>",
+		"uni": "<?= $translator->translate("uni") ?>",
+	}
 </script>
 <script src="<?= url('assets/js/store/details.js?t=' . time()) ?>"></script>
 <?= $this->stop() ?>

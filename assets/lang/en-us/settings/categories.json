@@ -30,6 +30,21 @@
     "Categoria deletada com sucesso.": "Category deleted successfully.",
     "Erro ao deletar categoria.": "Error deleting category.",
     "Sucesso": "Success",
-    "Erro": "Error"
+    "Erro": "Error",
+    "Clique ou arraste uma imagem aqui": "Click or drag an image here",
+    "Categoria: ": "Category: ",
+    "Alteração Salva!": "Change Saved!",
+    "Erro ao Salvar!": "Error Saving!",
+    "Thumbnail": "Thumbnail",
+    "Tamanho máximo: ": "Maximum size: ",
+    "A imagem deve ter no máximo 5MB": "The image must be at most 5MB",
+    "Nome": "Name",
+    "Voltar": "Back",
+    "Erro ao excluir a categoria.": "Error deleting the category.",
+    "Erro ao salvar as alterações.": "Error saving changes.",
+    "Você tem certeza que deseja excluir a categoria": "Are you sure you want to delete the category?",
+    "Esta ação não poderá ser desfeita.": "This action cannot be undone.",
+    "Cancelar": "Cancel",
+    "Excluir!": "Delete!"
     
 }

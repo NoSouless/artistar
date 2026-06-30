@@ -147,12 +147,12 @@ $(document).on('click', '#saveShowcaseBtn', function() {
     }).done(function (response) {
         response = JSON.parse(response);
         if (response.code == 200) {
-            defaultToast.showSuccess('Alterações salvas com sucesso!', response.message);
+            defaultToast.showSuccess(messages.successUpdate, response.message);
         } else {
-            defaultToast.showError('Erro', response.message);   
+            defaultToast.showError(messages.errorTitle, response.message);   
         }
     }).fail(function (error) {
-        defaultToast.showError('Erro', 'Um erro ocorreu ao salvar as alterações. Por favor, tente novamente.');   
+        defaultToast.showError(messages.errorTitle, messages.errorBody);   
     });
 
 });
