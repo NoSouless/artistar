@@ -57,7 +57,7 @@ function initImageDropArea(areaSelector, inputSelector, textSelector) {
 
     function showPreview(file) {
         const fileSize = file.size / 1024 / 1024;
-        if (fileSize > 5) {
+        if (fileSize > 1) {
             alert($input.attr('data-size-error'));
             $input.val('');
             return;

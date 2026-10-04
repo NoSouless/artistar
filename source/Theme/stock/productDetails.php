@@ -51,9 +51,9 @@
                             <?php endif; ?>
                         </div>
                         <small id="new-nameHelp" class="form-text text-muted">
-                            <?= $translator->translate("Tamanho máximo: 5MB") ?>
+                            <?= $translator->translate("Tamanho máximo: 1MB") ?>
                         </small>
-                        <input type="file" id="image" name="thumbnail" accept="image/*" style="display:none;" data-sizeError="<?= $translator->translate("A imagem deve ter no máximo 5MB") ?>">
+                        <input type="file" id="image" name="thumbnail" accept="image/*" style="display:none;" data-sizeError="<?= $translator->translate("A imagem deve ter no máximo 1MB") ?>">
                     </div>
                 </div>
                 <div class="col-12">
@@ -90,7 +90,7 @@
                             <input type="text" class="form-control moedaReal" id="price" name="price" value="<?= moedaReal($product['valor']) ?>">
                         </div>
                         <div class="mb-3 col-md-4 col-sm-6 col-12">
-                            <label for="discount" class="form-label"><?= $translator->translate("Desconto") ?> (R$)</label>
+                            <label for="discount" class="form-label"><?= $translator->translate("Desconto") ?> (<?= $currency ?>)</label>
                             <input type="text" class="form-control moedaReal" id="discount" name="discount" value="<?= moedaReal($product['valor_desconto']) ?>">
                         </div>
                         <div class="mb-3 col-md-4 col-sm-6 col-12">

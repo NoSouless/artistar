@@ -63,6 +63,7 @@ class stockController extends Core {
             'filter' => $filter ?? [],
             'sort' => $sort,
             'get' => $_GET,
+            'currency' => $this->getUser()['loja_moeda'] ?? 'R$'
         ]);
         return;
     }
@@ -139,7 +140,8 @@ class stockController extends Core {
         $this->addLayout($product['nome']);
         echo $this->view->render("stock/productDetails", [
             'product' => $product,
-            'categories' => $stockModel->getCategories($store)
+            'categories' => $stockModel->getCategories($store),
+            'currency' => $this->getUser()['loja_moeda'] ?? 'R$'
         ]);
         return;
     }

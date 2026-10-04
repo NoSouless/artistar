@@ -65,7 +65,7 @@ $(function() {
         const reader = new FileReader();
         reader.onload = function(e) {
             const fileSize = file.size / 1024 / 1024;
-            if (fileSize > 5) {
+            if (fileSize > 1) {
                 alert($('#image').attr('data-sizeError'));
                 $input.val('');
                 $area.find('img').remove();

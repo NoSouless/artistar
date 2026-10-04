@@ -73,6 +73,7 @@ class salesStatementController extends Core {
             'sort' => $sort,
             'orderList' => $orderList,
             'events' => $salesStatementModel->getStoreSubscriptions($store),
+            'currency' => ($this->getUser()['loja_moeda'] ?? '') ?: 'R$',
         ]);
         return;
     }
@@ -110,6 +111,7 @@ class salesStatementController extends Core {
             'saleInfo' => $saleInfo,
             'paymentMethods' => $paymentMethods->getMethods(),
             'events' => $salesStatementModel->getStoreSubscriptions($store),
+            'currency' => ($this->getUser()['loja_moeda'] ?? '') ?: 'R$',
         ]);
         return;
     }

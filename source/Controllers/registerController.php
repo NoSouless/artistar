@@ -11,6 +11,7 @@ use Source\Model\Helpers\ValidationCode;
 class registerController extends Core {
 
     public function __construct($router = ROOT) {
+        $this->setEnableRedirect(false);
         parent::__construct($router);
         $this->getLayout()->setFooter('footer');
         $this->addLayout();

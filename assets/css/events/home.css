@@ -1,0 +1,236 @@
+.carousel-item {
+    position: relative;
+    width: 100%;
+    height: 400px; /* Ajuste a altura conforme necessário */
+    overflow: hidden;
+}
+
+.slide-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px); /* Ajuste o valor do desfoque conforme necessário */
+    z-index: 1;
+}
+
+.slide-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    max-height: 80%;
+    max-width: 100%;
+    display: block;
+    z-index: 2;
+    object-fit: cover; /* Garante que a imagem cubra todo o contêiner */
+    object-position: center; /* Centraliza a imagem */
+    box-shadow: 
+        0 -10px 20px -10px rgba(0, 0, 0, 0.7), /* Sombra mais forte em cima */
+        0 10px 10px -10px rgba(0, 0, 0, 0.3);  /* Sombra mais fraca embaixo */
+    cursor: pointer;
+}
+
+.carousel-indicators,
+.carousel-control-prev,
+.carousel-control-next {
+    z-index: 3; /* Garante que os indicadores fiquem na frente */
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes slideDownFade {
+    0% { 
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUpFade {
+    0% { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% { 
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes grow-shrink {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); } /* Aumenta o tamanho para 120% */
+    100% { transform: scale(1); } /* Volta ao tamanho original */
+}
+
+.btn-icon {
+    font-size: 2rem;
+}
+
+.event-buttons {
+    color: #fff;
+}
+
+.btn-share ,
+.btn-favorite {
+    color: #fff;
+    padding: 0;
+    
+}
+
+.btn-share > .btn-icon,
+.btn-favorite > .btn-icon {
+    color: var(--stellar-blue);
+    transition: color .15s ease-in-out;
+}
+
+.btn-share:hover > .btn-icon,
+.btn-favorite:hover > .btn-icon {
+    color: var(--stellar-blue-shadow);
+}
+
+.animate-grow-shrink {
+    animation: grow-shrink 0.3s forwards;
+}
+
+.img-modal {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.slide-dialog {
+    max-width: 60%;
+}
+
+@media (max-width: 991px) {
+    .slide-dialog {
+        max-width: 90%;
+    }
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.wrap-modal-slider {
+    padding: 0 30px;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.wrap-modal-slider.open {
+    opacity: 1;
+}
+
+.slick-prev:before, .slick-next:before {
+    color: var(--nocturne-purple)
+}
+
+.content {
+    min-height: 100vh;
+}
+
+.btn-instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    color: white;
+    border-color: transparent;
+}
+
+.btn-instagram:hover {
+    color: gray;
+}
+
+#eventTabs {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+#eventTabs.show-with-animation {
+    max-height: 500px;
+    opacity: 1;
+    animation: slideDownFade 0.4s ease-out forwards;
+}
+
+#eventTabs.hide-with-animation {
+    max-height: 0;
+    opacity: 0;
+    animation: slideUpFade 0.4s ease-out forwards;
+}
+
+.nav-tabs .nav-link.active.link-stellar-blue {
+    color: var(--nocturne-purple)
+}
+
+.select2-container {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.toast-sucesso {
+    position: fixed;
+    z-index: 1030;
+    top: 70px;
+    right: 0;
+}
+
+
+.store-catalog-search {
+    min-width: 210px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.store-search-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--stellar-blue);;
+    border-radius: 999px;
+    background: #ffffff;
+    padding: 0.35rem 0.7rem;
+    width: 100%;
+}
+
+.store-search-icon {
+    color: var(--stellar-blue);;
+    font-size: 0.88rem;
+}
+
+.store-search-input {
+    border: var(--stellar-blue);
+    outline: none;
+    background: transparent;
+    width: 100%;
+    min-width: 130px;
+    color: #2b2e4a;
+    font-size: 0.88rem;
+}
+
+.store-search-input::placeholder {
+    color: #9aa0bf;
+}

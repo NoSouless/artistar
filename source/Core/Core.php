@@ -21,23 +21,24 @@ class Core {
     protected $NoSQL = NULL; 
     protected $SQL = NULL;
     protected $permissions = [];
+    protected $enableRedirect = true;
     protected $isRedirect = false;
     protected $redirect = null;
     protected $language = 'pt-br';
     protected $layout = null;
     protected $translator = null;
+    protected $model = null;
 
-    public function __construct($router = ROOT){
+    public function __construct($router = ROOT, $model = null){
         global $db;
         $this->router=$router;
         $this->view = new Engine(dirname(__DIR__,1)."/Theme");
         $this->nucleo = $this->view;
-        $this->SQL = $db;
-        
+        $this->setSQL($db);
+        $this->setModel($model);
         $this->verificaLogado();
-
         $this->defineRedirect();
-        if ($this->getLogado() && $this->isRedirect()) {
+        if ($this->getLogado() && $this->isRedirect() && $this->getEnableRedirect()) {
             header("Location: " . $this->extractRedirect());
             exit;
         }
@@ -49,11 +50,10 @@ class Core {
         $this->getLayout()->setLang($this->getLanguage());
         $this->getLayout()->setTranslator((new Translator($this->getLanguage()))->loadTranslation('core'));
         $this->getLayout()->setDescription($this->getLayout()->getTranslator()->translate('Gerencie seu estoque de forma eficiente e prática durante eventos com o Artistar. Nossa plataforma facilita o controle de vendas, produtos e relatórios, proporcionando uma experiência otimizada para artistas e vendedores. Simplifique sua gestão e maximize seus lucros com nossas ferramentas intuitivas.'));
-
         $this->view->addData([
             "router"=> $this->router,
             "logado" => $this->getLogado(),
-            "redirect" => $this->getRedirect(),
+            "redirect" => $this->isRedirect() ? $this->getRedirect() : null,
         ]);
     }
 
@@ -92,7 +92,8 @@ class Core {
                     usu.usuario_foto foto,
                     loj.loja_id loja_id,
                     loj.loja_nome_unico loja_nome_unico,
-                    loj.loja_nome loja_nome
+                    loj.loja_nome loja_nome,
+                    loj.loja_moeda loja_moeda
                 FROM
                     usuarios usu
                 LEFT JOIN
@@ -152,6 +153,14 @@ class Core {
             $redirect = base64_encode(urlencode($_SERVER['REQUEST_URI']));
         }
         $this->redirect = $redirect;
+    }
+
+    public function setEnableRedirect($enableRedirect) {
+        $this->enableRedirect = $enableRedirect;
+    }
+
+    public function getEnableRedirect() {
+        return $this->enableRedirect;
     }
 
     public function isRedirect() {
@@ -290,5 +299,21 @@ class Core {
         $this->view->addData([
             "translator" => $this->getTranslator()->loadTranslation($page)
         ]);
+    }
+
+    public function setSQL($SQL) {
+        $this->SQL = $SQL;
+    }
+
+    public function getSQL() {
+        return $this->SQL;
+    }
+
+    public function getModel() {
+        return $this->model;
+    }
+
+    public function setModel($model) {
+        $this->model = $model;
     }
 }

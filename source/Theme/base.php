@@ -12,8 +12,8 @@
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="<?= $layout->getTitle() ?>">
         <meta name="twitter:description" content="<?= $layout->getDescription() ?>">
-        <meta name="twitter:image" content="<?= $layout->getFavicon() ?>">
-        <link rel="shortcut icon" href="<?= $layout->getFavicon() ?>" />
+        <meta name="twitter:image" content="<?= $layout->getImage() ?>">
+        <link rel="shortcut icon" href="<?= $layout->getImage() ?>" />
         <link rel="stylesheet" href="<?= url("assets/vendors/bootstrap-5.3.3/css/bootstrap.min.css") ?>">
         <link rel="preload" href="<?= url("assets/vendors/fontawesome-6.6.0/css/all.min.css") ?>" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <link rel="preload" rel="stylesheet" href="<?= url("assets/css/artistar.css?t=" . time()) ?>" as="style" onload="this.onload=null;this.rel='stylesheet'">

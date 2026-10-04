@@ -1,120 +1,94 @@
-<?= $this->layout("base", [
-    'title' => $title, 
-    'logado' => $logado,
-    'header' => true,
-    'footer' => true
-]); ?>
+<?= $this->layout("base"); ?>
 
 <?= $this->start("css") ?>
 <link rel="stylesheet" href="<?= url("assets/css/events/home.css") ?>">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+#events-map { height: 400px; border-radius: 8px; }
+#events .evento { text-decoration: none; }
+#events .evento .card { height: 160px; }
+#events .evento .card-body { overflow: hidden; display: flex; flex-direction: column; }
+#events .evento .evento-data { font-size: .8rem; opacity: .75; margin-bottom: .25rem; }
+#events .evento .nome-produto { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#events .evento .descricao-evento { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; margin: 0; }
+</style>
 <?= $this->stop() ?>
 
 <?= $this->start("conteudo") ?>
 
 <section class="avoid-navbar minimum-height container">
 <section id="search-bar">
-        <!-- Barra de pesquisa e filtros -->
         <form id="searchForm" method="GET" action="<?= url('events')?>" class="pt-3">
             <div class="row position-relative">
                 <div class="col-12 d-flex align-items-center">
                     <div class="search-wrapper flex-grow-1 position-relative px-1">
-                        <input name="s" id="searchInput" type="search" class="form-control input-kiklit-2" placeholder="Pesquisar eventos..." value="<?php if (isset($_GET['s'])) echo urldecode($_GET['s']); ?>">
-                        <i class="fas fa-search link-kitlit-2 position-absolute" id="searchIcon"></i>
-                    </div>
-                    <i class="fas fa-sliders-h link-kitlit-2 m-3 icon-filter" id="filterIcon"></i>
-                </div>
-            </div>
-            <div class="offcanvas-filter w-100 show " id="filterRow">
-                <div class="row px-1">
-                    <div class="col-md-6 col-12 py-1">
-                        <div class="form-group">
-                            <label for="filterRegion">Região</label>
-                            <select id="filterRegion" class="form-control input-kiklit-2 my-1" name="r">
-                                <option value="">Selecione uma região</option>
-                                <?php foreach($estados as $estado) {?>
-                                    <option <?php if($estado['uf'] == $get['r']) echo 'selected'; ?> value="<?= $estado['uf'] ?>"><?= $estado['name'] ?></option>
-                                <?php } ?>
-                            </select>
+                    <div class="store-search-wrap">
+                            <i class="fa-solid fa-search store-search-icon"></i>
+                            <input type="search" name="search" id="storeSearchInput" class="store-search-input" aria-label="Search in catalog" placeholder="<?= $translator->translate("Pesquisar eventos...") ?>" value="<?= $search ?>">
                         </div>
-                    </div>
-                    <div class="col-md-6 col-12  py-1">
-                        <div class="form-group">
-                            <label for="filterCity">Cidade</label>
-                            <select id="filterCity" class="form-control input-kiklit-2 my-1" name="c">
-                                <option value="<?php if (!empty($get['c'])) echo $get['c']; ?>"><?= empty($get['c']) ? 'Selecione uma cidade' : $get['c']; ?></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row px-1">
-                    <div class="col-xl-3 col-md-4 col-sm-6 col-12 py-1">
-                        <div class="form-group">
-                            <label for="filterDate">Data Inicial</label>
-                            <input type="date" id="filterDate" class="form-control input-kiklit-2 my-1" name="sd" value="<?= $get['sd']?>">
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-4 col-sm-6 col-12 py-1">
-                        <div class="form-group">
-                            <label for="filterDate">Data Final</label>
-                            <input type="date" id="filterDate" class="form-control input-kiklit-2 my-1" name="fd" value="<?= $get['fd']?>">
-                        </div>
-                    </div>
-                    <div class="col-xl-6 col-md-4 col-12 d-flex justify-content-end align-items-end py-1">
-                        <button type="submit" class="btn btn-kiklit-2">Pesquisar</button>
                     </div>
                 </div>
             </div>
         </form>
     </section>
+    <div id="events-map" class="mt-3"></div>
     <hr>
-    <section id="events" class="row">
-        <?php 
-            for ($i = 1; $i < 4; $i++) {
-                foreach($events as $event) {
-        ?>
-        <a class="col-lg-3 col-md-4 col-sm-6 mb-4 evento" href="/events/<?= $event['id'] ?>/<?= $event['url']?>">
-            <div class="card">
-                <img class="card-img-top" src="<?= $event['image']?>" alt="Card image cap">
-                <span class="image-overlay"><?= $event['start_date']?> - <?= $event['start_date']?></span>
-                <div class="card-body">
-                    <h5 class="card-title"><?= $event['title']?></h5>
-                    <p class="card-text descricao-evento"><?= $event['subtitle']?></p>
+    <section id="events" class="row lista-eventos">
+        <?php foreach ($events as $event): ?>
+            <a class="col-lg-3 col-md-4 col-sm-6 mb-4 evento" href="<?= url('events/id/'.$event['evento_id']) ?>">
+                <div class="card">
+                    <div class="card-body">
+                        <?php if (!empty($event['evento_data_inicial']) && !empty($event['evento_data_final'])): ?>
+                            <span class="evento-data">
+                                <?php if (date('Y-m-d', strtotime($event['evento_data_inicial'])) != date('Y-m-d', strtotime($event['evento_data_final']))) : ?>
+                                    <?= date('d/m/Y', strtotime($event['evento_data_inicial'])) . ' - ' . date('d/m/Y', strtotime($event['evento_data_final'])) ?>
+                                <?php else: ?>
+                                    <?= date('d/m/Y', strtotime($event['evento_data_inicial'])).' '.(date('H:i', strtotime($event['evento_data_inicial'])).' - '.date('H:i', strtotime($event['evento_data_final']))) ?>
+                                <?php endif; ?>
+                            </span>
+                        <?php endif; ?>
+                        <h5 class="card-title">
+                            <span class="color-stellar-blue nome-produto"><?= $event['evento_nome'] ?></span>
+                        </h5>
+                        <?php
+                            $street = trim(($event['evento_endereco_logradouro'] ?? '') . ' ' . ($event['evento_endereco_numero'] ?? ''));
+                            $cityState = implode(' - ', array_filter([$event['evento_endereco_cidade'] ?? '', $event['evento_endereco_estado'] ?? '']));
+                            $addressLines = array_filter([
+                                $street,
+                                $event['evento_endereco_complemento'] ?? '',
+                                $event['evento_endereco_bairro'] ?? '',
+                                $cityState,
+                                $event['evento_pais'] ?? '',
+                            ]);
+                        ?>
+                        <p class="card-text descricao-evento">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <?= htmlspecialchars(implode(', ', $addressLines)) ?>
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </a>
-        <?php 
-                } 
-            }
-        ?>
-    </section>
-    <section>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item <?php if ($currentPage <= 1) echo 'disabled'; ?>">
-                    <a class="page-link link-kitlit-2" href="<?= url('events?page='.($currentPage-1).'&'.$queryString) ?>" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Anterior</span>
-                    </a>
-                </li>
-                <?php foreach($pages as $page) { ?>
-                    <li class="page-item <?= $page['class'] ?>"><a class="page-link link-kitlit-2" href="<?= url($page['url'])?>"><?= $page['pagina']?></a></li>
-                <?php } ?>
-                <li class="page-item <?php if ($currentPage >= 10) echo 'disabled'; ?>">
-                    <a class="page-link link-kitlit-2" href="<?= url('events?page='.($currentPage+1).'&'.$queryString) ?>" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Próximo</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+            </a>
+        <?php endforeach; ?>
     </section>
 </section>
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>
-<script src="<?= url('assets/js/events/home.js') ?>"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    const defaultCity = '<?= empty($get['c']) ? 'Carregando...' : $get['c']; ?>';
-    searchCities('<?= empty($get['r']) ? '' : $get['r']; ?>');
+const isFiltering = <?= !empty($search) ? 'true' : 'false' ?>;
+const mapEvents = <?= json_encode(array_map(fn($e) => [
+    'name' => $e['evento_nome'],
+    'url' => url('events/id/' . $e['evento_id']),
+    'address' => implode(', ', array_filter([
+        trim(($e['evento_endereco_logradouro'] ?? '') . ' ' . ($e['evento_endereco_numero'] ?? '')),
+        $e['evento_endereco_cidade'] ?? '',
+        $e['evento_endereco_estado'] ?? '',
+        $e['evento_pais'] ?? ''
+    ])),
+    'city' => implode(', ', array_filter([$e['evento_endereco_cidade'] ?? '', $e['evento_endereco_estado'] ?? '', $e['evento_pais'] ?? ''])),
+], $events), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+
 </script>
+<script src="<?= url('assets/js/events/home.js') ?>"></script>
 <?= $this->stop() ?>

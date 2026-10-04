@@ -240,9 +240,9 @@ $(function() {
     function showPreview(file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            //limitar a imagem a 5MB
+            //limitar a imagem a 1MB
             const fileSize = file.size / 1024 / 1024; // tamanho em MB
-            if (fileSize > 5) {
+            if (fileSize > 1) {
                 alert(dictionary.imageSizeError);
                 $input.val(''); // Limpa o input
                 $area.find('img').remove();

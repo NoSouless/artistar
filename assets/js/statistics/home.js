@@ -1,4 +1,5 @@
 const ctx = document.getElementById('myChart').getContext('2d');
+const formatMoney = v => currency + ' ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 var myChart
 function atualizarGrafico(data, real = false) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -25,7 +26,7 @@ function atualizarGrafico(data, real = false) {
         config.options.tooltips = {
             callbacks: {
                 label: function(tooltipItem, data) {
-                    return tooltipItem.yLabel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    return formatMoney(tooltipItem.yLabel);
                 }
             }
         };
@@ -33,7 +34,7 @@ function atualizarGrafico(data, real = false) {
             yAxes: [{
                 ticks: {
                     callback: function(value) {
-                        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        return formatMoney(value);
                     }
                 }
             }]
@@ -242,10 +243,7 @@ for (const [key, graph] of Object.entries(customGraphs)) {
                                 var percentual = ((valor / total) * 100).toFixed(2) + '%';
                                 if (graph.real) {
 
-                                    var valorFormatado = valor.toLocaleString('pt-BR', {
-                                        style: 'currency',
-                                        currency: 'BRL'
-                                    });
+                                    var valorFormatado = formatMoney(valor);
                                 } else {
                                     var valorFormatado = valor.toString();
                                 }
@@ -292,7 +290,7 @@ for (const [key, graph] of Object.entries(customGraphs)) {
                        callbacks: {
                             label: function(tooltipItem, data) {
                                 if (graph.real) {
-                                    return tooltipItem.yLabel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    return formatMoney(tooltipItem.yLabel);
                                 } else {
                                     return tooltipItem.yLabel;
                                 }
@@ -304,7 +302,7 @@ for (const [key, graph] of Object.entries(customGraphs)) {
                             ticks: {
                                 callback: function(value) {
                                     if (graph.real) {
-                                        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                        return formatMoney(value);
                                     } else {
                                         return value;
                                     }
@@ -347,7 +345,7 @@ for (const [key, graph] of Object.entries(customGraphs)) {
                        callbacks: {
                             label: function(tooltipItem, data) {
                                 if (graph.real) {
-                                    return tooltipItem.yLabel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    return formatMoney(tooltipItem.yLabel);
                                 } else {
                                     return tooltipItem.yLabel;
                                 }
@@ -359,7 +357,7 @@ for (const [key, graph] of Object.entries(customGraphs)) {
                             ticks: {
                                 callback: function(value) {
                                     if (graph.real) {
-                                        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                        return formatMoney(value);
                                     } else {
                                         return value;
                                     }

@@ -17,10 +17,10 @@
         <div class="col-12 mb-3 px-4">
             <div class="row p-md-5 p-3 bg-lavanda text-white rounded">
                 <div class="col-12">
-                    <h1><?= $translator->translate("Você já vendeu") ?> R$<?= moedaReal($totalSales['total_value'])?> <?= $translator->translate("em") ?> <?= $totalSales['total_sales']-$totalSales['total_canceled'] ?> <?= $translator->translate("Vendas!") ?></h1> 
+                    <h1><?= $translator->translate("Você já vendeu") ?> <?= $currency ?> <?= moedaReal($totalSales['total_value'])?> <?= $translator->translate("em") ?> <?= $totalSales['total_sales']-$totalSales['total_canceled'] ?> <?= $translator->translate("Vendas!") ?></h1> 
                 </div>
                 <div class="col-md-6 col-12">
-                    <h5><?= $translator->translate("Valor Médio das Vendas") ?>: R$<?= moedaReal($totalSales['total_value'] / ($totalSales['total_sales']-$totalSales['total_canceled']  ?: 1)) ?></h5>
+                    <h5><?= $translator->translate("Valor Médio das Vendas") ?>: <?= $currency ?> <?= moedaReal($totalSales['total_value'] / ($totalSales['total_sales']-$totalSales['total_canceled']  ?: 1)) ?></h5>
                     <h5><?= $translator->translate("Unidades Vendidas") ?>: <?= $totalSales['total_items'] ?></h5>
                 </div>
                 <div class="col-md-6 col-12">
@@ -120,8 +120,8 @@
                             <small class="color-gray"><?= $sale['total_unidades'] ?></small>
                         </td>
                         <td class="text-end align-middle" data-bs-toggle="collapse" data-bs-target="#collapse-<?= $sale['id'] ?>">
-                            <span class="color-nocturne-purple">R$<?= moedaReal($sale['total_valor']) ?></span><br>
-                            <small class="color-gray">R$<?= moedaReal($sale['total_desconto']) ?></small>
+                            <span class="color-nocturne-purple"><?= $currency ?> <?= moedaReal($sale['total_valor']) ?></span><br>
+                            <small class="color-gray"><?= $currency ?> <?= moedaReal($sale['total_desconto']) ?></small>
                         </td>
                         <td class="text-center align-right">
                             <div class="d-flex justify-content-sm-end justify-content-between">
@@ -169,12 +169,12 @@
                                                 </td>
                                                 <td class="text-center align-middle"><?= $item['qtd'] ?></td>
                                                 <td class="text-end align-middle">
-                                                    <span class="color-nocturne-purple">R$<?= $item['desconto'] ?></span><br>
-                                                    <small class="color-gray">R$<?= $item['desconto_unitario'] ?>/<?= $translator->translate('uni') ?></small>
+                                                    <span class="color-nocturne-purple"><?= $currency ?> <?= $item['desconto'] ?></span><br>
+                                                    <small class="color-gray"><?= $currency ?> <?= $item['desconto_unitario'] ?>/<?= $translator->translate('uni') ?></small>
                                                 </td>
                                                 <td class="text-end align-middle">
-                                                    <span class="color-nocturne-purple">R$<?= $item['valor'] ?></span><br>
-                                                    <small class="color-gray">R$<?= $item['valor_unitario'] ?>/<?= $translator->translate('uni') ?></small>
+                                                    <span class="color-nocturne-purple"><?= $currency ?> <?= $item['valor'] ?></span><br>
+                                                    <small class="color-gray"><?= $currency ?> <?= $item['valor_unitario'] ?>/<?= $translator->translate('uni') ?></small>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

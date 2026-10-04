@@ -31,9 +31,9 @@
                                             <?php endif; ?>
                                         </div>
                                         <small class="form-text text-muted d-block mt-2">
-                                            <?= $translator->translate("Tamanho máximo: 5MB") ?>
+                                            <?= $translator->translate("Tamanho máximo: 1MB") ?>
                                         </small>
-                                        <input type="file" id="store-photo-input" name="storePhoto" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 5MB") ?>">
+                                        <input type="file" id="store-photo-input" name="storePhoto" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 1MB") ?>">
                                     </div>
                                 </div>
                                 <div class="col-xxl-8 col-12">
@@ -47,9 +47,9 @@
                                             <?php endif; ?>
                                         </div>
                                         <small class="form-text text-muted d-block mt-2">
-                                            <?= $translator->translate("Tamanho máximo: 5MB") ?>
+                                            <?= $translator->translate("Tamanho máximo: 1MB") ?>
                                         </small>
-                                        <input type="file" id="store-banner-input" name="storeBanner" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 5MB") ?>">
+                                        <input type="file" id="store-banner-input" name="storeBanner" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 1MB") ?>">
                                     </div>
                                 </div>
                             </div>    

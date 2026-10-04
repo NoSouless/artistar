@@ -40,7 +40,8 @@ class statisticsController extends Core {
             'productRanking' => $productRanking,
             'allProducts' => $allProducts,
             'allCategories' => $allCategories,
-            'customGraphs' => $customGraphs
+            'customGraphs' => $customGraphs,
+            'currency' => ($this->getUser()['loja_moeda'] ?? '') ?: 'R$'
         ]);
         return;
     }

@@ -161,6 +161,14 @@
             
             <li class="border-top my-3"></li>
             <li>
+               <a href="<?= url('events') ?>" class="nav-link link-nocturne-purple link-hover">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-search me-4" style="width:24px; text-align: center;"></i>
+                        <span><?= $translator->translate('Procurar Eventos') ?></span>
+                    </div>
+                </a>
+            </li>
+            <li>
                <a href="<?= url('events/my-events') ?>" class="nav-link link-nocturne-purple link-hover">
                     <div class="d-flex align-items-center">
                         <i class="icone-sidebar icone-meus-eventos me-4" style="width:24px; text-align: center;"></i>
@@ -206,14 +214,6 @@
             </li> -->
 
             <?php if($_SESSION['artistar']['permissions']['prototype']): ?>
-            <li>
-               <a href="<?= url('events') ?>" class="nav-link link-nocturne-purple link-hover">
-                    <div class="d-flex align-items-center">
-                        <i class="icone-sidebar icone-procurar-eventos me-4" style="width:24px; text-align: center;"></i>
-                        <span><?= $translator->translate('Procurar Eventos') ?></span>
-                    </div>
-                </a>
-            </li>
             <li class="border-top my-3"></li>
             <li class="mb-1">
                 <a href="#" class="nav-link link-dark link-hover item-parcerias" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">

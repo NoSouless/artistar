@@ -32,7 +32,7 @@
                     <div class="row mt-3">
                         <div class="col-xl-6 col-12 mt-xl-0 mt-2 row mx-0">
                             <div class="col-6 d-flex align-items-center  p-0">
-                                <?= $translator->translate("Desconto") ?> (R$):
+                                <?= $translator->translate("Desconto") ?> (<?= $currency ?>):
                             </div>
                             <div class="col-6 d-flex align-items-center  p-0">
                                 <input id="total-discount-input" name="total_discount" type="text" class="form-control moedaReal input-stellar-blue" value="0,00" inputmode="decimal">
@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-xl-6 col-12 mt-xl-0 mt-2 row mx-0">
                             <div class="col-6 d-flex align-items-center p-0">
-                                <?= $translator->translate("Total") ?> (R$):
+                                <?= $translator->translate("Total") ?> (<?= $currency ?>):
                             </div>
                             <div class="col-6 d-flex align-items-center p-0">
                                 <input id="total-input" name="total_price" type="text" class="form-control moedaReal input-stellar-blue" value="0,00" inputmode="decimal">
@@ -66,7 +66,7 @@
                 <div class="modal-body">
                     <?= $translator->translate("Você está prestes a finalizar a venda. Por favor, confirme os detalhes abaixo:") ?>
                     <div class="my-3">
-                        <?= $translator->translate("Total da Venda:") ?> <span class="color-nocturne-purple">R$<span id="total-price-modal">0,00</span></span>
+                        <?= $translator->translate("Total da Venda:") ?> <span class="color-nocturne-purple"><?= $currency ?> <span id="total-price-modal">0,00</span></span>
                     </div>
                     <div class="row mb-3">
                         <div class="col-12">
@@ -176,6 +176,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
 <script>
   const produtos = <?php array_walk_recursive($products,function(&$item){$item=strval($item);}); echo json_encode($products); ?>;
+  const currency = <?= json_encode($currency) ?>;
   const dictionary = {
     noResults: [
         "<?= $translator->translate("Não encontrou o que procura?") ?>",

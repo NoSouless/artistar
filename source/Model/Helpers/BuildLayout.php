@@ -8,6 +8,7 @@ class buildLayout {
     protected $title;
     protected $lang;
     protected $description;
+    protected $image;
     protected $favicon;
     protected $url;
     protected $header;
@@ -20,6 +21,7 @@ class buildLayout {
         $this->setLang('pt-br');
         $this->setDescription('Gerencie seu estoque de forma eficiente e prática durante eventos com o Artistar. Nossa plataforma facilita o controle de vendas, produtos e relatórios, proporcionando uma experiência otimizada para artistas e vendedores. Simplifique sua gestão e maximize seus lucros com nossas ferramentas intuitivas.');
         $this->setFavicon(url("assets/image/favicon.png"));
+        $this->setImage(url("assets/image/favicon.png"));
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $this->setUrl($protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         $this->setHeader('');
@@ -64,6 +66,14 @@ class buildLayout {
 
     public function getFavicon() {
         return $this->favicon;
+    }
+
+    public function setImage($image) {
+        $this->image = $image;
+    }
+
+    public function getImage() {
+        return $this->image;
     }
 
     public function setUrl($url) {

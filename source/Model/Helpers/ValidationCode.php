@@ -9,6 +9,11 @@ use Source\Core\Core;
 
 class ValidationCode extends Core {
 
+    public function __construct() {
+        $this->setEnableRedirect(false);
+        parent::__construct();
+    }
+
     public function searchEmail($email) {
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         $emailStatement = $this->SQL->prepare('

@@ -29,9 +29,9 @@
                                         <?php endif; ?>
                                     </div>
                                     <small class="form-text text-muted d-block mt-2">
-                                        <?= $translator->translate("Tamanho máximo: ") ?> 5MB
+                                        <?= $translator->translate("Tamanho máximo: ") ?> 1MB
                                     </small>
-                                    <input type="file" id="thumbnail-input" name="thumbnail" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 5MB") ?>">
+                                    <input type="file" id="thumbnail-input" name="thumbnail" accept="image/*" class="d-none" data-size-error="<?= $translator->translate("A imagem deve ter no máximo 1MB") ?>">
                                 </div>
                                 <div class="mb-3 col-lg-8 col-12">
                                     <div class="mb-3">

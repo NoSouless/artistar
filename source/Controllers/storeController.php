@@ -31,6 +31,8 @@ class storeController extends Core {
             $isOwner = ((int) $this->getUser()['loja_id']) === ((int) $store['codigo']);
 
         $this->addLayout(!empty($store['nome']) ? $store['nome'] : null);
+        $this->getLayout()->setDescription(!empty($store['descricao']) ? $store['descricao'] : null);
+        $this->getLayout()->setImage(!empty($store['foto']) ? storageURL($store['foto']) : url('assets/image/favicon.png'));
 
         // $followersCount = $storeModel->getStoreFollowersCount($storeId);
 

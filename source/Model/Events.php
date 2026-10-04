@@ -6,11 +6,51 @@ namespace Source\Model;
 use PDO;
 use Source\Core\Core;
 
-class Events extends Core
-{
+class Events extends Core {
+
+    public function getFuturePublicEvents($search = null) {
+        $match = !empty($search) ? '(MATCH(evento_nome, evento_descricao, evento_endereco_cidade, evento_endereco_estado, evento_pais, evento_produtor) AGAINST (:search IN NATURAL LANGUAGE MODE))' : '';
+        $stmt = $this->getSQL()->prepare('
+            SELECT
+                *
+            FROM
+                eventos
+            WHERE 
+                COALESCE(evento_privado, 0) = 0
+            AND
+                evento_data_final >= CURDATE()
+            ' . (!empty($search) ? 'AND ' . $match : '') . '
+            ORDER BY
+                ' . (!empty($search) ? $match . ' DESC,' : '') . '
+                evento_data_final ASC
+        ');
+        if (!empty($search)) $stmt->bindValue(':search', $search, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getFuturePublicEventsCount($search = null) {
+        $match = !empty($search) ? '(MATCH(evento_nome, evento_descricao, evento_endereco_cidade, evento_endereco_estado, evento_pais, evento_produtor) AGAINST (:search IN NATURAL LANGUAGE MODE))' : '';
+        $stmt = $this->getSQL()->prepare('
+            SELECT
+                COUNT(*) AS total
+            FROM
+                eventos
+            WHERE 
+                COALESCE(evento_privado, 0) = 0
+            AND
+                evento_data_final >= CURDATE()
+            ' . (!empty($search) ? 'AND ' . $match : '') . '
+        ');
+        if (!empty($search)) {
+            $stmt->bindParam(':search', $search, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
 
     public function getEventBasicInfo($eventId, $storeId) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 eve.*,
                 insc.*,
@@ -37,7 +77,7 @@ class Events extends Core
     }
 
     public function getEventDays($eventId) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 *
             FROM
@@ -54,7 +94,7 @@ class Events extends Core
     }
 
     public function getEventAdvantages($eventId, $eventOnly = true, $activeOnly = true) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 vant.vantagem_id AS id,
                 vant.vantagem_nome AS nome,
@@ -74,7 +114,7 @@ class Events extends Core
     }
 
     public function getEventPrices($eventId) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 *
             FROM
@@ -91,7 +131,7 @@ class Events extends Core
     }
 
     public function getEventPhotos($eventId) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 *
             FROM
@@ -108,7 +148,7 @@ class Events extends Core
     }
 
     public function getUserEvents($user) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 eve.*,
                 insc.*,
@@ -148,7 +188,7 @@ class Events extends Core
     }
 
     public function getUserEventsTotals($user) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 COUNT(DISTINCT eve.evento_id) AS total,
                 COUNT(DISTINCT(IF(eve.evento_proprietario = :user, eve.evento_id, NULL))) AS total_criados,
@@ -179,7 +219,7 @@ class Events extends Core
     }
 
     public function getUserEventsToday($user) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 eve.*,
                 insc.*,
@@ -224,7 +264,7 @@ class Events extends Core
     }
 
     public function checkIfUserIsSubscribed($eventId, $storeId) {
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 *
             FROM
@@ -243,7 +283,7 @@ class Events extends Core
 
     public function getAdvantages($active = true) {
         $active = $active ? 1 : 0;
-        $qtdStatement = $this->SQL->prepare('
+        $qtdStatement = $this->getSQL()->prepare('
             SELECT
                 vantagem_id id,
                 vantagem_nome nome
@@ -260,7 +300,7 @@ class Events extends Core
     }
 
     public function createEvent($postData, $userId) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             INSERT INTO eventos
                 (
                     evento_proprietario, 
@@ -313,11 +353,11 @@ class Events extends Core
         $eventStatement->bindParam(':private', $private, PDO::PARAM_INT);
 
         $eventStatement->execute();
-        return $this->SQL->lastInsertId();
+        return $this->getSQL()->lastInsertId();
     }
 
     public function updateEvent($eventId, $postData) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE 
                 eventos 
             SET
@@ -355,7 +395,7 @@ class Events extends Core
     }
 
     public function addEventAdvantage($eventId, $advantageId) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             INSERT INTO eventos_vantagens
                 (
                     evento_vantagem_evento,
@@ -373,7 +413,7 @@ class Events extends Core
     }
 
     public function removeEventAdvantage($id) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             DELETE FROM 
                 eventos_vantagens
             WHERE
@@ -384,7 +424,7 @@ class Events extends Core
     }
 
     public function addEventDate($eventId, $dateData) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             INSERT INTO eventos_datas
                 (
                     evento_data_evento,
@@ -411,7 +451,7 @@ class Events extends Core
     }
 
     public function updateEventDate($dateId, $dateData) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE 
                 eventos_datas 
             SET
@@ -431,7 +471,7 @@ class Events extends Core
     }
 
     public function removeEventDate($id) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             DELETE FROM 
                 eventos_datas
             WHERE
@@ -442,7 +482,7 @@ class Events extends Core
     }
 
     public function addEventPrice($eventId, $priceData) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             INSERT INTO eventos_taxas
                 (
                     evento_taxa_evento,
@@ -470,7 +510,7 @@ class Events extends Core
     }
 
     public function updateEventPrice($priceId, $priceData) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE 
                 eventos_taxas 
             SET
@@ -491,7 +531,7 @@ class Events extends Core
     }
 
     public function removeEventPrice($id) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             DELETE FROM 
                 eventos_taxas
             WHERE
@@ -505,8 +545,8 @@ class Events extends Core
         //Data_inicial = A menor data e a hora inicial desta data
         //Data_final = A maior data e a hora final desta data
         // Iniciar transação
-        $this->SQL->beginTransaction();
-        $eventStatement = $this->SQL->prepare('
+        $this->getSQL()->beginTransaction();
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE eventos SET
                 evento_data_inicial = (SELECT MIN(evento_data_dia) FROM eventos_datas WHERE evento_data_evento = :event),
                 evento_data_final = (SELECT MAX(evento_data_dia) FROM eventos_datas WHERE evento_data_evento = :event)
@@ -516,7 +556,7 @@ class Events extends Core
         $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
         $eventStatement->execute();
         //Agora atualizar as datas com base na data inicial e final
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE eventos e1 SET
                 evento_data_inicial = (SELECT CONCAT(evento_data_dia, " ", evento_data_hora_inicial) FROM eventos_datas WHERE evento_data_evento = :event AND evento_data_dia = e1.evento_data_inicial LIMIT 1),
                 evento_data_final = (SELECT CONCAT(evento_data_dia, " ", evento_data_hora_final) FROM eventos_datas WHERE evento_data_evento = :event AND evento_data_dia = e1.evento_data_final LIMIT 1)
@@ -525,11 +565,11 @@ class Events extends Core
         ');
         $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
         $eventStatement->execute();
-        $this->SQL->commit();
+        $this->getSQL()->commit();
     }
 
     public function subscribeToEvent($eventId, $storeId) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             INSERT INTO inscricoes
                 (
                     inscricao_evento,
@@ -546,11 +586,11 @@ class Events extends Core
         $eventStatement->bindParam(':event', $eventId, PDO::PARAM_INT);
         $eventStatement->bindParam(':store', $storeId, PDO::PARAM_INT);
         $eventStatement->execute();
-        return $this->SQL->lastInsertId();
+        return $this->getSQL()->lastInsertId();
     }
 
     public function unsubscribeFromEvent($inscricaoId) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE 
                 inscricoes 
             SET
@@ -563,7 +603,7 @@ class Events extends Core
     }
 
     public function reactivateSubscription($inscricaoId) {
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE 
                 inscricoes 
             SET
@@ -579,7 +619,7 @@ class Events extends Core
         $status = filter_var($status, FILTER_SANITIZE_STRING);
         $observation = filter_var($observation, FILTER_SANITIZE_STRING);
         $feedback = filter_var($feedback, FILTER_SANITIZE_STRING);
-        $eventStatement = $this->SQL->prepare('
+        $eventStatement = $this->getSQL()->prepare('
             UPDATE 
                 inscricoes 
             SET

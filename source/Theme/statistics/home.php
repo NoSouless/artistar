@@ -53,7 +53,7 @@
                 <div class="col-xl-4 col-12">
                     <div class="row h-100 d-flex align-items-center">
                         <div class="col-12">
-                            <h2 class="color-nocturne-purple">R$<?= moedaReal($graphData['totals']['vendas'])?></h2>
+                            <h2 class="color-nocturne-purple"><?= $currency ?> <?= moedaReal($graphData['totals']['vendas'])?></h2>
                             <h3 class="color-stellar-blue"><?= $translator->translate("Faturamento") ?></h3>
                         </div>
                         <div class="col-12">
@@ -73,7 +73,7 @@
                     </div>
                     <div class="text-start">
                         <?= $translator->translate("Mais vendido por") ?> <span class="fs-5 color-stellar-blue"><?= $translator->translate("VALOR") ?></span><br>
-                        <span class="fs-4 color-nocturne-purple">R$<?= moedaReal($bestSellers['valor_maior_venda']) ?></span><br>
+                        <span class="fs-4 color-nocturne-purple"><?= $currency ?> <?= moedaReal($bestSellers['valor_maior_venda']) ?></span><br>
                         <span class="fs-5 color-lavanda"><?= $bestSellers['produto_maior_valor'] ?></span>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     </div>
                     <div class="text-start">
                         <span class="fs-5 color-stellar-blue"><?= $translator->translate("Ticket Médio") ?></span><br>
-                        <span class="fs-4 color-nocturne-purple">R$<?= moedaReal($graphData['totals']['vendas']/($graphData['totals']['transacoes'] > 0 ? $graphData['totals']['transacoes'] : 1)) ?></span><br>
+                        <span class="fs-4 color-nocturne-purple"><?= $currency ?> <?= moedaReal($graphData['totals']['vendas']/($graphData['totals']['transacoes'] > 0 ? $graphData['totals']['transacoes'] : 1)) ?></span><br>
                     </div>
                 </div>
                 <div class="col-xl-4 col-12 text-center d-flex align-items-center justify-content-xl-end">
@@ -262,7 +262,7 @@
                                     </td>
                                     <td class="text-center align-middle"><?= $produto['total_vendido'] ?></td>
                                     <td class="text-center align-middle">
-                                        <span class="color-nocturne-purple">R$<?= moedaReal($produto['total_faturado']) ?></span>
+                                        <span class="color-nocturne-purple"><?= $currency ?> <?= moedaReal($produto['total_faturado']) ?></span>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -367,6 +367,7 @@
 <script src="<?= url("assets/vendors/chart.js/Chart.min.js") ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    const currency = <?= json_encode($currency) ?>;
     const labels = <?= json_encode(array_values($graphData['labels'])) ?>;
     const totalTransacoes = <?= json_encode(array_values($graphData['values']['total_transacoes'])) ?>;
     const totalVendas = <?= json_encode(array_values($graphData['values']['total_vendas'])) ?>;

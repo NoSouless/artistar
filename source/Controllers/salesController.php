@@ -34,6 +34,7 @@ class salesController extends Core {
             'products' => $products,
             'storeEvents' => $salesModel->getStoresCurrentEvents($store),
             'paymentMethods' => $paymentMethods->getMethods(),
+            'currency' => ($this->getUser()['loja_moeda'] ?? '') ?: 'R$',
         ]);
         return;
     }

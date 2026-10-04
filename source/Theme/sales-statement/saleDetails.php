@@ -108,7 +108,7 @@
                     <div class="row mt-3">
                         <div class="col-xl-6 col-12 mt-xl-0 mt-2 row mx-0">
                             <div class="col-6 d-flex align-items-center  p-0">
-                                <?= $translator->translate("Desconto") ?> (R$):
+                                <?= $translator->translate("Desconto") ?> (<?= $currency ?>):
                             </div>
                             <div class="col-6 d-flex align-items-center  p-0">
                                 <input id="total-discount-input" name="total_discount" type="text" class="form-control moedaReal input-stellar-blue" value="0,00" inputmode="decimal">
@@ -116,7 +116,7 @@
                         </div>
                         <div class="col-xl-6 col-12 mt-xl-0 mt-2 row mx-0">
                             <div class="col-6 d-flex align-items-center p-0">
-                                <?= $translator->translate("Total") ?> (R$):
+                                <?= $translator->translate("Total") ?> (<?= $currency ?>):
                             </div>
                             <div class="col-6 d-flex align-items-center p-0">
                                 <input id="total-input" name="total_price" type="text" class="form-control moedaReal input-stellar-blue" value="0,00" inputmode="decimal">
@@ -145,6 +145,7 @@
 <script>
   const produtos = <?php array_walk_recursive($products,function(&$item){$item=strval($item);}); echo json_encode($products); ?>;
   const selecionados = new Set();
+  const currency = <?= json_encode($currency) ?>;
   const dictionary = {
     uni: "<?= $translator->translate("uni") ?>",
     remove: "<?= $translator->translate("Remover") ?>",

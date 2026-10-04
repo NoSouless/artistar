@@ -13,7 +13,7 @@ class storeController extends settingsController {
         $storeId = !empty($this->getUser()['loja_id']) ? (int) $this->getUser()['loja_id'] : 0;
         $model = new Store();
         $store = $model->getStoreData($storeId);  
-        $this->addLayout('Editar Loja');
+        $this->addLayout($this->getTranslator()->translate("Editar Loja"));
 
         echo $this->view->render("settings/store", [
             'store' => $store,

@@ -80,10 +80,10 @@
                                         $selectedCategoriesLabels[] = htmlspecialchars($category['nome']);
                                 echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Categoria(s)').': ' . implode(', ', $selectedCategoriesLabels) . '</span>';
                             }
-                            if (!empty($filter['price'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Preço').': R$ ' . htmlspecialchars($filter['price']) . '</span>';
-                            if (!empty($filter['cost'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Custo').': R$ ' . htmlspecialchars($filter['cost']) . '</span>';
-                            if (!empty($filter['discount'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Desconto').': R$ ' . htmlspecialchars($filter['discount']) . '</span>';
-                            if (!empty($filter['real_price'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Preço Atual').': R$ ' . htmlspecialchars($filter['real_price']) . '</span>';
+                            if (!empty($filter['price'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Preço').': '.$currency.' '. htmlspecialchars($filter['price']) . '</span>';
+                            if (!empty($filter['cost'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Custo').': '.$currency.' ' . htmlspecialchars($filter['cost']) . '</span>';
+                            if (!empty($filter['discount'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Desconto').': '.$currency.' ' . htmlspecialchars($filter['discount']) . '</span>';
+                            if (!empty($filter['real_price'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Preço Atual').': '.$currency.' ' . htmlspecialchars($filter['real_price']) . '</span>';
                             if (!empty($filter['stock'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Estoque').': ' . htmlspecialchars($filter['stock']) . '</span>';
                             if (!empty($filter['min_stock'])) echo '<span class="badge bg-light text-dark me-1">'.$translator->translate('Estoque Mínimo').': ' . htmlspecialchars($filter['min_stock']) . '</span>';
                             if (!empty($filter['stock_status'])) {
@@ -188,15 +188,15 @@
                                     <div>
                                         <span><?= $translator->translate('Preço Base:') ?></span><br>
                                         <?php if ($product['valor_desconto'] > 0): ?>
-                                            <span class="badge bg-light text-dark me-1 text-decoration-line-through">R$ <?= number_format($product['valor'], 2, ',', '.') ?></span>
+                                            <span class="badge bg-light text-dark me-1 text-decoration-line-through"><?= $currency ?> <?= number_format($product['valor'], 2, ',', '.') ?></span>
                                         <?php else: ?>
-                                            <span class="badge bg-light text-dark me-1">R$ <?= number_format($product['valor'], 2, ',', '.') ?></span>
+                                            <span class="badge bg-light text-dark me-1"><?= $currency ?> <?= number_format($product['valor'], 2, ',', '.') ?></span>
                                         <?php endif; ?>
                                     </div>
                                     <div>
                                         <span ><?= $translator->translate('Preço Atual:') ?></span> <br>
                                         <div class="text-end">
-                                            <span class="badge bg-light text-dark me-1">R$ <?= number_format($product['valor']-$product['valor_desconto'], 2, ',', '.') ?></span>
+                                            <span class="badge bg-light text-dark me-1"><?= $currency ?> <?= number_format($product['valor']-$product['valor_desconto'], 2, ',', '.') ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -364,7 +364,7 @@
                             </div>
                         </div>
                         <small id="new-nameHelp" class="form-text text-muted">
-                            <?= $translator->translate('Tamanho máximo') ?>: 5MB
+                            <?= $translator->translate('Tamanho máximo') ?>: 1MB
                         </small>
                         <input type="file" id="new-image" name="thumbnail" accept="image/*" style="display:none;">
 
@@ -532,7 +532,7 @@
                 },
             }
         },
-        imageSizeError: '<?= $translator->translate("A imagem deve ter no máximo 5MB") ?>',
+        imageSizeError: '<?= $translator->translate("A imagem deve ter no máximo 1MB") ?>',
         validation: {
             nameRequired: '<?= $translator->translate("Por favor, preencha o campo de nome") ?>',
             error: '<?= $translator->translate("Erro ao criar produto:") ?>'

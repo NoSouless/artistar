@@ -123,7 +123,7 @@ $(document).ready(function () {
                         <p class="card-text mb-1"><small class="text-muted">${prod.subtitulo}</small></p>
                     </div>
                     <div class="col-3 text-end">
-                        <span class="card-text fw-bold text-success">R$${prod.total}</span>
+                        <span class="card-text fw-bold text-success">${currency} ${prod.total}</span>
                         <p class="card-text mb-1"><small class="text-muted">${prod.estoque} uni</small></p>
                     </div>
                 </div>
@@ -198,7 +198,7 @@ $(document).ready(function () {
                         </div>
                         <div class="col-md-3 col-sm-6 col-12">
                             <div class="card-body py-3">
-                                <span class="card-text fw-bold text-success">R$${prod.preco}</span>
+                                <span class="card-text fw-bold text-success">${currency} ${prod.preco}</span>
                                 <p class="card-text mb-1"><small class="text-muted">${prod.estoque} ${dictionary.uni}</small></p>
                             </div>
                         </div>
@@ -221,13 +221,13 @@ $(document).ready(function () {
                             </div>
                         </div>
                         <div class="col-md-4 col-12 my-md-0 my-3 align-items-center px-3">
-                            <label for="discount-${prod.id}" class="">${dictionary.discount} (R$)</label>
+                            <label for="discount-${prod.id}" class="">${dictionary.discount} (${currency})</label>
                             <div class="text-end">
                                 <input id="discount-${prod.id}" name="items[${prod.id}][discount]" type="text" class="form-control moedaReal input-stellar-blue" value="${prod.desconto}">
                             </div>
                         </div>
                         <div class="col-md-4 col-12 align-items-center px-3">
-                            <label for="total-price-${prod.id}" class="">${dictionary.value} (R$)</label>
+                            <label for="total-price-${prod.id}" class="">${dictionary.value} (${currency})</label>
                             <div class="text-end">
                                 <input id="base-price-${prod.id}" name="items[${prod.id}][base_price]" type="hidden" value="${prod.preco}">
                                 <input id="total-price-${prod.id}" name="items[${prod.id}][total_price]" type="text" class="form-control moedaReal input-stellar-blue" value="${prod.total}">
