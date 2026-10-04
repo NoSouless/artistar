@@ -117,11 +117,13 @@ $(document).ready(function () {
 
 function buildProductCard(product, order, selected = false) {
     let stockBadge = '';
+    if (product.mostrar_estoque) {
     if (product.estoque <= 0) {
         stockBadge = `<span class="badge bg-danger position-absolute top-0 end-0 m-3">${translator["Esgotado!"]}</span>`;
-    } else if (product.mostrar_estoque && product.estoque > 0) {
+    } else {
         stockBadge = `<span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3">${product.estoque} ${translator["uni"]}</span>`;
     }
+}
     return `
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4 draggable-product" id="product-${product.id}" data-product-name="${product.nome}" data-product-keywords="${product.palavras_chave}">
             <div class="card h-100 d-flex flex-column product-card">
