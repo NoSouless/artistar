@@ -95,6 +95,102 @@ async function favoriteEvent() {
     });
 }
 
+function setupEventFollowers() {
+    const modal = $('#eventFollowersModal');
+    const list = document.getElementById('eventFollowersList');
+    const status = document.getElementById('eventFollowersStatus');
+    const moreButton = document.getElementById('eventFollowersMore');
+    let offset = 0;
+    let isLoading = false;
+
+    function loadFollowers() {
+        if (isLoading) return;
+        isLoading = true;
+        moreButton.disabled = true;
+        moreButton.textContent = translator.followersLoading;
+        status.hidden = true;
+
+        $.ajax({
+            url: '/events/subscribers',
+            type: 'POST',
+            data: { eventId: eventId, offset: offset },
+            success: function(response) {
+                try {
+                    response = typeof response === 'string' ? JSON.parse(response) : response;
+                    if (response.code !== 200) throw new Error(response.message || translator.followersLoadError);
+
+                    response.data.subscribers.forEach(function(subscriber) {
+                        const item = document.createElement('li');
+                        const profileLink = document.createElement('a');
+                        profileLink.className = 'list-group-item subscriber-link';
+                        profileLink.href = subscriber.perfil_url;
+
+                        if (subscriber.foto_url) {
+                            const avatar = document.createElement('img');
+                            avatar.className = 'subscriber-avatar';
+                            avatar.src = subscriber.foto_url;
+                            avatar.alt = '';
+                            profileLink.appendChild(avatar);
+                        } else {
+                            const avatar = document.createElement('span');
+                            avatar.className = 'subscriber-avatar subscriber-avatar-fallback';
+                            avatar.textContent = subscriber.nome.trim().charAt(0).toLocaleUpperCase();
+                            avatar.setAttribute('aria-hidden', 'true');
+                            profileLink.appendChild(avatar);
+                        }
+
+                        const name = document.createElement('span');
+                        name.className = 'subscriber-name';
+                        name.textContent = subscriber.nome;
+                        profileLink.appendChild(name);
+                        if (subscriber.is_owner) {
+                            const ownerLabel = document.createElement('small');
+                            ownerLabel.className = 'subscriber-owner';
+                            ownerLabel.textContent = translator.followersOwner;
+                            profileLink.appendChild(ownerLabel);
+                        }
+                        item.appendChild(profileLink);
+                        list.appendChild(item);
+                    });
+                    offset += response.data.subscribers.length;
+                    moreButton.hidden = !response.data.hasMore;
+                    moreButton.textContent = translator.followersMore;
+                    if (offset === 0) {
+                        status.textContent = translator.followersEmpty;
+                        status.hidden = false;
+                    }
+                } catch (error) {
+                    status.textContent = error.message || translator.followersLoadError;
+                    status.hidden = false;
+                    moreButton.hidden = false;
+                    moreButton.textContent = translator.followersRetry;
+                }
+            },
+            error: function() {
+                status.textContent = translator.followersLoadError;
+                status.hidden = false;
+                moreButton.hidden = false;
+                moreButton.textContent = translator.followersRetry;
+            },
+            complete: function() {
+                isLoading = false;
+                moreButton.disabled = false;
+            }
+        });
+    }
+
+    $('#totalSubscribersBadge').on('click', function() {
+        offset = 0;
+        list.replaceChildren();
+        status.hidden = true;
+        moreButton.hidden = true;
+        modal.modal('show');
+        loadFollowers();
+    });
+
+    moreButton.addEventListener('click', loadFollowers);
+}
+
 function shareButtons() {
     $('#copyUrl').on('click', function() {
         navigator.clipboard.writeText(url).then(async function() {
@@ -142,6 +238,7 @@ function loadShareSlide() {
 document.addEventListener('DOMContentLoaded', async function() {
     lazyLoadImages();
     favoriteEvent();
+    setupEventFollowers();
     new QRCode(document.getElementById("qrcode"), {
         text: url,
         width: 200,

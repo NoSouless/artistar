@@ -42,5 +42,8 @@
     "E-mail reenviado com sucesso!": "Email resent successfully!",
     "O código enviado será válido por 1 hora. Aguarde 1 minuto para tentar novamente!": "The code sent will be valid for 1 hour. Please wait 1 minute before trying again!",
     "Código inválido": "Invalid code",
-    "O código enviado é inválido (outro código foi enviado ou expirou), tente novamente!": "The code sent is invalid (another code was sent or it expired), please try again!"
+    "O código enviado é inválido (outro código foi enviado ou expirou), tente novamente!": "The code sent is invalid (another code was sent or it expired), please try again!",
+    "Verificação reCAPTCHA inválida. Confirme que você não é um robô.": "Invalid reCAPTCHA verification. Please confirm that you are not a robot.",
+    "Verificação anti-robô indisponível no momento.": "Anti-bot verification is currently unavailable.",
+    "Não foi possível validar o reCAPTCHA. Tente novamente.": "Could not verify reCAPTCHA. Please try again."
 }

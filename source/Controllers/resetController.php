@@ -8,6 +8,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use Source\Core\Core;
 use Source\Model\Reset;
+use Source\Model\Helpers\GoogleRecaptcha;
 use Source\Model\Helpers\ValidationCode;
 
 class resetController extends Core {
@@ -26,6 +27,9 @@ class resetController extends Core {
     }
 
     public function sendEmail($post) {
+        $this->addTranslator('password-reset/home');
+        if (!GoogleRecaptcha::verify($post['g-recaptcha-response'] ?? '', 'password_reset'))
+            exit($this->renderApiResponse(400, $this->getTranslator()->translate('Verificação reCAPTCHA inválida. Confirme que você não é um robô.')));
         try { 
             $helper = new ValidationCode();
             $userFound = $helper->searchEmail($post['email']);

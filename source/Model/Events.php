@@ -76,6 +76,34 @@ class Events extends Core {
         return $qtdStatement->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getEventSubscribers($eventId, $offset) {
+        $statement = $this->getSQL()->prepare('
+            SELECT
+                COALESCE(lojas.loja_nome, lojas.loja_nome_unico, "Loja sem nome") AS nome,
+                lojas.loja_nome_unico AS nome_unico,
+                lojas.loja_foto AS foto,
+                lojas.loja_proprietario = eventos.evento_proprietario AS is_owner
+            FROM
+                inscricoes
+            INNER JOIN
+                lojas ON inscricoes.inscricao_loja = lojas.loja_id
+            INNER JOIN
+                eventos ON inscricoes.inscricao_evento = eventos.evento_id
+            WHERE
+                inscricoes.inscricao_evento = :eventId
+            AND
+                COALESCE(inscricoes.inscricao_cancelada, 0) = 0
+            ORDER BY
+                inscricoes.inscricao_id ASC
+            LIMIT 5 OFFSET :offset
+        ');
+
+        $statement->bindValue(':eventId', $eventId, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getEventDays($eventId) {
         $qtdStatement = $this->getSQL()->prepare('
             SELECT

@@ -16,7 +16,7 @@
                 <div class="login-form border">
                     <h2 class="text-center"><?= $translator->translate("Cadastro") ?></h2>
                     <p class="text-center"><?= $translator->translate("Já possui conta?") ?> <a href="<?= url("login?r=".$redirect) ?>" class="link-stellar-blue"><?= $translator->translate("Entrar") ?></a></p>
-                    <form id="form-register" class="needs-validation" method="get" action="<?= url("register/validate-email?r=".$redirect) ?>" novalidate>
+                    <form id="form-register" class="needs-validation" method="post" action="<?= url("register/validate-email?r=".$redirect) ?>" data-recaptcha-sitekey="<?= htmlspecialchars(RECAPTCHA_SITE_KEY, ENT_QUOTES, 'UTF-8') ?>" data-recaptcha-error="<?= htmlspecialchars($translator->translate("Não foi possível validar o reCAPTCHA. Tente novamente."), ENT_QUOTES, 'UTF-8') ?>" novalidate>
                         <div class="mb-3">
                             <label for="user" class="form-label"><?= $translator->translate("Nome de Usuário") ?></label>
                             <input type="text" class="form-control input-stellar-blue" id="user" name="user" required minlength="3">
@@ -50,12 +50,16 @@
                                 <?= $translator->translate("As senhas não coincidem.") ?>
                             </div>
                         </div>
+                        <?php if (!RECAPTCHA_ENABLED): ?>
+                            <div class="alert alert-warning" role="alert"><?= $translator->translate("Verificação anti-robô indisponível no momento.") ?></div>
+                        <?php endif; ?>
+                        <div id="register-error" class="alert alert-danger d-none" role="alert"></div>
                         <!-- <div class="mb-3 position d-flex">
                             <input type="checkbox" class="form-check-input checkbox-kiklit-2" id="aceito-termos" name="aceito-termos" required>
                             <label class="form-check label" for="aceito-termos">Li e aceito as <a href="<?= url('legal/privacy')?>" target="_blank" class="link-kitlit-2">Políticas de Privacidade</a> e os <a href="<?= url('legal/terms')?>" target="_blank" class="link-kitlit-2">Termos de Uso</a></label>
                         </div> -->
                         <div class="d-flex justify-content-end align-items-center">
-                            <button type="submit" class="btn btn-nocturne-purple" id="btn-confirm-register">
+                            <button type="submit" class="btn btn-nocturne-purple" id="btn-confirm-register" <?= RECAPTCHA_ENABLED ? '' : 'disabled' ?>>
                                 <span id="spinner-confirm" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none;"></span>
                                 <span id="text-confirm"><?= $translator->translate("Confirmar") ?></span>
                             </button>
@@ -72,5 +76,7 @@
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>
-<script src="<?= url("assets/js/register/home.js") ?>"></script>
+<?php if (RECAPTCHA_ENABLED): ?><script src="https://www.google.com/recaptcha/api.js?render=<?= rawurlencode(RECAPTCHA_SITE_KEY) ?>&amp;hl=<?= $translator->getLang() === 'pt-br' ? 'pt-BR' : 'en' ?>" defer></script><?php endif; ?>
+<script src="<?= url("assets/js/recaptcha.js") ?>" defer></script>
+<script src="<?= url("assets/js/register/home.js") ?>" defer></script>
 <?= $this->stop() ?>

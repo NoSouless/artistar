@@ -15,7 +15,7 @@
                 <div class="login-form border">
                     <h2 class="text-center"><?= $translator->translate("Login") ?></h2>
                     <p class="text-center"><?= $translator->translate("Não possui conta?") ?> <a href="<?= url("register?r=" . $redirect) ?>" class="link-stellar-blue"><?= $translator->translate("Cadastre-se") ?></a></p>
-                    <form id="form-login" method="post" action="<?= url("?r=" . $redirect) ?>">
+                    <form id="form-login" method="post" action="<?= url("?r=" . $redirect) ?>" data-recaptcha-sitekey="<?= htmlspecialchars(RECAPTCHA_SITE_KEY, ENT_QUOTES, 'UTF-8') ?>" data-recaptcha-error="<?= htmlspecialchars($translator->translate("Não foi possível validar o reCAPTCHA. Tente novamente."), ENT_QUOTES, 'UTF-8') ?>">
                         <div class="mb-3">
                             <label for="email" class="form-label"><?= $translator->translate("E-mail") ?></label>
                             <input type="email" class="form-control input-stellar-blue" id="email" name="email" required>
@@ -24,9 +24,12 @@
                             <label for="senha" class="form-label"><?= $translator->translate("Senha") ?></label>
                             <input type="password" class="form-control input-stellar-blue" id="senha" name="senha" required>
                         </div>
+                        <?php if (!RECAPTCHA_ENABLED): ?>
+                            <div class="alert alert-warning" role="alert"><?= $translator->translate("Verificação anti-robô indisponível no momento.") ?></div>
+                        <?php endif; ?>
                         <div class="d-flex justify-content-between align-items-center">
                             <a href="<?= url("password-reset?r=" . $redirect) ?>" class="link-stellar-blue"><?= $translator->translate("Esqueci minha senha") ?></a>
-                            <button type="submit" class="btn btn-nocturne-purple w-25"><?= $translator->translate("Entrar") ?></button>
+                            <button type="submit" class="btn btn-nocturne-purple w-25" <?= RECAPTCHA_ENABLED ? '' : 'disabled' ?>><?= $translator->translate("Entrar") ?></button>
                         </div>
                     </form>
                 </div>
@@ -38,5 +41,7 @@
 <?= $this->stop() ?>
 
 <?= $this->start("js") ?>
-<script src="<?= url("assets/js/login.js") ?>"></script>
+<?php if (RECAPTCHA_ENABLED): ?><script src="https://www.google.com/recaptcha/api.js?render=<?= rawurlencode(RECAPTCHA_SITE_KEY) ?>&amp;hl=<?= $translator->getLang() === 'pt-br' ? 'pt-BR' : 'en' ?>" defer></script><?php endif; ?>
+<script src="<?= url("assets/js/recaptcha.js") ?>" defer></script>
+<script src="<?= url("assets/js/login.js") ?>" defer></script>
 <?= $this->stop() ?>

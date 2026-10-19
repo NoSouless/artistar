@@ -84,6 +84,7 @@ $router->get("/id/{eventId}", "eventsController:details", "eventsController.deta
 $router->get("/id/{eventId}/edit", "eventsController:edit", "eventsController.edit");
 $router->post("/update", "eventsController:update", "eventsController.update");
 $router->post("/subscribe", "eventsController:subscribe", "eventsController.subscribe");
+$router->post("/subscribers", "eventsController:subscribers", "eventsController.subscribers");
 $router->post("/update-subscription", "eventsController:updateSubscription", "eventsController.updateSubscription");
 $router->get("/my-events", "eventsController:myEvents", "eventsController.myEvents"); // Meus Eventos
 $router->get("/create", "eventsController:create", "eventsController.create"); // Criação de novo evento

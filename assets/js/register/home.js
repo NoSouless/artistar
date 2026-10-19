@@ -246,43 +246,51 @@ document.addEventListener("DOMContentLoaded", function () {
             let password = $('#senha').val();
 
             // Envia os dados via AJAX
-            $.ajax({
-                url: '/register',
-                type: 'POST',
-                data: {
-                    user: user,
-                    complete_user: complete_user,
-                    email: email,
-                    password: password
-                },
-                success: function (response) {
-                    response = JSON.parse(response);
-                    if (response.code == 200) {
-                        location.href = $('#form-register').attr('action'); // Redireciona para a ação do formulário
-                    } else {
-                        let errors = response.data || [];
+            executeRecaptcha('register', form.dataset.recaptchaSitekey).then(function(token) {
+                $.ajax({
+                    url: '/register',
+                    type: 'POST',
+                    data: {
+                        user: user,
+                        complete_user: complete_user,
+                        email: email,
+                        password: password,
+                        'g-recaptcha-response': token
+                    },
+                    success: function (response) {
+                        response = JSON.parse(response);
+                        $('#register-error').addClass('d-none').text('');
+                        if (response.code == 200) {
+                            location.href = $('#form-register').attr('action');
+                        } else {
+                            $('#register-error').removeClass('d-none').text(response.message);
+                            let errors = response.data || [];
 
-                        errors.forEach(function (error) {
-                            if (error.field === 'user') {
-                                $('#user').addClass('is-invalid').removeClass('is-valid');
-                                $('#user').next('.invalid-feedback').text(error.message);
-                                document.getElementById('user').setCustomValidity(error.message);
-                            }
-                            if (error.field === 'email') {
-                                $('#email').addClass('is-invalid').removeClass('is-valid');
-                                $('#email').next('.invalid-feedback').text(error.message);
-                                document.getElementById('email').setCustomValidity(error.message);
-                            }
-                        });
+                            errors.forEach(function (error) {
+                                if (error.field === 'user') {
+                                    $('#user').addClass('is-invalid').removeClass('is-valid');
+                                    $('#user').next('.invalid-feedback').text(error.message);
+                                    document.getElementById('user').setCustomValidity(error.message);
+                                }
+                                if (error.field === 'email') {
+                                    $('#email').addClass('is-invalid').removeClass('is-valid');
+                                    $('#email').next('.invalid-feedback').text(error.message);
+                                    document.getElementById('email').setCustomValidity(error.message);
+                                }
+                            });
 
-                        console.error(response.message); // Exibe a mensagem de erro do servidor
+                            console.error(response.message);
+                            enableRegisterBtn();
+                        }
+                    },
+                    error: function () {
+                        console.log('An error occurred');
                         enableRegisterBtn();
                     }
-                },
-                error: function (error) {
-                    console.log('An error occurred');
-                    enableRegisterBtn();
-                }
+                });
+            }).catch(function() {
+                $('#register-error').removeClass('d-none').text(form.dataset.recaptchaError);
+                enableRegisterBtn();
             });
         }, false);
     });

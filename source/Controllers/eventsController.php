@@ -78,6 +78,37 @@ class eventsController extends Core {
         return;
     }
 
+    public function subscribers($post) {
+        $eventId = filter_var($post['eventId'] ?? null, FILTER_VALIDATE_INT);
+        $offset = filter_var($post['offset'] ?? 0, FILTER_VALIDATE_INT);
+        if (!$eventId || $eventId < 1 || $offset === false || $offset < 0) {
+            exit($this->renderApiResponse(400, "Parâmetros inválidos."));
+        }
+
+        $user = $this->getUser();
+        $storeId = !empty($user['loja_id']) ? $user['loja_id'] : null;
+        $event = $this->getModel()->getEventBasicInfo($eventId, $storeId);
+        if (empty($event) || ($event['evento_privado'] == 1 && (empty($user) || ($user['id'] != $event['evento_proprietario'] && empty($event['inscricao_id']))))) {
+            exit($this->renderApiResponse(404, "Evento não encontrado."));
+        }
+
+        $subscribers = $this->getModel()->getEventSubscribers($eventId, $offset);
+        foreach ($subscribers as &$subscriber) {
+            $subscriber = [
+                'nome' => $subscriber['nome'],
+                'perfil_url' => url($subscriber['nome_unico']),
+                'foto_url' => !empty($subscriber['foto']) ? storageURL($subscriber['foto']) : null,
+                'is_owner' => (bool) $subscriber['is_owner']
+            ];
+        }
+        unset($subscriber);
+
+        exit($this->renderApiResponse(200, "Seguidores carregados.", [
+            'subscribers' => $subscribers,
+            'hasMore' => $offset + count($subscribers) < (int) $event['total_inscritos']
+        ]));
+    }
+
     public function subscribe($post) {
         if (!$this->getLogado()) exit($this->renderApiResponse(401, "Usuário não autenticado.", [
             'redirect' => '/login?r=' . base64_encode(urlencode('/events/id/'.$post['eventId']))

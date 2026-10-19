@@ -7,5 +7,8 @@
     "Esqueci minha senha": "I forgot my password",
     "Entrar": "Login",
     "Usuário não encontrado!": "User not found!",
-    "Usuário encontrado!": "User found!"
+    "Usuário encontrado!": "User found!",
+    "Verificação reCAPTCHA inválida. Confirme que você não é um robô.": "Invalid reCAPTCHA verification. Please confirm that you are not a robot.",
+    "Verificação anti-robô indisponível no momento.": "Anti-bot verification is currently unavailable.",
+    "Não foi possível validar o reCAPTCHA. Tente novamente.": "Could not verify reCAPTCHA. Please try again."
 }

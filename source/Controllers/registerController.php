@@ -6,6 +6,7 @@ use Exception;
 use CoffeeCode\Router\Router;
 use Source\Core\Core;
 use Source\Model\Register;
+use Source\Model\Helpers\GoogleRecaptcha;
 use Source\Model\Helpers\ValidationCode;
 
 class registerController extends Core {
@@ -28,6 +29,8 @@ class registerController extends Core {
     public function insertStore($post) {
         $this->addTranslator('register/home');
         $translator = $this->getTranslator();
+        if (!GoogleRecaptcha::verify($post['g-recaptcha-response'] ?? '', 'register'))
+            exit($this->renderApiResponse(400, $translator->translate('Verificação reCAPTCHA inválida. Confirme que você não é um robô.')));
         try { 
             $model = new Register();
             $qtd = $model->verifyIfEmailAndUsernameAreValid($post['email'], $post['user']);

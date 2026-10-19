@@ -2,5 +2,8 @@
     "Esqueci minha senha": "I forgot my password",
     "E-mail": "E-mail",
     "Cancelar": "Cancel",
-    "Enviar e-mail": "Send e-mail"
+    "Enviar e-mail": "Send e-mail",
+    "Verificação reCAPTCHA inválida. Confirme que você não é um robô.": "Invalid reCAPTCHA verification. Please confirm that you are not a robot.",
+    "Verificação anti-robô indisponível no momento.": "Anti-bot verification is currently unavailable.",
+    "Não foi possível validar o reCAPTCHA. Tente novamente.": "Could not verify reCAPTCHA. Please try again."
 }

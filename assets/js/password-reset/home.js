@@ -15,20 +15,22 @@ $('#form-password-reset').on('submit', function(e) {
     disableRegisterBtn();
     let email = $('#email').val();
 
-    setTimeout(function() {
+    const form = this;
+    executeRecaptcha('password_reset', form.dataset.recaptchaSitekey).then(function(token) {
         $.ajax({
             url: '/password-reset',
             type: 'POST',
             data: {
                 email: email,
+                'g-recaptcha-response': token
             },
             success: function(response) {
                 response = JSON.parse(response);
                 if (response.code == 200) {
                     location.href = $('#form-password-reset').attr('action');
                 }  else {    
-                    $('#toastTitle').text('E-mail não encontrado');
-                    $('#toastBody').text('O e-mail informado não foi encontrado!');
+                    $('#toastTitle').text(response.message);
+                    $('#toastBody').text('');
                     $('#myToast').addClass('bg-danger');
                     $('#myToast').removeClass('bg-success');
                     var myToast = new bootstrap.Toast(document.getElementById('myToast'));
@@ -42,5 +44,11 @@ $('#form-password-reset').on('submit', function(e) {
                 enableRegisterBtn();
             }
         });
-    }, 10); // Pequeno delay para garantir renderização do spinner
+    }).catch(function() {
+        $('#toastTitle').text(form.dataset.recaptchaError);
+        $('#toastBody').text('');
+        $('#myToast').addClass('bg-danger').removeClass('bg-success');
+        new bootstrap.Toast(document.getElementById('myToast')).show();
+        enableRegisterBtn();
+    });
 });

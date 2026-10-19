@@ -6,6 +6,7 @@ use CoffeeCode\Router\Router;
 use Exception;
 use Source\Core\Core;
 use Source\Model\Auth;
+use Source\Model\Helpers\GoogleRecaptcha;
 use Source\Model\Helpers\ValidationCode;
 
 class authController extends Core {
@@ -18,6 +19,8 @@ class authController extends Core {
     public function login($post) {
         $this->addTranslator('login');
         $translator = $this->getTranslator();
+        if (!GoogleRecaptcha::verify($post['g-recaptcha-response'] ?? '', 'login')) 
+            exit($this->renderApiResponse(400, $translator->translate('Verificação reCAPTCHA inválida. Confirme que você não é um robô.')));
         $auth = new Auth();
         $user = $auth->searchUser($post['email'], $post['password']);
         if (!$user) exit($this->renderApiResponse(404, $translator->translate('Usuário não encontrado!')));

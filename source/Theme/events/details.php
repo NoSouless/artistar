@@ -61,10 +61,10 @@
                     </a>
                 <?php endif;?>
                 <?php if ($event['total_inscritos'] > 0): ?>
-                <span class="badge bg-lavanda ms-3" id="totalSubscribersBadge">
+                <button type="button" class="badge bg-lavanda ms-3 border-0 subscriber-badge" id="totalSubscribersBadge" aria-haspopup="dialog" aria-controls="eventFollowersModal">
                     <span class="iconify" data-icon="mdi:account-multiple" data-inline="false"></span>
                     <?= $event['total_inscritos'] ?> <?= $translator->translate($event['total_inscritos'] == 1 ? 'Seguidor' : 'Seguidores') ?>
-                </span>
+                </button>
                 <?php endif; ?>
             </div>
             <div class="col-md-6 d-md-flex d-block justify-content-end" id="column-buttons">
@@ -234,6 +234,25 @@
             </div>
         </div>
     </section>
+    <section id="event-followers-modal">
+        <div class="modal fade" id="eventFollowersModal" tabindex="-1" aria-labelledby="eventFollowersModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventFollowersModalLabel"><?= $translator->translate("Seguidores do evento") ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="eventFollowersStatus" class="mb-2" role="status" aria-live="polite" hidden></p>
+                        <ul id="eventFollowersList" class="list-group list-group-flush subscriber-list"></ul>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-stellar-blue" id="eventFollowersMore" hidden><?= $translator->translate("Ver mais") ?></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <section id="share-modal">
         <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -389,6 +408,12 @@
         tagsLanguage: "<?= $translator->translate("Adicione tags personalizadas") ?>",
         saveSuccessTitle: "<?= $translator->translate("Alteração Salva!") ?>",
         errorTitle: "<?= $translator->translate("Erro!") ?>",
+        followersLoading: <?= json_encode($translator->translate("Carregando..."), JSON_UNESCAPED_UNICODE) ?>,
+        followersLoadError: <?= json_encode($translator->translate("Não foi possível carregar os seguidores."), JSON_UNESCAPED_UNICODE) ?>,
+        followersEmpty: <?= json_encode($translator->translate("Nenhum seguidor encontrado."), JSON_UNESCAPED_UNICODE) ?>,
+        followersRetry: <?= json_encode($translator->translate("Tentar novamente"), JSON_UNESCAPED_UNICODE) ?>,
+        followersMore: <?= json_encode($translator->translate("Ver mais"), JSON_UNESCAPED_UNICODE) ?>,
+        followersOwner: <?= json_encode($translator->translate("Proprietário"), JSON_UNESCAPED_UNICODE) ?>,
     };
 </script>
 <script src="<?= url("assets/js/events/details.js") ?>" defer></script>
