@@ -137,6 +137,11 @@
                     </div>
                 </div>
                 <div class="col-12 border rounded p-3 mb-3">
+                    <div class="mb-3 form-check form-switch form-switch-sm">
+                        <input class="form-check-input" type="checkbox" role="switch" id="product-on-demand" name="produto_sob_demanda" value="1" <?= $product['sob_demanda'] ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="product-on-demand"><?= $translator->translate("Produto sob demanda (Make to order)") ?></label>
+                        <i class="fa-solid fa-circle-info color-gray ms-2" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate("Este produto não possui estoque controlado.") ?>"></i>
+                    </div>
                     <div class="row">
                         <div class="mb-3 col-sm-6 col-12">
                             <label for="stock" class="form-label"><?= $translator->translate("Estoque") ?></label>

@@ -160,6 +160,10 @@
                             <input type="text" class="form-control moedaReal input-stellar-blue" id="new-discount" name="discount" value="0,00">
                         </div>
                     </div>
+                    <div class="form-check form-switch form-switch-sm">
+                        <input class="form-check-input" type="checkbox" role="switch" id="new-product-on-demand" name="produto_sob_demanda" value="1">
+                        <label class="form-check-label" for="new-product-on-demand"><?= $translator->translate("Produto sob demanda (Make to order)") ?></label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-fog-gray" data-bs-dismiss="modal"><?= $translator->translate("Cancelar") ?></button>

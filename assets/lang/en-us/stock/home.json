@@ -17,6 +17,8 @@
     "Preço Atual": "Current Price",
     "Estoque": "Stock",
     "Estoque Mínimo": "Minimum Stock",
+    "Produto sob demanda (Make to order)": "Make-to-order product",
+    "Este produto não possui estoque controlado.": "This product does not have tracked inventory.",
     "Status de Estoque": "Stock Status",
     "Bom": "Good",
     "Baixo": "Low",

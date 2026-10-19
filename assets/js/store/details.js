@@ -117,7 +117,7 @@ $(document).ready(function () {
 
 function buildProductCard(product, order, selected = false) {
     let stockBadge = '';
-    if (product.mostrar_estoque) {
+    if (product.mostrar_estoque && !product.sob_demanda) {
     if (product.estoque <= 0) {
         stockBadge = `<span class="badge bg-danger position-absolute top-0 end-0 m-3">${translator["Esgotado!"]}</span>`;
     } else {

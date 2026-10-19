@@ -162,12 +162,14 @@
                     <a class="card h-100 d-flex flex-column product-card" href="<?=url('stock/product/'.$product['id'])?>">
                         <div class="card-img-top position-relative pt-2 px-2">
                             <img src="<?= empty($product['thumbnail']) ? url('assets/image/200x300.png') : storageURL($product['thumbnail']) ?>" class="img-fluid rounded thumbnail-product" alt="Evento">
-                            <?php if ($product['estoque'] <= 0): ?>
-                            <span class="badge bg-danger position-absolute top-0 end-0 m-3"><?= $translator->translate('Sem Estoque') ?></span>
-                            <?php elseif ($product['estoque'] < $product['estoque_minimo']): ?>
-                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3"><?= $product['estoque'] ?> <?= $translator->translate('uni') ?></span>
-                            <?php else: ?>
-                            <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3"><?= $product['estoque'] ?> <?= $translator->translate('uni') ?></span>
+                            <?php if (!$product['sob_demanda']): ?>
+                                <?php if ($product['estoque'] <= 0): ?>
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-3"><?= $translator->translate('Sem Estoque') ?></span>
+                                <?php elseif ($product['estoque'] < $product['estoque_minimo']): ?>
+                                <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3"><?= $product['estoque'] ?> <?= $translator->translate('uni') ?></span>
+                                <?php else: ?>
+                                <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3"><?= $product['estoque'] ?> <?= $translator->translate('uni') ?></span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                         <div class="card-body d-flex flex-column">
@@ -428,6 +430,13 @@
                                     <?= $translator->translate('Margem') ?> <i class="fa-solid fa-circle-info color-gray ms-1" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('A margem de contribuição é calculada subtraindo o custo e o desconto do preço de venda, ajuda a identificar a lucratividade do produto.') ?>"></i>
                                 </label>
                                 <input type="text" disabled class="form-control" id="new-profit" name="profit" value="0,00">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch form-switch-sm">
+                                <input class="form-check-input" type="checkbox" role="switch" id="new-product-on-demand" name="produto_sob_demanda" value="1">
+                                <label class="form-check-label" for="new-product-on-demand"><?= $translator->translate('Produto sob demanda (Make to order)') ?></label>
+                                <i class="fa-solid fa-circle-info color-gray ms-2" data-toggle="tooltip" data-placement="top" data-bs-custom-class="cor-tooltip" title="<?= $translator->translate('Este produto não possui estoque controlado.') ?>"></i>
                             </div>
                         </div>
                         <div class="row">

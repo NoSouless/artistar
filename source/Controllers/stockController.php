@@ -83,6 +83,7 @@ class stockController extends Core {
             'produto_custo' => str_replace(',', '.', str_replace('.', '', $post['cost'] ?? '0')),
             'produto_estoque' => $post['stock'] ?? 0,
             'produto_estoque_minimo' => $post['min_stock'] ?? 0,
+            'produto_sob_demanda' => isset($post['produto_sob_demanda']) ? 1 : 0,
             'produto_loja' => $store,
             'produto_ativo' => isset($post['active']) ? 1 : 0,
             'produto_palavras_chave' => isset($post['keywords']) ? implode('|', $post['keywords']) : '',
@@ -163,6 +164,7 @@ class stockController extends Core {
             'produto_custo' => desconverteMoedaReal($post['cost'] ?? '0'),
             'produto_estoque' => $post['stock'] ?? 0,
             'produto_estoque_minimo' => $post['min_stock'] ?? 0,
+            'produto_sob_demanda' => isset($post['produto_sob_demanda']) ? 1 : 0,
             'produto_ativo' => isset($post['active']) ? 1 : 0,
             'produto_palavras_chave' => isset($post['keywords']) ? implode('|', $post['keywords']) : '',
             'produto_codigo_interno' => $post['insideId'] ?? ''

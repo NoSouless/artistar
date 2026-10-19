@@ -64,13 +64,13 @@ class Stock extends Core {
         if (!empty($filter['stock_status'])) {
             switch ($filter['stock_status']) {
                 case 'good':
-                    $where[] = "produto_estoque >= produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1";
+                    $where[] = "produto_ativo = 1 AND (produto_sob_demanda = 1 OR (produto_estoque >= produto_estoque_minimo AND produto_estoque > 0))";
                     break;
                 case 'low':
-                    $where[] = "produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1";
+                    $where[] = "produto_sob_demanda = 0 AND produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1";
                     break;
                 case 'out':
-                    $where[] = "produto_estoque <= 0 AND produto_ativo = 1";
+                    $where[] = "produto_sob_demanda = 0 AND produto_estoque <= 0 AND produto_ativo = 1";
                     break;
                 case 'dead':
                     $where[] = "COALESCE(produto_ativo, 0) = 0";
@@ -85,9 +85,9 @@ class Stock extends Core {
         try {
             $stmt = $this->SQL->prepare("
                 SELECT 
-                    COUNT(IF(produto_estoque >= produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1, 1, NULL)) AS goodStock,
-                    COUNT(IF(produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1, 1, NULL)) AS lowStock,
-                    COUNT(IF(produto_estoque <= 0 AND produto_ativo = 1, 1, NULL)) AS outOfStock,
+                    COUNT(IF(produto_ativo = 1 AND (produto_sob_demanda = 1 OR (produto_estoque >= produto_estoque_minimo AND produto_estoque > 0)), 1, NULL)) AS goodStock,
+                    COUNT(IF(produto_sob_demanda = 0 AND produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1, 1, NULL)) AS lowStock,
+                    COUNT(IF(produto_sob_demanda = 0 AND produto_estoque <= 0 AND produto_ativo = 1, 1, NULL)) AS outOfStock,
                     COUNT(IF(produto_ativo = 0, 1, NULL)) AS deadStock,
                     COUNT(produto_id) AS totalProducts
                 FROM
@@ -231,6 +231,7 @@ class Stock extends Core {
                     produto_valor_desconto valor_desconto,
                     produto_estoque estoque,
                     produto_estoque_minimo estoque_minimo,
+                    produto_sob_demanda sob_demanda,
                     produto_palavras_chave palavras_chave,
                     produto_ativo ativo
                 FROM 
@@ -264,6 +265,7 @@ class Stock extends Core {
                 produto_custo, 
                 produto_estoque, 
                 produto_estoque_minimo, 
+                produto_sob_demanda,
                 produto_loja, 
                 produto_ativo, 
                 produto_palavras_chave
@@ -277,6 +279,7 @@ class Stock extends Core {
                 :produto_custo, 
                 :produto_estoque, 
                 :produto_estoque_minimo, 
+                :produto_sob_demanda,
                 :produto_loja, 
                 :produto_ativo, 
                 :produto_palavras_chave
@@ -378,6 +381,7 @@ class Stock extends Core {
                 produto.produto_custo custo,
                 produto.produto_estoque estoque,
                 produto.produto_estoque_minimo estoque_minimo,
+                produto.produto_sob_demanda sob_demanda,
                 produto.produto_loja loja,
                 produto.produto_ativo ativo,
                 produto.produto_thumbnail thumbnail,
@@ -409,6 +413,7 @@ class Stock extends Core {
                 produto_custo = :produto_custo,
                 produto_estoque = :produto_estoque,
                 produto_estoque_minimo = :produto_estoque_minimo,
+                produto_sob_demanda = :produto_sob_demanda,
                 produto_ativo = :produto_ativo,
                 produto_palavras_chave = :produto_palavras_chave,
                 produto_codigo_interno = :produto_codigo_interno
@@ -484,7 +489,7 @@ class Stock extends Core {
                 produto_valor, 
                 produto_valor_desconto, 
                 produto_custo, produto_estoque, 
-                produto_estoque_minimo, produto_ativo, 
+                produto_estoque_minimo, produto_sob_demanda, produto_ativo,
                 produto_palavras_chave, 
                 produto_codigo_interno, 
                 produto_loja
@@ -496,7 +501,7 @@ class Stock extends Core {
                 produto_valor_desconto, 
                 produto_custo, 
                 produto_estoque, 
-                produto_estoque_minimo, 
+                produto_estoque_minimo, produto_sob_demanda,
                 produto_ativo, 
                 produto_palavras_chave, 
                 produto_codigo_interno, 
@@ -576,6 +581,7 @@ class Stock extends Core {
 
         $existingProducts = $this->getProducts($store, ['offset' => 0, 'limit' => 100000], '', 'produto_id ASC');
         $existingProductsNames = array_column($existingProducts, 'id', 'nome');
+        $existingProductsById = array_column($existingProducts, null, 'id');
         $existingCategories = $this->getCategories($store);
         $existingCategories = array_column($existingCategories, 'id', 'nome');
 
@@ -611,7 +617,8 @@ class Stock extends Core {
                         ':produto_custo'            => filter_var($productData['cost'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
                         ':produto_estoque'          => filter_var($productData['stock'], FILTER_SANITIZE_NUMBER_INT),
                         ':produto_estoque_minimo'   => filter_var($productData['minimum_stock'], FILTER_SANITIZE_NUMBER_INT),
-                        ':produto_ativo'            => $existingProduct[$productId]['ativo'] ?? 1,
+                        ':produto_sob_demanda'      => $existingProductsById[$productId]['sob_demanda'] ?? 0,
+                        ':produto_ativo'            => $existingProductsById[$productId]['ativo'] ?? 1,
                         ':produto_palavras_chave'   => $productData['keywords'],
                         ':produto_codigo_interno'   => $productData['internal_id']
                     ]);
@@ -625,6 +632,7 @@ class Stock extends Core {
                         ':produto_custo'            => filter_var($productData['cost'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
                         ':produto_estoque'          => filter_var($productData['stock'], FILTER_SANITIZE_NUMBER_INT),
                         ':produto_estoque_minimo'   => filter_var($productData['minimum_stock'], FILTER_SANITIZE_NUMBER_INT),
+                        ':produto_sob_demanda'      => 0,
                         ':produto_loja'             => $store,
                         ':produto_ativo'            => 1,
                         ':produto_palavras_chave'   => $productData['keywords'],

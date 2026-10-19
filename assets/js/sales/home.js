@@ -124,7 +124,7 @@ $(document).ready(function () {
                     </div>
                     <div class="col-3 text-end">
                         <span class="card-text fw-bold text-success">${currency} ${prod.total}</span>
-                        <p class="card-text mb-1"><small class="text-muted">${prod.estoque} uni</small></p>
+                        ${prod.sob_demanda === '1' ? '' : `<p class="card-text mb-1"><small class="text-muted">${prod.estoque} uni</small></p>`}
                     </div>
                 </div>
                 `);
@@ -172,6 +172,7 @@ $(document).ready(function () {
             desconto: desconto,
             total: total,
             estoque: 0,
+            sob_demanda: $('#new-product-on-demand').is(':checked') ? '1' : '0',
         }, true);
     });
 
@@ -199,7 +200,7 @@ $(document).ready(function () {
                         <div class="col-md-3 col-sm-6 col-12">
                             <div class="card-body py-3">
                                 <span class="card-text fw-bold text-success">${currency} ${prod.preco}</span>
-                                <p class="card-text mb-1"><small class="text-muted">${prod.estoque} ${dictionary.uni}</small></p>
+                                ${prod.sob_demanda === '1' ? '' : `<p class="card-text mb-1"><small class="text-muted">${prod.estoque} ${dictionary.uni}</small></p>`}
                             </div>
                         </div>
                         <div class="col-md-1 col-12 text-end">
@@ -214,6 +215,7 @@ $(document).ready(function () {
                                     <i class="fa fa-minus"></i>
                                 </button>
                                 <input id="stock-${prod.id}" type="hidden" value="${prod.estoque}">
+                                <input id="on-demand-${prod.id}" type="hidden" value="${prod.sob_demanda || '0'}">
                                 <input id="qtd-items-${prod.id}" name="items[${prod.id}][qtd]" type="text" class="form-control mx-2" value="1" min="1" readonly>
                                 <button type="button" class="btn btn-sm btn-success qtd" data-id="${prod.id}" data-action="increment">
                                     <i class="fa fa-plus"></i>
@@ -265,6 +267,10 @@ $(document).ready(function () {
         });
 
         function verificarEstoque(id) {
+            if ($(`#on-demand-${id}`).val() === '1') {
+                $(`#qtd-items-${id}`).removeClass('is-invalid');
+                return;
+            }
             const estoque = parseInt($(`#stock-${id}`).val());
             const quantidade = parseInt($(`#qtd-items-${id}`).val());
             if (quantidade > estoque) {

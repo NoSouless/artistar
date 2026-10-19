@@ -19,6 +19,7 @@ class Sales extends Core {
                 produto_valor preco,
                 produto_valor_desconto desconto,
                 produto_estoque estoque,
+                produto_sob_demanda sob_demanda,
                 produto_thumbnail imagem
             FROM 
                 produtos
@@ -124,6 +125,7 @@ class Sales extends Core {
                             produto_valor,
                             produto_valor_desconto,
                             produto_estoque,
+                            produto_sob_demanda,
                             produto_ativo,
                             produto_data_cadastro
                         ) VALUES (
@@ -133,6 +135,7 @@ class Sales extends Core {
                             :valor,
                             :valor_desconto,
                             0,
+                            :sob_demanda,
                             1,
                             NOW()
                         )
@@ -142,6 +145,7 @@ class Sales extends Core {
                     $stmt->bindValue(":descricao", $item['subtitle'], PDO::PARAM_STR);
                     $stmt->bindValue(":valor", $item['base_price'], PDO::PARAM_STR);
                     $stmt->bindValue(":valor_desconto", $item['discount'], PDO::PARAM_STR);
+                    $stmt->bindValue(":sob_demanda", ($item['sob_demanda'] ?? '0') == '1' ? 1 : 0, PDO::PARAM_BOOL);
                     $stmt->execute();   
                     $item['id'] = $this->SQL->lastInsertId();
                 }
