@@ -5,6 +5,8 @@ namespace Source\Model;
 
 use PDO;
 use Source\Core\Core;
+use Source\Model\Helpers\PasswordChangedNotifier;
+use Source\Model\Helpers\RememberMe;
 
 class Auth extends Core {
 
@@ -41,7 +43,12 @@ class Auth extends Core {
         ');
         $updateStatement->bindParam(':password', $password, PDO::PARAM_STR);
         $updateStatement->bindParam(':id', $id, PDO::PARAM_INT);
-        return $updateStatement->execute();
+        $updated = $updateStatement->execute();
+        if ($updated) {
+            (new RememberMe($this->SQL))->revokeAll($id);
+            PasswordChangedNotifier::notify($this->SQL, $id);
+        }
+        return $updated;
     }
 
 }

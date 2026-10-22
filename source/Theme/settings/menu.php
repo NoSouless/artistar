@@ -13,12 +13,12 @@
                 <?= $translator->translate("Editar Perfil") ?>
             </a>
         </li>
-        <!-- <li>
+        <li>
             <a href="<?= url("settings/security") ?>" class="nav-link link-graphite-gray <?= $selected === 'security' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-lock bi me-4" style="width:24px; text-align: center;"></i>
                 <?= $translator->translate("Senha e Segurança") ?>
             </a>
-        </li> -->
+        </li>
         <!-- <li>
             <a href="<?= url("settings/partner") ?>" class="nav-link link-graphite-gray <?= $selected === 'partner' ? 'bg-stellar-blue link-light' : '' ?>">
                 <i class="fa fa-handshake bi me-4" style="width:24px; text-align: center;"></i>

@@ -125,6 +125,7 @@ $router->get("/profile", "profileController:profile", "profileController.profile
 $router->post("/profile", "profileController:updateProfile", "profileController.updateProfile");
 $router->get("/security", "securityController:security", "securityController.security");
 $router->post("/security", "securityController:updateSecurity", "securityController.updateSecurity");
+$router->post("/security/revoke", "securityController:revokeDevice", "securityController.revokeDevice");
 $router->get("/partner", "partnerController:partner", "partnerController.partner");
 $router->post("/partner", "partnerController:updatePartner", "partnerController.updatePartner");
 $router->get("/store", "storeController:store", "storeController.store");

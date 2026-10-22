@@ -9,6 +9,7 @@ use League\Plates\Engine;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use Source\Model\Helpers\BuildLayout;
+use Source\Model\Helpers\RememberMe;
 use Source\Model\Helpers\Translator;
 
 class Core {
@@ -80,6 +81,13 @@ class Core {
 
     public function verificaLogado(){
         $this->setLogado(false);
+        if (empty($this->getUserLogonStatus()) && !empty($_COOKIE[RememberMe::COOKIE_NAME])) {
+            $rememberedId = (new RememberMe($this->SQL))->consume();
+            if ($rememberedId) {
+                session_regenerate_id(true);
+                $this->setUserLogonStatus($rememberedId);
+            }
+        }
         if(!empty($this->getUserLogonStatus())) {
             $userStatement = $this->SQL->prepare('
                 SELECT

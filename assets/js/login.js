@@ -12,6 +12,7 @@ $('#form-login').on('submit', function(e) {
             data: {
                 email: email,
                 password: senha,
+                remember: $('#remember').is(':checked') ? 1 : 0,
                 'g-recaptcha-response': token
             },
             success: function(response) {

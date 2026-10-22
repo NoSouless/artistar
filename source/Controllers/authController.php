@@ -7,6 +7,7 @@ use Exception;
 use Source\Core\Core;
 use Source\Model\Auth;
 use Source\Model\Helpers\GoogleRecaptcha;
+use Source\Model\Helpers\RememberMe;
 use Source\Model\Helpers\ValidationCode;
 
 class authController extends Core {
@@ -24,11 +25,14 @@ class authController extends Core {
         $auth = new Auth();
         $user = $auth->searchUser($post['email'], $post['password']);
         if (!$user) exit($this->renderApiResponse(404, $translator->translate('Usuário não encontrado!')));
+        session_regenerate_id(true);
         $this->setUserLogonStatus($user);
+        if (!empty($post['remember'])) (new RememberMe($this->getSQL()))->issue($user);
         exit($this->renderApiResponse(200, $translator->translate('Usuário encontrado!')));
     }
 
     public function logout(){
+        (new RememberMe($this->getSQL()))->revoke();
         session_destroy();
         header("location: /");
     }

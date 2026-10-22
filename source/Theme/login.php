@@ -24,6 +24,10 @@
                             <label for="senha" class="form-label"><?= $translator->translate("Senha") ?></label>
                             <input type="password" class="form-control input-stellar-blue" id="senha" name="senha" required>
                         </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember" value="1">
+                            <label for="remember" class="form-check-label"><?= $translator->translate("Manter conectado") ?></label>
+                        </div>
                         <?php if (!RECAPTCHA_ENABLED): ?>
                             <div class="alert alert-warning" role="alert"><?= $translator->translate("Verificação anti-robô indisponível no momento.") ?></div>
                         <?php endif; ?>
