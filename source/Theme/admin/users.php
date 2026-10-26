@@ -18,6 +18,7 @@
                 <thead>
                     <tr>
                         <th scope="col" class="color-nocturne-purple">#</th>
+                        <th scope="col" class="text-center color-nocturne-purple">Perfil</th>
                         <th scope="col" class="text-center color-nocturne-purple">Cadastro</th>
                         <th scope="col" class="color-nocturne-purple">Nome</th>
                         <th scope="col" class="color-nocturne-purple">Nome Completo</th>
@@ -29,6 +30,13 @@
                     <?php foreach ($users as $user): ?>
                     <tr>
                         <th scope="row" class="color-stellar-blue"><?= $user['usuario_id'] ?></th>
+                        <td class="text-center">
+                            <?php if (!empty($user['usuario_foto'])): ?>
+                                <img src="<?= htmlspecialchars(storageURL($user['usuario_foto']), ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($user['usuario_nome'], ENT_QUOTES, 'UTF-8') ?>" style="max-width: 50px; max-height: 50px;">
+                            <?php else: ?>
+                                <i class="fas fa-user-circle fa-2x color-stellar-blue" aria-label="Sem foto de perfil"></i>
+                            <?php endif; ?>
+                        </td>
                         <td class="text-center"><?= date('d/m/Y H:i:s', strtotime($user['usuario_cadastro'])) ?></td>
                         <td><?= $user['usuario_nome'] ?></td>
                         <td><?= $user['usuario_nome_completo'] ?></td>

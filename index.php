@@ -74,6 +74,7 @@ $router->get("/products", "adminController:products", "adminController.products"
 $router->get("/sales", "adminController:sales", "adminController.sales");
 $router->get("/graphs", "adminController:graphs", "adminController.graphs");
 $router->get("/events", "adminController:events", "adminController.events");
+$router->get("/tokens", "adminController:tokens", "adminController.tokens");
 $router->get("/subscriptions", "adminController:subscriptions", "adminController.subscriptions");
 
 $router->group('results');
@@ -147,7 +148,6 @@ $router->dispatch();
 if($router->error()){
     header("location: /error/".$router->error());
 }
-
 
 
 

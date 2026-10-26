@@ -18,6 +18,7 @@
                 <thead>
                     <tr>
                         <th scope="col" class="color-nocturne-purple">#</th>
+                        <th scope="col" class="text-center color-nocturne-purple">Ícone</th>
                         <th scope="col" class="text-center color-nocturne-purple">Cadastro</th>
                         <th scope="col" class="color-nocturne-purple">Nome</th>
                         <th scope="col" class="color-nocturne-purple">Nome Completo</th>
@@ -30,8 +31,15 @@
                     <?php foreach ($stores as $store): ?>
                     <tr>
                         <th scope="row" class="color-stellar-blue"><?= $store['loja_id'] ?></th>
+                        <td class="text-center">
+                            <?php if (!empty($store['loja_foto'])): ?>
+                                <img src="<?= htmlspecialchars(storageURL($store['loja_foto']), ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($store['loja_nome'], ENT_QUOTES, 'UTF-8') ?>" style="max-width: 50px; max-height: 50px;">
+                            <?php else: ?>
+                                <i class="fas fa-store fa-2x color-stellar-blue" aria-label="Sem ícone de loja"></i>
+                            <?php endif; ?>
+                        </td>
                         <td class="text-center"><?= date('d/m/Y H:i:s', strtotime($store['loja_dt_criacao'])) ?></td>
-                        <td><?= $store['loja_nome_unico'] ?></td>
+                        <td><a href="<?= htmlspecialchars(url($store['loja_nome_unico']), ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer"><?= htmlspecialchars($store['loja_nome_unico'], ENT_QUOTES, 'UTF-8') ?></a></td>
                         <td><?= $store['loja_nome'] ?></td>
                         <td><?= $store['usuario_nome_completo'] ?></td>
                         <td class="text-center"><?= $store['loja_ativa'] == 1 ? 'Sim' : 'Não' ?></td>

@@ -132,6 +132,25 @@ class adminController extends Core {
         ]);
     }
 
+    public function tokens() {
+        $admin = new Admin();
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = 50;
+        $offset = ($page - 1) * $limit;
+        echo $this->view->render("admin/tokens", [
+            'layout' => [
+                'title' =>  'Tokens (Painel de Administrador) - Artistar',
+                'logado' => $this->getLogado(),
+                'header' => true,
+                'footer' => true
+            ],
+            'tokens' => $admin->getTokens($limit, $offset),
+            'total' => $admin->getTokenCount(),
+            'page' => $page,
+            'limit' => $limit,
+        ]);
+    }
+
     public function subscriptions() {
         $admin = new Admin();
         $page = $_GET['page'] ?? 1;

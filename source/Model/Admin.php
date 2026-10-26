@@ -161,6 +161,42 @@ class Admin extends Core {
         return $result['count'];
     }
 
+    public function getTokens($limit = 50, $offset = 0) {
+        $stmt = $this->SQL->prepare("
+            SELECT
+                usuarios_tokens.token_id,
+                usuarios_tokens.token_criado_em,
+                usuarios_tokens.token_ultimo_uso,
+                usuarios_tokens.token_expira_em,
+                usuarios_tokens.token_user_agent,
+                usuarios_tokens.token_ip,
+                usuarios.usuario_id,
+                usuarios.usuario_nome,
+                usuarios.usuario_email
+            FROM
+                usuarios_tokens
+            LEFT JOIN
+                usuarios ON usuarios_tokens.token_usuario = usuarios.usuario_id
+            ORDER BY
+                usuarios_tokens.token_id DESC
+            LIMIT
+                :limit
+            OFFSET
+                :offset
+        ");
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTokenCount() {
+        $stmt = $this->SQL->prepare("SELECT COUNT(*) as count FROM usuarios_tokens");
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'];
+    }
+
     public function getSubscriptions($limit = 50, $offset = 0) {
         $stmt = $this->SQL->prepare("
             SELECT 

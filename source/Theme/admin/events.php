@@ -33,7 +33,7 @@
                         <th scope="row" class="color-stellar-blue"><?= $event['evento_id'] ?></th>
                         <td class="text-center"><?= date('d/m/Y H:i:s', strtotime($event['evento_data_criacao'])) ?></td>
                         <td><?= $event['usuario_nome'] ?></td>
-                        <td><?= $event['evento_nome'] ?></td>
+                        <td><a href="<?= htmlspecialchars(url('events/id/' . (int) $event['evento_id']), ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer"><?= htmlspecialchars($event['evento_nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
                         <td class="text-center"><?= date('d/m/Y', strtotime($event['evento_data_inicial'])) ?></td>
                         <td class="text-center"><?= date('d/m/Y', strtotime($event['evento_data_final'])) ?></td>
                         <td><?= $event['evento_endereco_cidade'] ?></td>
