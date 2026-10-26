@@ -52,6 +52,8 @@ class stockController extends Core {
         $orderList = $stockModel->getOrderList($sort);
         $order = $stockModel->buildOrderBy($orderList, $sort);
 
+        $columnsImport = $this->getImportColumns();
+
         echo $this->view->render("stock/home", [
             'stocks' => $stocks,
             'categories' => $stockModel->getCategories($store),
@@ -63,7 +65,8 @@ class stockController extends Core {
             'filter' => $filter ?? [],
             'sort' => $sort,
             'get' => $_GET,
-            'currency' => $this->getUser()['loja_moeda'] ?? 'R$'
+            'currency' => $this->getUser()['loja_moeda'] ?? 'R$',
+            'columnsImport' => $columnsImport
         ]);
         return;
     }
@@ -110,6 +113,61 @@ class stockController extends Core {
         exit($this->renderApiResponse(200, $tradutor->translate("Produto inserido com sucesso."), ['productId' => $productId]));
     }
 
+    private function getImportColumns() {
+        return [
+            'name' => 'Nome',
+            'internal_id' => 'Identificação Interna',
+            'categories' => 'Categorias',
+            'keywords' => 'Palavras-Chave',
+            'description' => 'Descrição',
+            'price' => 'Preço',
+            'cost' => 'Custo',
+            'discount' => 'Desconto',
+            'stock' => 'Estoque',
+            'minimum_stock' => 'Estoque Mínimo'
+        ];
+    }
+
+    public function exportProducts() {
+        $this->addTranslator('stock/home');
+        $store = $this->getUser()['loja_id'] ?? 0;
+        if (empty($store)) exit($this->renderApiResponse(400, "Loja não encontrada."));
+        $stockModel = new Stock();
+        $search = $_GET['search'] ?? '';
+        $filter = $_GET['filter'] ?? [];
+        $where = $stockModel->buildWhereStock($search, $filter);
+        $sort = $_GET['sort'] ?? 'name_asc';
+        $stockModel->setTranslator($this->getTranslator());
+        $order = $stockModel->buildOrderBy($stockModel->getOrderList($sort), $sort);
+        $products = $stockModel->getProductsForExport($store, $where, $order);
+
+        $columns = $this->getImportColumns();
+        $headers = array_keys($columns);
+        $sheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $ws = $sheet->getActiveSheet();
+        $translator = $this->getTranslator();
+        $ws->fromArray(array_map(fn($label) => $translator->translate($label), array_values($columns)), null, 'A1');
+        $ws->getStyle('A1:J1')->getFont()->setBold(true);
+        $rowNumber = 2;
+        foreach ($products as $product) {
+            foreach ($headers as $i => $key) {
+                $value = $product[$key] ?? '';
+                $ws->setCellValueExplicit([$i + 1, $rowNumber], $value, in_array($key, ['price', 'cost', 'discount', 'stock', 'minimum_stock'])
+                    ? \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_NUMERIC
+                    : \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            }
+            $rowNumber++;
+        }
+        foreach (range('A', 'J') as $col) $ws->getColumnDimension($col)->setAutoSize(true);
+
+        while (ob_get_level()) ob_end_clean();
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="produtos_' . date('Y-m-d_His') . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($sheet))->save('php://output');
+        exit;
+    }
+
     public function importProducts($post) {
         $this->addTranslator('stock/home');
         $tradutor = $this->getTranslator();
@@ -120,7 +178,7 @@ class stockController extends Core {
             exit($this->renderApiResponse(400, $tradutor->translate("Nenhum arquivo enviado.")));
         }
         try {
-            $result = $stockModel->importProductsFromFile($_FILES['importFile'], $store);
+            $result = $stockModel->importProductsFromFile($_FILES['importFile'], $store, $_POST['mapping'] ?? []);
             exit($this->renderApiResponse(200, $tradutor->translate("Produtos importados com sucesso!"), [
                 'created' => $result['created'], 
                 'updated' => $result['updated']

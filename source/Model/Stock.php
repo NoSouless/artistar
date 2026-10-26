@@ -67,10 +67,10 @@ class Stock extends Core {
                     $where[] = "produto_ativo = 1 AND (produto_sob_demanda = 1 OR (produto_estoque >= produto_estoque_minimo AND produto_estoque > 0))";
                     break;
                 case 'low':
-                    $where[] = "produto_sob_demanda = 0 AND produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1";
+                    $where[] = "COALESCE(produto_sob_demanda, 0) = 0 AND produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1";
                     break;
                 case 'out':
-                    $where[] = "produto_sob_demanda = 0 AND produto_estoque <= 0 AND produto_ativo = 1";
+                    $where[] = "COALESCE(produto_sob_demanda, 0) = 0 AND produto_estoque <= 0 AND produto_ativo = 1";
                     break;
                 case 'dead':
                     $where[] = "COALESCE(produto_ativo, 0) = 0";
@@ -86,9 +86,9 @@ class Stock extends Core {
             $stmt = $this->SQL->prepare("
                 SELECT 
                     COUNT(IF(produto_ativo = 1 AND (produto_sob_demanda = 1 OR (produto_estoque >= produto_estoque_minimo AND produto_estoque > 0)), 1, NULL)) AS goodStock,
-                    COUNT(IF(produto_sob_demanda = 0 AND produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1, 1, NULL)) AS lowStock,
-                    COUNT(IF(produto_sob_demanda = 0 AND produto_estoque <= 0 AND produto_ativo = 1, 1, NULL)) AS outOfStock,
-                    COUNT(IF(produto_ativo = 0, 1, NULL)) AS deadStock,
+                    COUNT(IF(COALESCE(produto_sob_demanda, 0) = 0 AND produto_estoque < produto_estoque_minimo AND produto_estoque > 0 AND produto_ativo = 1, 1, NULL)) AS lowStock,
+                    COUNT(IF(COALESCE(produto_sob_demanda, 0) = 0 AND produto_estoque <= 0 AND produto_ativo = 1, 1, NULL)) AS outOfStock,
+                    COUNT(IF(COALESCE(produto_ativo, 0) = 0, 1, NULL)) AS deadStock,
                     COUNT(produto_id) AS totalProducts
                 FROM
                     produtos
@@ -251,6 +251,37 @@ class Stock extends Core {
         } catch (\PDOException $e) {
             return [];
         }
+    }
+
+    public function getProductsForExport($store, $where = '', $order = 'produto_id ASC') {
+        $stmt = $this->SQL->prepare("
+            SELECT
+                produto_nome name,
+                produto_codigo_interno internal_id,
+                (
+                    SELECT GROUP_CONCAT(cl.categoria_nome ORDER BY cl.categoria_nome SEPARATOR '|')
+                    FROM categoria_produtos cp
+                    JOIN categoria_loja cl ON cl.categoria_id = cp.categoria_produto_categoria
+                    WHERE cp.categoria_produto_produto = produto_id
+                ) categories,
+                produto_palavras_chave keywords,
+                produto_descricao description,
+                produto_valor price,
+                produto_custo cost,
+                produto_valor_desconto discount,
+                produto_estoque stock,
+                produto_estoque_minimo minimum_stock
+            FROM
+                produtos
+            WHERE
+                produto_loja = :store
+            {$where}
+            ORDER BY
+                {$order}
+        ");
+        $stmt->bindValue(":store", $store);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function insertProduct($data) {
@@ -563,10 +594,10 @@ class Stock extends Core {
         return $stmt->execute();
     }
 
-    public function importProductsFromFile($file, $store) {
+    public function importProductsFromFile($file, $store, $mapping = []) {
         $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
         if ($fileExtension === 'csv') {
-            return $this->importProductsFromCSV($file['tmp_name'], $store);
+            return $this->importProductsFromCSV($file['tmp_name'], $store, $mapping);
         // } elseif (in_array($fileExtension, ['xlsx', 'xls'])) {
         //     return $this->importProductsFromExcel($filename, $store);
         } else {
@@ -574,7 +605,7 @@ class Stock extends Core {
         }
     }
 
-    public function importProductsFromCSV($filename, $store) {
+    public function importProductsFromCSV($filename, $store, $mapping = []) {
         if (!file_exists($filename) || !is_readable($filename)) {
             throw new \Exception("Arquivo CSV não encontrado ou não legível.");
         }
@@ -590,9 +621,25 @@ class Stock extends Core {
         if (($handle = fopen($filename, 'r')) !== false) {
             while (($row = fgetcsv($handle, 1000, ',')) !== false) {
                 if (!$header) {
-                    $header = $row;
+                    $row[0] = preg_replace('/^\xEF\xBB\xBF/', '', $row[0]);
+                    $header = array_map('trim', $row);
+                    $templateFields = ['name', 'internal_id', 'categories', 'keywords', 'description', 'price', 'cost', 'discount', 'stock', 'minimum_stock'];
+                    $columnIndex = [];
+                    foreach ($templateFields as $field) {
+                        $source = is_array($mapping) && array_key_exists($field, $mapping) ? $mapping[$field] : $field;
+                        $idx = ($source === '' || $source === null) ? false : array_search($source, $header, true);
+                        $columnIndex[$field] = $idx;
+                    }
+                    if ($columnIndex['name'] === false) {
+                        throw new \Exception("A coluna de nome do produto deve ser selecionada.");
+                    }
                 } else {
-                    $data[] = array_combine($header, $row);
+                    if ($row === [null]) continue;
+                    $item = [];
+                    foreach ($columnIndex as $field => $idx) {
+                        $item[$field] = $idx === false ? '' : ($row[$idx] ?? '');
+                    }
+                    $data[] = $item;
                 }
             }
             fclose($handle);

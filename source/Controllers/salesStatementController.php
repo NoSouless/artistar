@@ -24,7 +24,7 @@ class salesStatementController extends Core {
         $pagination = $_GET['pagination'] ?? [
             'offset' => 0
         ];
-        $pagination['limit'] = 25;
+        $pagination['limit'] = 100;
 
         $filter = [];
         if (isset($_GET['event']) && $_GET['event'] !== 'all') {
@@ -76,6 +76,107 @@ class salesStatementController extends Core {
             'currency' => ($this->getUser()['loja_moeda'] ?? '') ?: 'R$',
         ]);
         return;
+    }
+
+    public function export() {
+        $this->addTranslator('sales-statement/home');
+        $translator = $this->getTranslator();
+        $store = $this->getUser()['loja_id'] ?? 0;
+        if (empty($store)) exit($this->renderApiResponse(404, $translator->translate("Loja não encontrada.")));
+        $model = new SalesStatement();
+        $model->setTranslator($translator);
+
+        $filter = [];
+        if (isset($_GET['event']) && $_GET['event'] !== 'all') {
+            $filter['event'] = $_GET['event'] === 'none' ? 0 : $_GET['event'];
+        }
+        $sort = $_GET['sort'] ?? 'name_asc';
+        $order = $model->buildOrderBy($model->getOrderList($sort), $sort);
+        $sales = $model->getSales($store, ['offset' => 0, 'limit' => 1000000], $model->buildWhereSales($filter), $order);
+        $items = $model->getItems(array_column($sales, 'id'));
+        $itemsBySale = [];
+        foreach ($items as $item) $itemsBySale[$item['id_venda']][] = $item;
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $salesSheet = $spreadsheet->getActiveSheet();
+        $salesSheet->setTitle($translator->translate('Vendas'));
+        $salesSheet->fromArray([
+            $translator->translate('Venda'),
+            $translator->translate('Data (Venda)'),
+            $translator->translate('Data (Criação)'),
+            $translator->translate('Status do Pagamento'),
+            $translator->translate('Status da Entrega'),
+            $translator->translate('Cancelada'),
+            $translator->translate('Método de Pagamento'),
+            $translator->translate('Evento'),
+            $translator->translate('Produtos'),
+            $translator->translate('Unidades'),
+            $translator->translate('Valor'),
+            $translator->translate('Desconto'),
+        ], null, 'A1');
+
+        $itemsSheet = $spreadsheet->createSheet();
+        $itemsSheet->setTitle($translator->translate('Itens'));
+        $itemsSheet->fromArray([
+            $translator->translate('Venda'),
+            $translator->translate('Produto'),
+            $translator->translate('Código Interno'),
+            $translator->translate('Qtd.'),
+            $translator->translate('Valor Unitário'),
+            $translator->translate('Desconto'),
+            $translator->translate('Valor'),
+        ], null, 'A1');
+
+        $text = \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING;
+        $num = \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_NUMERIC;
+        $saleRow = 2;
+        $itemRow = 2;
+        foreach ($sales as $sale) {
+            $cells = [
+                [(int)$sale['numero'], $num],
+                [$sale['data_venda'], $text],
+                [$sale['data_criacao'], $text],
+                [$translator->translate($sale['pago'] ? 'Pago' : 'Pendente'), $text],
+                [$translator->translate($sale['entregue'] ? 'Entregue' : 'Pendente'), $text],
+                [$sale['cancelada'] == 1 ? $translator->translate('Cancelada') : '', $text],
+                [$translator->translate((string)$sale['pagamento']), $text],
+                [$sale['evento_nome'] ?? $translator->translate('(Venda Avulsa)'), $text],
+                [(int)$sale['total_itens'], $num],
+                [(int)$sale['total_unidades'], $num],
+                [(float)$sale['total_valor'], $num],
+                [(float)$sale['total_desconto'], $num],
+            ];
+            foreach ($cells as $i => [$value, $type]) $salesSheet->setCellValueExplicit([$i + 1, $saleRow], $value, $type);
+            $saleRow++;
+
+            foreach ($itemsBySale[$sale['id']] ?? [] as $item) {
+                $qty = (float)$item['qtd'];
+                $cells = [
+                    [(int)$sale['numero'], $num],
+                    [(string)$item['nome'], $text],
+                    [(string)$item['codigo_interno'], $text],
+                    [(int)$qty, $num],
+                    [$qty ? (float)$item['valor'] / $qty : 0, $num],
+                    [(float)$item['desconto'], $num],
+                    [(float)$item['valor'], $num],
+                ];
+                foreach ($cells as $i => [$value, $type]) $itemsSheet->setCellValueExplicit([$i + 1, $itemRow], $value, $type);
+                $itemRow++;
+            }
+        }
+
+        foreach ([[$salesSheet, 'L'], [$itemsSheet, 'G']] as [$ws, $last]) {
+            $ws->getStyle("A1:{$last}1")->getFont()->setBold(true);
+            foreach (range('A', $last) as $col) $ws->getColumnDimension($col)->setAutoSize(true);
+        }
+        $spreadsheet->setActiveSheetIndex(0);
+
+        while (ob_get_level()) ob_end_clean();
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="extrato_' . date('Y-m-d_His') . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet))->save('php://output');
+        exit;
     }
 
     public function saleDetails($get) {

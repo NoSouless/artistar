@@ -139,11 +139,11 @@
                                         <i class="fa fa-file-import me-1" aria-hidden="true"></i> <?= $translator->translate('Importar Produtos') ?>                   
                                     </a>
                                 </li>
-                                <!-- <li>
-                                    <a class="dropdown-item" href="#" id="export-products" data-bs-toggle="modal">
-                                        <i class="fa fa-file-export me-1" aria-hidden="true"></i> <?= $translator->translate('Exportar Produtos') ?>                      
+                                <li>
+                                    <a class="dropdown-item" href="<?= url('stock/exportProducts') . '?' . http_build_query(['search' => $search, 'filter' => $filter, 'sort' => $sort]) ?>" id="export-products">
+                                        <i class="fa fa-file-export me-1" aria-hidden="true"></i> <?= $translator->translate('Exportar Produtos') ?>
                                     </a>
-                                </li> -->
+                                </li>
                             </ul>
                         </div>
                         <a class="btn btn-stellar-blue btn-md" id="newProduct" data-bs-toggle="modal" data-bs-target="#newModal">
@@ -474,10 +474,10 @@
                             <p><?= $translator->translate('Ao importar produtos, aqueles com nomes iguais serão atualizados, enquanto produtos com nomes diferentes serão criados.') ?></p>
                             <p><?= $translator->translate('Categorias com nomes iguais serão vinculadas aos produtos, e categorias não encontradas serão criadas automaticamente.') ?></p>
                             <p><?= $translator->translate('Você pode baixar o modelo de importação clicando no botão abaixo.') ?></p>
-                            <p><?= $translator->translate('Não troque o nome das colunas do arquivo.') ?></p>
+                            <p><?= $translator->translate('Após enviar o arquivo, indique qual coluna do seu arquivo corresponde a cada coluna do modelo.') ?></p>
                         </div>
                         <div class="mb-3">
-                            <a href="<?= url('assets/template/import_products_template.csv') ?>" class="btn btn-stellar-blue" download>
+                            <a href="<?= url('assets/template/'.$translator->getLang().'/' .'import_products_template.csv') ?>" class="btn btn-stellar-blue" download>
                                 <i class="fa-solid fa-file-excel me-1"></i> <?= $translator->translate('Baixar Modelo de Importação') ?>
                             </a>
                         </div>
@@ -491,6 +491,17 @@
                             <small id="importFileError" class="form-text text-danger d-none">
                                 <?= $translator->translate('Erro ao importar o arquivo. Por favor, verifique se o arquivo está no formato correto e tente novamente.') ?>
                             </small>
+                        </div>
+                        <div id="importMapping" class="d-none">
+                            <h6><?= $translator->translate('Mapeamento de colunas') ?></h6>
+                            <?php foreach ($columnsImport as $field => $label): ?>
+                                <div class="row mb-2 align-items-center">
+                                    <label class="col-5 col-form-label" for="map_<?= $field ?>"><?= $translator->translate($label) ?></label>
+                                    <div class="col-7">
+                                        <select class="form-select import-map-select" id="map_<?= $field ?>" name="mapping[<?= $field ?>]" data-field="<?= $field ?>"></select>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </form>
                 </div>
@@ -541,6 +552,7 @@
                 },
             }
         },
+        importIgnoreColumn: '<?= $translator->translate("Ignorar (não importar)") ?>',
         imageSizeError: '<?= $translator->translate("A imagem deve ter no máximo 1MB") ?>',
         validation: {
             nameRequired: '<?= $translator->translate("Por favor, preencha o campo de nome") ?>',

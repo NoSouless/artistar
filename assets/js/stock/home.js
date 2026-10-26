@@ -299,7 +299,50 @@ $('#importFile').on('change', function() {
             this.value = '';
         }
     }
+    loadImportMapping(this.value ? file : null);
 });
+
+function parseCsvLine(line) {
+    const cols = [];
+    let cur = '', quoted = false;
+    for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (quoted) {
+            if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+            else if (c === '"') quoted = false;
+            else cur += c;
+        } else if (c === '"') quoted = true;
+        else if (c === ',') { cols.push(cur.trim()); cur = ''; }
+        else cur += c;
+    }
+    cols.push(cur.trim());
+    return cols;
+}
+
+function loadImportMapping(file) {
+    const $box = $('#importMapping');
+    if (!file) {
+        $box.addClass('d-none');
+        $('.import-map-select').empty();
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function () {
+        const text = String(reader.result).replace(/^\uFEFF/, '');
+        const headers = parseCsvLine(text.split(/\r?\n/)[0] || '').filter(h => h !== '');
+        $('.import-map-select').each(function () {
+            const field = $(this).data('field');
+            const $sel = $(this).empty();
+            $sel.append($('<option>').val('').text(dictionary.importIgnoreColumn));
+            headers.forEach(h => $sel.append($('<option>').val(h).text(h)));
+            const label = $('label[for="map_' + field + '"]').text().trim().toLowerCase();
+            const match = headers.find(h => h.toLowerCase() === field || h.toLowerCase() === label);
+            if (match) $sel.val(match);
+        });
+        $box.removeClass('d-none');
+    };
+    reader.readAsText(file.slice(0, 64 * 1024));
+}
 
 
 $(document).on('click', '#import-form-btn', function(e) {

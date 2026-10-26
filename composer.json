@@ -26,6 +26,7 @@
     "league/plates": "3.4.*",
     "coffeecode/optimizer": "2.0.*",
     "aws/aws-sdk-php": "3.368.*",
-    "guzzlehttp/guzzle": "^7.8"
+    "guzzlehttp/guzzle": "^7.8",
+    "phpoffice/phpspreadsheet": "^5.10"
   }
 }

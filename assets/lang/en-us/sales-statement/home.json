@@ -52,5 +52,12 @@
     "Pix": "Pix",
     "Boleto": "Boleto",
     "Transferência Bancária": "Bank Transfer",
-    "Outros": "Other"
+    "Outros": "Other",
+    "Exportar Extrato": "Export Statement",
+    "Vendas": "Sales",
+    "Itens": "Items",
+    "Status do Pagamento": "Payment Status",
+    "Status da Entrega": "Delivery Status",
+    "Código Interno": "Internal Code",
+    "Valor Unitário": "Unit Value"
 }

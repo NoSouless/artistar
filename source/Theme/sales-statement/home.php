@@ -33,6 +33,9 @@
     <div class="row" id="filters">
         <div class="col-lg-12 col-md-12 col-sm-12 d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center">
+                <a class="btn btn-stellar-blue btn-sm" id="export-sales" href="<?= url('sales-statement/export') . '?' . http_build_query(['event' => $_GET['event'] ?? 'all', 'sort' => $sort]) ?>">
+                    <i class="fa fa-file-export me-1" aria-hidden="true"></i> <?= $translator->translate("Exportar Extrato") ?>
+                </a>
             </div>
             <div class="d-flex align-items-end">
                 <form id="id-sort-form" class="d-md-flex d-block align-items-center" method="GET" action="/sales-statement">

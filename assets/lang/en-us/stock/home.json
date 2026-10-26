@@ -96,5 +96,6 @@
     "Baixar Modelo de Importação": "Download Import Template",
     "Erro ao importar o arquivo. Por favor, verifique se o arquivo está no formato correto e tente novamente.": "Error importing the file. Please check if the file is in the correct format and try again.",
     "Envie um arquivo .csv": "Upload a .csv file",
-    "Importar": "Import"
+    "Importar": "Import",
+    "Ignorar (não importar)": "Ignore (do not import)"
 }
